@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 17
+Class-Path: lib/mysql-connector-j-8.0.33.jar lib/protobuf-java-3.21.9.ja
+ r lib/maven-jar-plugin-3.3.0.jar lib/file-management-3.1.0.jar lib/slf4
+ j-api-1.7.36.jar lib/commons-io-2.11.0.jar lib/maven-archiver-3.6.0.jar
+  lib/plexus-io-3.4.0.jar lib/javax.inject-1.jar lib/plexus-archiver-4.4
+ .0.jar lib/commons-compress-1.21.jar lib/snappy-0.4.jar lib/xz-1.9.jar 
+ lib/plexus-interpolation-1.26.jar lib/plexus-utils-3.4.2.jar lib/common
+ s-lang3-3.12.0.jar
+Main-Class: ui.Main
+Created-By: Maven Integration for Eclipse
+
