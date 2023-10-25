@@ -160,7 +160,7 @@ public class TrangChuQuanLyBanHangView extends JFrame implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if(o.equals(menuButton7)) {
-			this.setVisible(false);
+			this.dispose();
 			PhanQuyenView view = new PhanQuyenView();
 			view.setVisible(true);
 		}

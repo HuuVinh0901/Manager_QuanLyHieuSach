@@ -85,11 +85,11 @@ public class PhanQuyenView extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if(o.equals(btnLogOut)) {
-			this.setVisible(false);
+			this.dispose();
 			DangNhapView view = new DangNhapView();
 			view.setVisible(true);
 		}else if(o.equals(btnQLBanHang)) {
-			this.setVisible(false);
+			this.dispose();
 			TrangChuQuanLyBanHangView view = new TrangChuQuanLyBanHangView();
 			view.setVisible(true);
 		}
