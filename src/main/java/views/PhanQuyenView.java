@@ -77,9 +77,7 @@ public class PhanQuyenView extends JFrame implements ActionListener{
         btnLogOut.addActionListener(this);
         btnQLBanHang.addActionListener(this);
         btnQLHeThong.addActionListener(this);
-        
-       
-		
+     
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
