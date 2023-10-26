@@ -120,9 +120,6 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		panelBody.setBackground(new Color(255, 255, 255));
 		panelBody.setLayout(new BorderLayout());
 		getContentPane().add(panelBody, BorderLayout.CENTER);
-
-		
-
 	}
 
 }
