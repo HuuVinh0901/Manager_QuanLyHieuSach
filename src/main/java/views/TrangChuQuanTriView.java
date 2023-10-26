@@ -1,41 +1,31 @@
 package views;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-import javax.swing.border.TitledBorder;
 
 import controllers.MenuItem;
-import views.QuanLyBanHangView;
 
-public class TrangChuQuanLyBanHangView extends JFrame {
+public class TrangChuQuanTriView extends JFrame{
 	private JScrollPane jScrollPane1;
 	private JPanel menus;
 	private JPanel panelBody;
 	private JPanel panelHeader;
 	private JPanel panelMenu;
 
-	public TrangChuQuanLyBanHangView() {
-		setTitle("Quản lý bán hàng");
+	public TrangChuQuanTriView() {
+		setTitle("Quản trị");
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -59,14 +49,20 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 				
 			}
 		});
-		
-
+		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", null);
+		MenuItem subQLNhaCungCap = new MenuItem(iconSubMenu, "Nhà cung cấp", null);
+		MenuItem QLSP = new MenuItem(iconStaff, "Quản lý sản phẩm",null,subQLLoaiSanPham,subQLNhaCungCap);
+		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên",null);
 		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",null);
+		MenuItem QLHD = new MenuItem(iconStaff, "Quản lý hóa đơn",null);
+		MenuItem subTKCa = new MenuItem(iconSubMenu, "Thống kê theo ca", null);
+		MenuItem subTKCP = new MenuItem(iconSubMenu, "Thống kê chi phí", null);
+		MenuItem TKBC = new MenuItem(iconStaff, "Thống kê báo cáo",null,subTKCa,subTKCP);
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", null);
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subCaiDatTT,subCaiDatDMK,subCaiDatHDSD);
-		addMenu(QLBH,QLKH,CaiDat);
+		addMenu(QLBH, QLSP, QLNV,QLKH,QLHD,TKBC,CaiDat);
 
 	}
 
@@ -124,5 +120,4 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		
 
 	}
-
 }

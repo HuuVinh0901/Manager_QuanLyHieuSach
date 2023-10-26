@@ -92,6 +92,10 @@ public class PhanQuyenView extends JFrame implements ActionListener{
 			this.dispose();
 			TrangChuQuanLyBanHangView view = new TrangChuQuanLyBanHangView();
 			view.setVisible(true);
+		}else if(o.equals(btnQLHeThong)) {
+			this.dispose();
+			TrangChuQuanTriView view = new TrangChuQuanTriView();
+			view.setVisible(true);
 		}
 	}
 
