@@ -41,7 +41,16 @@ public class TrangChuQuanTriView extends JFrame{
 
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", null);
 		MenuItem subQLNhaCungCap = new MenuItem(iconSubMenu, "Nhà cung cấp", null);
-		MenuItem QLSP = new MenuItem(iconStaff, "Quản lý sản phẩm",null,subQLLoaiSanPham,subQLNhaCungCap);
+		MenuItem QLSP = new MenuItem(iconStaff, "Quản lý sản phẩm",new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panelBody.add(new QuanLySanPhamView());
+				panelBody.repaint();
+				panelBody.revalidate();
+				
+			}
+		},subQLLoaiSanPham,subQLNhaCungCap);
 		MenuItem QLTKNV = new MenuItem(iconSubMenu, "Quản lý tài khoản",null);
 		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên",null,QLTKNV);
 		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",null);
