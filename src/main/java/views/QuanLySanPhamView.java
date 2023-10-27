@@ -17,7 +17,7 @@ public class QuanLySanPhamView extends JPanel {
     private JTextField txtTimKiem;
     private JButton btnXuatEX;
     private JButton btnTimKiem;
-    private JComboBox<String> cbBoLoc;
+    private JComboBox<Object> cbBoLoc;
     private JPanel pnCenter;
     private JButton btnThemSP;
     private JButton btnNhapSP;
@@ -30,21 +30,20 @@ public class QuanLySanPhamView extends JPanel {
         Container mainContainer = new Container();
         mainContainer.setLayout(new BorderLayout(20, 20));
         tabbedPane = new JTabbedPane();
-
-        // Tab Sản phẩm
+        
         JPanel sanPhamPanel = new JPanel();
         sanPhamPanel.setLayout(new BorderLayout());
 
+        // start
         pnTop = new JPanel(new BorderLayout());
         JPanel pnTop_Left = new JPanel();
         JPanel pnTop_Right = new JPanel();
         pnTop_Left.add(new JLabel("Tìm kiếm"));
-        JTextField txtTimKiem = new JTextField(20);
+        JTextField txtTimKiem = new JTextField(50);
         JButton btnTimKiem = new JButton("Tìm kiếm");
         pnTop_Left.add(txtTimKiem);
         pnTop_Left.add(btnTimKiem);
-        String[] items = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
-        JComboBox<String> cbBoLoc = new JComboBox<>(items);
+        cbBoLoc = new JComboBox<Object>(new Object[] {"Loai San Pham","Nha Cung Cap"});
         JButton btnXuatEX = new JButton("Xuất Excel");
         pnTop_Right.add(cbBoLoc);
         pnTop_Right.add(Box.createRigidArea(new Dimension(50, 0)));
@@ -54,15 +53,20 @@ public class QuanLySanPhamView extends JPanel {
         pnTop.add(pnTop_Left, BorderLayout.WEST);
         pnTop.add(pnTop_Right, BorderLayout.EAST);
         sanPhamPanel.add(pnTop, BorderLayout.NORTH);
-
+        // end
+        
+        
+        // start
         Border lineBorder = BorderFactory.createLineBorder(Color.decode("#d3d3d3"), 2);
         Border emptyBorder = new EmptyBorder(20, 20, 40, 20);
         Border compoundBorder = BorderFactory.createCompoundBorder(lineBorder, emptyBorder);
+        
+        
         pnCenter = new JPanel(new BorderLayout());
         pnCenter.setBorder(compoundBorder);
         sanPhamPanel.setBorder(compoundBorder);
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER,110,10));
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER,100,10));
         btnThemSP = new JButton("THÊM SẢN PHẨM");
         btnNhapSP = new JButton("NHẬP SẢN PHẨM");
         btnCapNhatSP = new JButton("CẬP NHẬT SẢN PHẨM");
@@ -87,13 +91,8 @@ public class QuanLySanPhamView extends JPanel {
         pnCenter.add(tablePanel, BorderLayout.CENTER);
 
         sanPhamPanel.add(pnCenter, BorderLayout.CENTER);
-        
-        
         tabbedPane.addTab("Sản phẩm", sanPhamPanel);
-        
-        
-        
-        
+        // end
         
         // Tab Sách
         JPanel sachPanel = new JPanel();
