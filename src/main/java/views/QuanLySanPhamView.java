@@ -112,12 +112,14 @@ public class QuanLySanPhamView extends JPanel {
         pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
         modelSP = new DefaultTableModel();
         tableSP = new JTable();
+        modelSP.addColumn("Hình Ảnh");
         modelSP.addColumn("ID Sản Phẩm");
         modelSP.addColumn("Tên Sản Phẩm");
         modelSP.addColumn("Loại Sản Phẩm");
         modelSP.addColumn("Nhà Cung Cấp");
         modelSP.addColumn("Kích Thước");
         modelSP.addColumn("Màu Sắc");
+        modelSP.addColumn("Trạng Thái");
         modelSP.addColumn("Thuế");
         modelSP.addColumn("Số Lượng");
         modelSP.addColumn("Giá Bán");
