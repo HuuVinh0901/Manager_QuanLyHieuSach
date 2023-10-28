@@ -25,7 +25,7 @@ public class QuanLySanPhamView extends JPanel {
 	lblSoLuong,lblGiaBan,lblThueVAT,lblTinhTrangKinhDoanh;
 	private JTable sanPhamTable;
 	private JPanel pnCenter,pnChucNang,pnDanhMuc,pnMain;
-	private JButton btnThemSP, btnXoaSP,btnNhapSP,btnCapNhatSP,btnHienThiLS;
+	private JButton btnThemSP, btnXoaSP,btnNhapSP,btnCapNhatSP,btnHienThiLS,btnLamMoi;
 	
 	
 	private JTable tableSP;
@@ -91,18 +91,20 @@ public class QuanLySanPhamView extends JPanel {
         pnMain = new JPanel(new BorderLayout());
         
         
-        pnChucNang=new JPanel(new GridLayout(1,5,10,40));
+        pnChucNang=new JPanel(new GridLayout(1,6,10,40));
         pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
         btnThemSP=new JButton("THÊM SẢN PHẨM");
         btnNhapSP =new JButton("NHẬP SẢN PHẨM");
         btnCapNhatSP=new JButton("CẬP NHẬT SẢN PHẨM");
         btnXoaSP=new JButton("XÓA SẢN PHẨM");
         btnHienThiLS=new JButton("LỊCH SỬ XÓA");
+        btnLamMoi= new JButton("LÀM MỚI");
         pnChucNang.add(btnThemSP);
         pnChucNang.add(btnNhapSP);
         pnChucNang.add(btnCapNhatSP);
         pnChucNang.add(btnXoaSP);
         pnChucNang.add(btnHienThiLS);
+        pnChucNang.add(btnLamMoi);
         
         
         

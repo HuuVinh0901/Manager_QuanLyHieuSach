@@ -41,7 +41,13 @@ public class TrangChuQuanTriView extends JFrame{
 		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/setting.png"));
 		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/subMenu.png"));
 		
-		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", null);
+		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new LoaiSanPhamView());
+			}
+		});
 		MenuItem subQLNhaCungCap = new MenuItem(iconSubMenu, "Nhà cung cấp", null);
 		MenuItem QLSP = new MenuItem(iconStaff, "Hàng Hóa",new ActionListener() {
 			
