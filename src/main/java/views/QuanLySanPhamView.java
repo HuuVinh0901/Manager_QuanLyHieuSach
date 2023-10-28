@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Label;
 
 import javax.swing.*;
@@ -34,7 +35,8 @@ public class QuanLySanPhamView extends JPanel {
 		
 		setLayout(new BorderLayout(8,6));
 		tabbedPane = new JTabbedPane();
-
+		// tab sách
+		JPanel sachPanel = new JPanel();
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
 		sanPhamPanel.setLayout(new BorderLayout());
@@ -65,6 +67,18 @@ public class QuanLySanPhamView extends JPanel {
         lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
         chkTinhTrangKinhDoanh = new JCheckBox();
 
+//        
+//        Insets labelInsets = new Insets(0, 60, 0, 10); 
+//        Dimension labelSize = new Dimension(100, 30);
+//        
+//        JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//        lblIDSanPham.setBorder(new EmptyBorder(labelInsets));
+//        lblIDSanPham.setPreferredSize(labelSize);
+      
+//		idPanel.add(lblIDSanPham);
+//		idPanel.add(txtIdSanPham);
+		
+		
         pnCenter.add(lblIDSanPham);
         pnCenter.add(txtIdSanPham);
         pnCenter.add(lblTenSanPham);
@@ -139,6 +153,7 @@ public class QuanLySanPhamView extends JPanel {
 		sanPhamPanel.add(pnMain,BorderLayout.CENTER);
 		
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
+		tabbedPane.add("Sách",sachPanel);
 		add(tabbedPane);
 		
 		

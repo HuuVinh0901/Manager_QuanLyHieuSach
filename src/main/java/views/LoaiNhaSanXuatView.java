@@ -2,16 +2,11 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,11 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import connection.ConnectDB;
-import dao.DAOLoaiSanPham;
-import models.LoaiSanPham;
-
-public class LoaiSanPhamView extends JPanel implements ActionListener {
+public class LoaiNhaSanXuatView extends JPanel{
 	private JPanel pnMain;
 	private JPanel pnHeader, pnTitle;
 	private JPanel pnCener;
@@ -48,39 +39,28 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 	private JTable tableSP;
 	private DefaultTableModel modelSP;
 
-	
-	private DAOLoaiSanPham daoLoaiSanPham;
-	public LoaiSanPhamView() {
-		
-		LoaiSanPham sp = new LoaiSanPham();
-		daoLoaiSanPham = new DAOLoaiSanPham();
-		try {
-			ConnectDB.getinstance().connect();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+	public LoaiNhaSanXuatView() {
 		setLayout(new BorderLayout());
 		pnMain = new JPanel(new BorderLayout(8, 6));
 
 		pnHeader = new JPanel();
-		pnHeader.add(lblTitle = new JLabel("Quản Lý Loại Sản Phẩm"));
+		pnHeader.add(lblTitle = new JLabel("Quản Lý Nhà Cung Cấp"));
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setForeground(new Color(26, 102, 227));
 		pnHeader.setBackground(new Color(208, 225, 253));
 
 		// layout thong tin
 		pnMainThongTin = new JPanel(new BorderLayout());
-		pnMainThongTin.setBorder(BorderFactory.createTitledBorder("Thông tin sản phẩm"));
+		pnMainThongTin.setBorder(BorderFactory.createTitledBorder("Thông tin nhà cung cấp"));
 
 		pnLoaiThongTin = new JPanel(new GridLayout(2, 2, 10, 10));
 
 		
-		lblIdLoaiSanPham = new JLabel("Mã loại sản phẩm:");
+		lblIdLoaiSanPham = new JLabel("Mã nhà cung cấp:");
 		txtIdLoaiSanPham = new JTextField(20);
 		txtIdLoaiSanPham.setPreferredSize(new Dimension(150, 30));
 
-		lblTenLoaiSanPham = new JLabel("Tên loại sản phẩm:");
+		lblTenLoaiSanPham = new JLabel("Tên nhà cung cấp:");
 		txtTenLoaiSanPham = new JTextField(20);
 		txtTenLoaiSanPham.setPreferredSize(new Dimension(150, 30));
 		
@@ -143,8 +123,8 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
         pnSouthBottom.setBorder(BorderFactory.createTitledBorder("Danh mục"));
         modelSP = new DefaultTableModel();
         tableSP = new JTable();
-        modelSP.addColumn("Mã Loại Sản Phẩm");
-        modelSP.addColumn("Tên Loại Sản Phẩm");
+        modelSP.addColumn("Mã Nhà Cung Cấp");
+        modelSP.addColumn("Tên Nhà Cung Cấp");
         tableSP.setModel(modelSP);
         JScrollPane scrollPane = new JScrollPane(tableSP);
         pnSouthBottom.add(scrollPane);
@@ -161,50 +141,5 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 		pnMain.add(pnMainThongTin, BorderLayout.CENTER);
 		pnMain.add(pnSouth, BorderLayout.SOUTH);
 		this.add(pnMain);
-		
-		btnThem.addActionListener(this);
-		try {
-			loadData();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
-
-	private void loadData() throws SQLException {
-		modelSP.setRowCount(0);
-		for(LoaiSanPham sp:daoLoaiSanPham.getAllLoaiSanPham()) {
-			String[] row = {
-					sp.getIdLoaiSanPham(),sp.getTenLoaiSanPham()
-			};
-			modelSP.addRow(row);
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		Object o = e.getSource();
-		if(o.equals(btnThem)) {
-			try {
-				themLoaiSanPham();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		
-	}
-
-	private void themLoaiSanPham() throws SQLException {
-		String idLoaiSanPham = txtIdLoaiSanPham.getText();
-		String tenLoaiSanPham = txtTenLoaiSanPham.getText();
-		
-		LoaiSanPham lsp = new LoaiSanPham(idLoaiSanPham, tenLoaiSanPham);
-		daoLoaiSanPham.themLoaiSanPham(lsp);
-		modelSP.addRow(new Object[] {
-				idLoaiSanPham,tenLoaiSanPham
-		});
-		
-	}
-
 }
