@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-import com.mysql.cj.x.protobuf.MysqlxExpr.DocumentPathItem;
 
 public class PhanQuyenView extends JFrame implements ActionListener{
 	private JButton btnLogOut, btnQLBanHang, btnQLHeThong;
