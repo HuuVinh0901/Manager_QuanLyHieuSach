@@ -104,15 +104,17 @@ CREATE TABLE TheLoai(
 )
 go
 CREATE TABLE SanPham (
+    hinhAnhSanPham NVARCHAR(255) NOT NULL, 
     idSanPham NVARCHAR(7) NOT NULL PRIMARY KEY, 
     tenSanPham NVARCHAR(30) NOT NULL, 
-    hinhAnhSanPham NVARCHAR(255) NOT NULL, 
 	loaiSanPham NVARCHAR(7) NOT NULL,
     nhaCungCap NVARCHAR(7) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
+	thue FLOAT CHECK (thue > 0),
 	soLuong INT ,
+	giaBan FLOAT,
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
 )
@@ -166,3 +168,5 @@ go
 
 use master
 drop database QLHieuSach
+
+

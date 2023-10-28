@@ -12,6 +12,9 @@ import java.awt.Label;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import connection.ConnectDB;
 
 public class QuanLySanPhamView extends JPanel {
 	private JTabbedPane tabbedPane;
@@ -22,8 +25,13 @@ public class QuanLySanPhamView extends JPanel {
 	lblSoLuong,lblGiaBan,lblThueVAT,lblTinhTrangKinhDoanh;
 	private JTable sanPhamTable;
 	private JPanel pnCenter,pnChucNang,pnDanhMuc,pnMain;
-	private JButton btnThemSP, btnXoaSP,btnNhapSP,btnCapNhatSP,btnHienThiLS;
+	private JButton btnThemSP, btnXoaSP,btnNhapSP,btnCapNhatSP,btnHienThiLS,btnLamMoi;
+	
+	
+	private JTable tableSP;
+	private DefaultTableModel modelSP;
 	public QuanLySanPhamView() {
+		
 		setLayout(new BorderLayout(8,6));
 		tabbedPane = new JTabbedPane();
 
@@ -83,18 +91,20 @@ public class QuanLySanPhamView extends JPanel {
         pnMain = new JPanel(new BorderLayout());
         
         
-        pnChucNang=new JPanel(new GridLayout(1,5,10,40));
+        pnChucNang=new JPanel(new GridLayout(1,6,10,40));
         pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
         btnThemSP=new JButton("THÊM SẢN PHẨM");
         btnNhapSP =new JButton("NHẬP SẢN PHẨM");
         btnCapNhatSP=new JButton("CẬP NHẬT SẢN PHẨM");
         btnXoaSP=new JButton("XÓA SẢN PHẨM");
         btnHienThiLS=new JButton("LỊCH SỬ XÓA");
+        btnLamMoi= new JButton("LÀM MỚI");
         pnChucNang.add(btnThemSP);
         pnChucNang.add(btnNhapSP);
         pnChucNang.add(btnCapNhatSP);
         pnChucNang.add(btnXoaSP);
         pnChucNang.add(btnHienThiLS);
+        pnChucNang.add(btnLamMoi);
         
         
         
@@ -102,10 +112,21 @@ public class QuanLySanPhamView extends JPanel {
         
         pnDanhMuc = new JPanel(new BorderLayout());
         pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
-        String[] columnNames = {"Column 1", "Column 2","column"};
-        Object[][] data = {{"test thu", "test thu 2","test hoai hong ra"}, {"Data 3", "Data 4","HHDSHD"},{"Data 3", "Data 4","HHDSHD"}};
-        JTable table = new JTable(data, columnNames);
-        JScrollPane scrollPane = new JScrollPane(table);
+        modelSP = new DefaultTableModel();
+        tableSP = new JTable();
+        modelSP.addColumn("Hình Ảnh");
+        modelSP.addColumn("ID Sản Phẩm");
+        modelSP.addColumn("Tên Sản Phẩm");
+        modelSP.addColumn("Loại Sản Phẩm");
+        modelSP.addColumn("Nhà Cung Cấp");
+        modelSP.addColumn("Kích Thước");
+        modelSP.addColumn("Màu Sắc");
+        modelSP.addColumn("Trạng Thái");
+        modelSP.addColumn("Thuế");
+        modelSP.addColumn("Số Lượng");
+        modelSP.addColumn("Giá Bán");
+        tableSP.setModel(modelSP);
+        JScrollPane scrollPane = new JScrollPane(tableSP);
         pnDanhMuc.add(scrollPane);
         pnMain.add(pnDanhMuc,BorderLayout.CENTER);
         
@@ -119,5 +140,17 @@ public class QuanLySanPhamView extends JPanel {
 		
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
 		add(tabbedPane);
+		
+		
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		loadData();
+	}
+	private void loadData() {
+		
+		
 	}
 }
