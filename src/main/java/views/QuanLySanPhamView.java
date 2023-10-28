@@ -1,110 +1,123 @@
 package views;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Label;
 
-import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
 public class QuanLySanPhamView extends JPanel {
-    private JTabbedPane tabbedPane;
-    private JTable sanPhamTable;
-    private JTable sachTable;
-    private JPanel pnTop;
-    private JPanel pnTop_Left;
-    private JPanel pnTop_Right;
-    private JLabel lblTimKiem;
-    private JTextField txtTimKiem;
-    private JButton btnXuatEX;
-    private JButton btnTimKiem;
-    private JComboBox<Object> cbBoLoc;
-    private JPanel pnCenter;
-    private JButton btnThemSP;
-    private JButton btnNhapSP;
-    private JButton btnCapNhatSP;
-    private JButton btnXoaSP;
-    private JButton btnLSXoa;
-    private JPanel pnTable;
-    public QuanLySanPhamView() {
-    	setLayout(new BorderLayout());
-        Container mainContainer = new Container();
-        mainContainer.setLayout(new BorderLayout(20, 20));
-        tabbedPane = new JTabbedPane();
-        
-        JPanel sanPhamPanel = new JPanel();
-        sanPhamPanel.setLayout(new BorderLayout());
+	private JTabbedPane tabbedPane;
+	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan,txtHinhAnh;
+	private JComboBox<String> cbLoaiSanPham, cbNhaCungCap,cbTinhTrangKhinhDoanh;
+	private JCheckBox chkThueVAT, chkTinhTrangKinhDoanh;
+	private JLabel lblTieuDe,lblAnhSanPham, lblHinhAnh,lblIDSanPham,lblTenSanPham,lblNhaCungCap,lblLoaiSanPham,lblKichThuoc,lblMauSac,
+	lblSoLuong,lblGiaBan,lblThueVAT,lblTinhTrangKinhDoanh;
+	private JTable sanPhamTable;
+	private JPanel pnCenter,pnChucNang,pnDanhMuc,pnMain;
+	private JButton btnThemSP, btnXoaSP,btnNhapSP,btnCapNhatSP,btnHienThiLS;
+	public QuanLySanPhamView() {
+		setLayout(new BorderLayout(8,6));
+		tabbedPane = new JTabbedPane();
 
-        // start
-        pnTop = new JPanel(new BorderLayout());
-        JPanel pnTop_Left = new JPanel();
-        JPanel pnTop_Right = new JPanel();
-        pnTop_Left.add(new JLabel("Tìm kiếm"));
-        JTextField txtTimKiem = new JTextField(50);
-        JButton btnTimKiem = new JButton("Tìm kiếm");
-        pnTop_Left.add(txtTimKiem);
-        pnTop_Left.add(btnTimKiem);
-        cbBoLoc = new JComboBox<Object>(new Object[] {"Loai San Pham","Nha Cung Cap"});
-        JButton btnXuatEX = new JButton("Xuất Excel");
-        pnTop_Right.add(cbBoLoc);
-        pnTop_Right.add(Box.createRigidArea(new Dimension(50, 0)));
-        pnTop_Right.add(btnXuatEX);
-        pnTop_Left.setBorder(new EmptyBorder(10, 20, 10, 10));
-        pnTop_Right.setBorder(new EmptyBorder(10, 0, 10, 50));
-        pnTop.add(pnTop_Left, BorderLayout.WEST);
-        pnTop.add(pnTop_Right, BorderLayout.EAST);
-        sanPhamPanel.add(pnTop, BorderLayout.NORTH);
-        // end
-        
-        
-        // start
-        Border lineBorder = BorderFactory.createLineBorder(Color.decode("#d3d3d3"), 2);
-        Border emptyBorder = new EmptyBorder(20, 20, 40, 20);
-        Border compoundBorder = BorderFactory.createCompoundBorder(lineBorder, emptyBorder);
-        
-        
-        pnCenter = new JPanel(new BorderLayout());
-        pnCenter.setBorder(compoundBorder);
-        sanPhamPanel.setBorder(compoundBorder);
-        JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER,100,10));
-        btnThemSP = new JButton("THÊM SẢN PHẨM");
-        btnNhapSP = new JButton("NHẬP SẢN PHẨM");
-        btnCapNhatSP = new JButton("CẬP NHẬT SẢN PHẨM");
-        btnXoaSP = new JButton("XÓA SẢN PHẨM");
-        btnLSXoa = new JButton("LỊCH SỬ XÓA");
-        buttonsPanel.add(btnThemSP);
-        buttonsPanel.add(btnNhapSP);
-        buttonsPanel.add(btnCapNhatSP);
-        buttonsPanel.add(btnXoaSP);
-        buttonsPanel.add(btnLSXoa);
-        pnCenter.add(buttonsPanel, BorderLayout.NORTH);
+		// Tab Sản phẩm
+		JPanel sanPhamPanel = new JPanel();
+		sanPhamPanel.setLayout(new BorderLayout());
+		sanPhamPanel.setBorder(new EmptyBorder(10,10,10,10));
+		// center
+		pnCenter = new JPanel();
+		pnCenter.setLayout(new GridLayout(6, 6, 10, 10));
+		pnCenter.setBorder(BorderFactory.createTitledBorder("Thông tin sản phẩm"));
+		
+        lblIDSanPham = new JLabel("ID Sản Phẩm(*):");
+        txtIdSanPham = new JTextField();
+        lblTenSanPham = new JLabel("Tên Sản Phẩm(*):");
+        txtTenSanPham = new JTextField();
+        lblNhaCungCap = new JLabel("Nhà Cung Cấp(*):");
+        cbNhaCungCap = new JComboBox<>();
+        lblLoaiSanPham = new JLabel("Loại Sản Phẩm(*):");
+        cbLoaiSanPham = new JComboBox<>();
+        lblKichThuoc = new JLabel("Kích Thước (*):");
+        txtKichThuoc = new JTextField();
+        lblMauSac = new JLabel("Màu Sắc (*):");
+        txtMauSac = new JTextField();
+        lblSoLuong = new JLabel("Số Lượng (*):");
+        txtSoLuong = new JTextField();
+        lblGiaBan = new JLabel("Giá Bán (*):");
+        txtGiaBan = new JTextField();
+        lblThueVAT = new JLabel("Thuế VAT:");
+        chkThueVAT = new JCheckBox();
+        lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
+        chkTinhTrangKinhDoanh = new JCheckBox();
 
-        JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BorderLayout());
-
-        String[] sachColumnNamess = {"Mã sách", "Tên sách", "Tác giả"};
-        Object[][] sachDatas = {{"S001", "Sách 1", "Tác giả 1"}, {"S002", "Sách 2", "Tác giả 2"}};
-        JTable table = new JTable(sachDatas, sachColumnNamess);
+        pnCenter.add(lblIDSanPham);
+        pnCenter.add(txtIdSanPham);
+        pnCenter.add(lblTenSanPham);
+        pnCenter.add(txtTenSanPham);
+        pnCenter.add(lblNhaCungCap);
+        pnCenter.add(cbNhaCungCap);
+        pnCenter.add(lblLoaiSanPham);
+        pnCenter.add(cbLoaiSanPham);
+        pnCenter.add(lblKichThuoc);
+        pnCenter.add(txtKichThuoc);
+        pnCenter.add(lblMauSac);
+        pnCenter.add(txtMauSac);
+        pnCenter.add(lblSoLuong);
+        pnCenter.add(txtSoLuong);
+        pnCenter.add(lblGiaBan);
+        pnCenter.add(txtGiaBan);
+        pnCenter.add(lblThueVAT);
+        pnCenter.add(chkThueVAT);
+        pnCenter.add(lblTinhTrangKinhDoanh);
+        pnCenter.add(chkTinhTrangKinhDoanh);
+		
+        
+        
+        pnMain = new JPanel(new BorderLayout());
+        
+        
+        pnChucNang=new JPanel(new GridLayout(1,5,10,40));
+        pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
+        btnThemSP=new JButton("THÊM SẢN PHẨM");
+        btnNhapSP =new JButton("NHẬP SẢN PHẨM");
+        btnCapNhatSP=new JButton("CẬP NHẬT SẢN PHẨM");
+        btnXoaSP=new JButton("XÓA SẢN PHẨM");
+        btnHienThiLS=new JButton("LỊCH SỬ XÓA");
+        pnChucNang.add(btnThemSP);
+        pnChucNang.add(btnNhapSP);
+        pnChucNang.add(btnCapNhatSP);
+        pnChucNang.add(btnXoaSP);
+        pnChucNang.add(btnHienThiLS);
+        
+        
+        
+        pnMain.add(pnChucNang,BorderLayout.NORTH);
+        
+        pnDanhMuc = new JPanel(new BorderLayout());
+        pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
+        String[] columnNames = {"Column 1", "Column 2","column"};
+        Object[][] data = {{"test thu", "test thu 2","test hoai hong ra"}, {"Data 3", "Data 4","HHDSHD"},{"Data 3", "Data 4","HHDSHD"}};
+        JTable table = new JTable(data, columnNames);
         JScrollPane scrollPane = new JScrollPane(table);
-        tablePanel.add(scrollPane);
-        tablePanel.setBorder(new EmptyBorder(5, 20, 5, 20));
-        pnCenter.add(tablePanel, BorderLayout.CENTER);
-
-        sanPhamPanel.add(pnCenter, BorderLayout.CENTER);
-        tabbedPane.addTab("Sản phẩm", sanPhamPanel);
-        // end
+        pnDanhMuc.add(scrollPane);
+        pnMain.add(pnDanhMuc,BorderLayout.CENTER);
         
-        // Tab Sách
-        JPanel sachPanel = new JPanel();
-        sachPanel.setLayout(new BorderLayout());
-        String[] sachColumnNames = {"Mã sách", "Tên sách", "Tác giả"};
-        Object[][] sachData = {{"S001", "Sách 1", "Tác giả 1"}, {"S002", "Sách 2", "Tác giả 2"}};
-        sachTable = new JTable(sachData, sachColumnNames);
-        JScrollPane sachScrollPane = new JScrollPane(sachTable);
-        sachPanel.add(sachScrollPane, BorderLayout.CENTER);
-        tabbedPane.addTab("Sách", sachPanel);
-
-        mainContainer.add(tabbedPane);
-        add(mainContainer);
-    }
+		// Bảng
+		sanPhamTable = new JTable();
+		
+		
+        
+        sanPhamPanel.add(pnCenter, BorderLayout.NORTH);
+		sanPhamPanel.add(pnMain,BorderLayout.CENTER);
+		
+		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
+		add(tabbedPane);
+	}
 }
