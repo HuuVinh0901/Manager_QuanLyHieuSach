@@ -48,7 +48,14 @@ public class TrangChuQuanTriView extends JFrame{
 				switchToPanel(new LoaiSanPhamView());
 			}
 		});
-		MenuItem subQLNhaCungCap = new MenuItem(iconSubMenu, "Nhà cung cấp", null);
+		MenuItem subQLNhaCungCap = new MenuItem(iconSubMenu, "Nhà cung cấp", new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new LoaiNhaSanXuatView());
+				
+			}
+		});
 		MenuItem QLSP = new MenuItem(iconStaff, "Hàng Hóa",new ActionListener() {
 			
 			@Override

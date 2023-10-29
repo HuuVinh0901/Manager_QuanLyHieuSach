@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 import utils.TrangThaiSPEnum;
 
 public class SanPham {
+	private String hinhAnhSanPham;
 	private String idSanPham;
 	private String tenSanPham;
 	private LoaiSanPham idLoaiSanPham;
@@ -14,21 +15,22 @@ public class SanPham {
 	private double kichThuoc;
 	private String mauSac;
 	private TrangThaiSPEnum trangThai;
-	
 	private double thue;
-	private double giaBan;
 	private int soLuong;
-	
+	private double giaBan;
 	
 	public SanPham() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	public SanPham(String idSanPham) {
+		this.idSanPham = idSanPham;
+	}
 
-
-	public SanPham(String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap,
-			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai) {
-		super();
+	
+	public SanPham(String hinhAnhSanPham, String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
+			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai) {
+		this.hinhAnhSanPham = hinhAnhSanPham;
 		this.idSanPham = idSanPham;
 		this.tenSanPham = tenSanPham;
 		this.idLoaiSanPham = idLoaiSanPham;
@@ -36,12 +38,31 @@ public class SanPham {
 		this.kichThuoc = kichThuoc;
 		this.mauSac = mauSac;
 		this.trangThai = trangThai;
+		this.thue = thue;
+		this.soLuong = soLuong;
+		this.giaBan = giaBan;
 		this.tinhThue();
 		this.giaBan();
 		this.laySoLuong();
 	}
+
+
+	
+	public String getHinhAnhSanPham() {
+		return hinhAnhSanPham;
+	}
+
+
+
+	public void setHinhAnhSanPham(String hinhAnhSanPham) {
+		this.hinhAnhSanPham = hinhAnhSanPham;
+	}
+
+
+
 	public String getIdSanPham() {
 		return idSanPham;
+		
 	}
 
 
@@ -139,13 +160,14 @@ public class SanPham {
 		this.soLuong = this.laySoLuong();
 	}
 
-
 	@Override
 	public String toString() {
-		return "SanPham [idSanPham=" + idSanPham + ", tenSanPham=" + tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham
-				+ ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc=" + kichThuoc + ", mauSac=" + mauSac + ", trangThai="
-				+ trangThai + ", thue=" + this.tinhThue() + ", giaBan=" + this.giaBan() + ", soLuong=" + this.laySoLuong() + "]";
+		return "SanPham [hinhAnhSanPham=" + hinhAnhSanPham + ", idSanPham=" + idSanPham + ", tenSanPham=" + tenSanPham
+				+ ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc=" + kichThuoc
+				+ ", mauSac=" + mauSac + ", trangThai=" + trangThai + ", thue=" + thue + ", soLuong=" + soLuong
+				+ ", giaBan=" + giaBan + "]";
 	}
+
 
 
 	@Override
@@ -169,16 +191,18 @@ public class SanPham {
 	private double tinhThue() {
 //		gia nhap * 0.05
 //		this.thue = this.soLuong *0.05;
-		return this.thue;
+		return this.soLuong*0.05;
 	}
 	
 	private int laySoLuong() {
 		// TODO Auto-generated method stub
-		return this.laySoLuong();
+		return this.soLuong;
 	}
 	private double giaBan() {
 //		Giá nhập sản phẩm + (Giá nhập sản phẩm x 55%) + thuế
-		return this.giaBan;
+		
+		
+		return 0.05;
 	}
 	
 	

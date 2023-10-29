@@ -65,9 +65,4 @@ public class NhaCungCap {
 		NhaCungCap other = (NhaCungCap) obj;
 		return Objects.equals(idNhaCungCap, other.idNhaCungCap);
 	}
-	
-	
-	
-	
-	
 }
