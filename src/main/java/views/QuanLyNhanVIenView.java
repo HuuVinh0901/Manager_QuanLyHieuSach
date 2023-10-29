@@ -174,6 +174,7 @@ public class QuanLyNhanVIenView extends JPanel{
         PanelMain.add(scrollPane,BorderLayout.SOUTH);
 //        PanelMain.add(panelSearch,BorderLayout.WEST);
         NhanVienPanel.add(PanelMain,BorderLayout.SOUTH);
+
 	}
 	
 }
