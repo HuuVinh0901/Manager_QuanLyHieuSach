@@ -82,7 +82,6 @@ public class DAOLoaiSanPham {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
-	        // Đóng ResultSet, PreparedStatement và Connection trong khối finally để đảm bảo rằng chúng sẽ được đóng dù có lỗi xảy ra hay không
 	        if (rs != null) {
 	            rs.close();
 	        }
