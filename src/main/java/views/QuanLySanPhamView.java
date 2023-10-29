@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Label;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,6 +18,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
 import connection.ConnectDB;
+import dao.DAOLoaiSanPham;
+import dao.DAONhaCungCap;
+import models.LoaiSanPham;
+import models.NhaCungCap;
 
 public class QuanLySanPhamView extends JPanel {
 	private JTabbedPane tabbedPane;
@@ -31,7 +37,11 @@ public class QuanLySanPhamView extends JPanel {
 	
 	private JTable tableSP;
 	private DefaultTableModel modelSP;
+	private DAOLoaiSanPham daoLoaiSanPham;
+	private DAONhaCungCap daoNhaCungCap;
 	public QuanLySanPhamView() {
+		daoLoaiSanPham= new DAOLoaiSanPham();
+		daoNhaCungCap = new DAONhaCungCap();
 		
 		setLayout(new BorderLayout(8,6));
 		tabbedPane = new JTabbedPane();
@@ -162,10 +172,36 @@ public class QuanLySanPhamView extends JPanel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		loadData();
+		try {
+			loadData();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	private void loadData() {
+	private void loadData() throws SQLException {
+//		modelSP.setRowCount(0);
+//		for(LoaiSanPham sp:daoLoaiSanPham.getAllLoaiSanPham()) {
+//			String[] row = {
+//					sp.getIdLoaiSanPham(),sp.getTenLoaiSanPham()
+//			};
+//			modelSP.addRow(row);
+//		}
 		
+		loadComboxBoxLoaiSanPham();
+		loadComboxBoxNhaCungCap();
+	}
+	private void loadComboxBoxLoaiSanPham() {
+		ArrayList<LoaiSanPham> danhSachLoaiSanPham = daoLoaiSanPham.getAllLoaiSanPham();
+		for (LoaiSanPham loaiSanPham: danhSachLoaiSanPham) {
+			cbLoaiSanPham.addItem(loaiSanPham.getTenLoaiSanPham());
+		}
 		
+	}
+	private void loadComboxBoxNhaCungCap() {
+		ArrayList<NhaCungCap> danhSachNhaCungCap = daoNhaCungCap.getAllNhaCungCap();
+		for(NhaCungCap ncc : danhSachNhaCungCap) {
+			cbNhaCungCap.addItem(ncc.getTenNhaCungCap());
+		}
 	}
 }

@@ -13,6 +13,7 @@ import models.SanPham;
 import utils.TrangThaiSPEnum;
 import views.LoaiNhaSanXuatView;
 import models.LoaiSanPham;
+
 public class DAOLoaiSanPham {
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
@@ -24,15 +25,15 @@ public class DAOLoaiSanPham {
 			}
 		}
 	}
-	
-	public ArrayList<LoaiSanPham> getAllLoaiSanPham(){
+
+	public ArrayList<LoaiSanPham> getAllLoaiSanPham() {
 		ArrayList<LoaiSanPham> dsLoaiSanPham = new ArrayList<>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		try {
 			PreparedStatement ps = con.prepareStatement("SELECT * FROM LoaiSanPham");
 			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				LoaiSanPham lsp = new LoaiSanPham();
 				lsp.setIdLoaiSanPham(rs.getString(1));
 				lsp.setTenLoaiSanPham(rs.getString(2));
@@ -43,9 +44,8 @@ public class DAOLoaiSanPham {
 		}
 		return dsLoaiSanPham;
 	}
-	
-	
-	public boolean themLoaiSanPham(LoaiSanPham lsp)throws SQLException {
+
+	public boolean themLoaiSanPham(LoaiSanPham lsp) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "insert into LoaiSanPham values (?,?)";
@@ -60,4 +60,26 @@ public class DAOLoaiSanPham {
 		con.close();
 		return false;
 	}
+
+	public LoaiSanPham getLoaiSanPhamTheoTen(String maLoaiSanPham) {
+	    LoaiSanPham lsp = null;
+	    ConnectDB.getinstance();
+	    Connection con = ConnectDB.getConnection();
+	    String sql = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
+	    
+	    try {
+	        PreparedStatement ps = con.prepareStatement(sql);
+	        ps.setString(1, maLoaiSanPham);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            lsp = new LoaiSanPham();
+	            lsp.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
+	            lsp.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return lsp;
+	}
+
 }
