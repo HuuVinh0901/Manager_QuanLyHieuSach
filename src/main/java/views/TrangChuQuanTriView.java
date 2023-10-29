@@ -57,9 +57,23 @@ public class TrangChuQuanTriView extends JFrame{
 				
 			}
 		},subQLLoaiSanPham,subQLNhaCungCap);
-		MenuItem QLTKNV = new MenuItem(iconSubMenu, "Quản lý tài khoản",null);
-		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên",null,QLTKNV);
-		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",null);
+		MenuItem QLTKNV = new MenuItem(iconStaff, "Quản lý tài khoản",null);
+		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên",new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new QuanLyNhanVIenView());
+			}
+		});
+		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new QuanLyKhachHangView());
+			}
+		});
 		MenuItem QLHD = new MenuItem(iconStaff, "Quản lý hóa đơn",null);
 		MenuItem subTKCa = new MenuItem(iconSubMenu, "Thống kê theo ca", null);
 		MenuItem subTKCP = new MenuItem(iconSubMenu, "Thống kê chi phí", null);
@@ -76,7 +90,7 @@ public class TrangChuQuanTriView extends JFrame{
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", null);
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subCaiDatTT,subGiaoDien,subCaiDatDMK,subCaiDatHDSD);
-		addMenu( QLSP, QLNV,QLKH,QLHD,TKBC,CaiDat);
+		addMenu( QLSP, QLNV,QLTKNV,QLKH,QLHD,TKBC,CaiDat);
 	}
 	 private void switchToPanel(JPanel newPanel) {
 	        panelBody.remove(paneCu); // Loại bỏ panel hiện tại
