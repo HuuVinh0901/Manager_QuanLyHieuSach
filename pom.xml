@@ -16,6 +16,13 @@
 			<artifactId>maven-jar-plugin</artifactId>
 			<version>3.3.0</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.toedter/jcalendar -->
+	<dependency>
+	    <groupId>com.toedter</groupId>
+	    <artifactId>jcalendar</artifactId>
+	    <version>1.4</version>
+	</dependency>
+
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>

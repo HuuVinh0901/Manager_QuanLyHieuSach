@@ -8,9 +8,11 @@ public class LoaiSanPham {
 	public LoaiSanPham() {
 		super();
 		// TODO Auto-generated constructor stub
-	}public LoaiSanPham(String idLoaiSanPham) {
+	}
+	public LoaiSanPham(String idLoaiSanPham) {
 		this.idLoaiSanPham=idLoaiSanPham;
 	}
+	
 	public LoaiSanPham(String idLoaiSanPham, String tenLoaiSanPham) {
 		super();
 		this.idLoaiSanPham = idLoaiSanPham;
