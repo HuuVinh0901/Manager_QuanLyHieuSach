@@ -61,25 +61,43 @@ public class DAOLoaiSanPham {
 		return false;
 	}
 
-	public LoaiSanPham getLoaiSanPhamTheoTen(String maLoaiSanPham) {
-	    LoaiSanPham lsp = null;
-	    ConnectDB.getinstance();
-	    Connection con = ConnectDB.getConnection();
-	    String sql = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
-	    
+	public LoaiSanPham getLoaiSanPhamByName(String tenLoaiSanPham) throws SQLException {
+	    LoaiSanPham loaiSanPham = null;
+	    Connection con = null;
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
+
 	    try {
-	        PreparedStatement ps = con.prepareStatement(sql);
-	        ps.setString(1, maLoaiSanPham);
-	        ResultSet rs = ps.executeQuery();
+	        con = ConnectDB.getinstance().getConnection();
+	        String sql = "SELECT * FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
+	        ps = con.prepareStatement(sql);
+	        ps.setString(1, tenLoaiSanPham);
+	        rs = ps.executeQuery();
+	        
 	        if (rs.next()) {
-	            lsp = new LoaiSanPham();
-	            lsp.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
-	            lsp.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
+	            loaiSanPham = new LoaiSanPham();
+	            loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
+	            loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
+	    } finally {
+	        // Đóng ResultSet, PreparedStatement và Connection trong khối finally để đảm bảo rằng chúng sẽ được đóng dù có lỗi xảy ra hay không
+	        if (rs != null) {
+	            rs.close();
+	        }
+	        if (ps != null) {
+	            ps.close();
+	        }
+	        if (con != null) {
+	            con.close();
+	        }
 	    }
-	    return lsp;
+	    return loaiSanPham;
 	}
+
+
+
+
 
 }

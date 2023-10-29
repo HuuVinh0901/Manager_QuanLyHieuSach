@@ -60,26 +60,28 @@ public class DAONhaCungCap {
 		return false;
 	}
 	
-	
-	public NhaCungCap getNhaCungCapTheoTen(String maNhaCungCap) {
-		NhaCungCap ncc = null;
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
-		String sql = "SELECT tenNhaCungCap FROM NhaCungCap WHERE idNhaCungCap = ?";
-		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, maNhaCungCap);
-			ResultSet rs = ps.executeQuery();
-			if(rs.next()) {
-				ncc = new NhaCungCap();
-				ncc.setIdNhaCungCap(rs.getString(1));
-				ncc.setTenNhaCungCap(rs.getString(2));
-				ncc.setDiaChi(rs.getString(3));
-				ncc.setSoDienThoai(rs.getString(4));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return ncc;
+	public NhaCungCap getNhaCungCapTheoTen(String tenNhaCungCap) {
+	    NhaCungCap ncc = null;
+
+	    try (Connection con = ConnectDB.getinstance().getConnection();
+	         PreparedStatement ps = con.prepareStatement("SELECT * FROM NhaCungCap WHERE tenNhaCungCap = ?")) {
+	        ps.setString(1, tenNhaCungCap);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                ncc = new NhaCungCap();
+	                ncc.setIdNhaCungCap(rs.getString("idNhaCungCap"));
+	                ncc.setTenNhaCungCap(rs.getString("tenNhaCungCap"));
+	                ncc.setDiaChi(rs.getString("diaChi"));
+	                ncc.setSoDienThoai(rs.getString("soDienThoai"));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return ncc;
 	}
+
+
+	
+	
 }

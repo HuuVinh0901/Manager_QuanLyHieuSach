@@ -54,12 +54,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 
 	public LoaiNhaSanXuatView() {
 		daoNhaCungCap = new DAONhaCungCap();
-		try {
-			ConnectDB.getinstance().connect();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+
 		setLayout(new BorderLayout());
 		pnMain = new JPanel(new BorderLayout(8, 6));
 
@@ -183,6 +178,12 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		this.add(pnMain);
 
 		btnThem.addActionListener(this);
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 		loadData();
 
 	}
