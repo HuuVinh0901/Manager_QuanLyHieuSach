@@ -13,12 +13,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-
 
 import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
@@ -33,8 +33,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	private JTabbedPane tabbedPane;
 	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtHinhAnh;
 	private JComboBox<String> cbTinhTrangKhinhDoanh;
-	private JComboBox<String> cbLoaiSanPham;
-	private JComboBox<String> cbNhaCungCap;
+	private JComboBox<Object> cbLoaiSanPham;
+	private JComboBox<Object> cbNhaCungCap;
 	private JCheckBox chkThueVAT, chkTinhTrangKinhDoanh;
 	private JLabel lblTieuDe, lblAnhSanPham, lblHinhAnh, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham,
 			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh;
@@ -177,6 +177,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+
 		loadData();
 		loadComboxBoxLoaiSanPham();
 		loadComboxBoxNhaCungCap();
@@ -184,16 +185,19 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	}
 
 	private void loadData() {
-		modelSP.setRowCount(0);
-		for (SanPham sp : daoSanPham.getAllSanPham()) {
-			String[] row = { sp.getHinhAnhSanPham(), sp.getIdSanPham(), sp.getTenSanPham(),
-					sp.getIdLoaiSanPham().getTenLoaiSanPham(), sp.getIdNhaCungCap().getTenNhaCungCap(),
-					sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "", sp.getThue() + "",
-					sp.getSoLuong() + "", sp.getGiaBan() + "" };
-			modelSP.addRow(row);
-		}
-
+	    modelSP.setRowCount(0);
+	    for (SanPham sp : daoSanPham.getAllSanPham()) {
+	        String tenLoaiSanPham = sp.getIdLoaiSanPham().getTenLoaiSanPham();
+	        String tenNhaCungCap = sp.getIdNhaCungCap().getTenNhaCungCap();
+	        
+	        String[] row = { sp.getHinhAnhSanPham(), sp.getIdSanPham(), sp.getTenSanPham(),
+	                tenLoaiSanPham, tenNhaCungCap,
+	                sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "", sp.getThue() + "",
+	                sp.getSoLuong() + "", sp.getGiaBan() + "" };
+	        modelSP.addRow(row);
+	    }
 	}
+
 
 	private void loadComboxBoxLoaiSanPham() {
 		ArrayList<LoaiSanPham> danhSachLoaiSanPham = daoLoaiSanPham.getAllLoaiSanPham();
@@ -217,7 +221,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		}
 	}
 
-	
 	private void themSanPham() {
 	    String hinhAnhSanPham = txtHinhAnh.getText();
 	    String idSanPham = txtIdSanPham.getText();
@@ -277,8 +280,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 	    }
 	}
-
-
 
 	private double tinhGiaBan() {
 		double giaBan = 0;

@@ -97,4 +97,46 @@ public class DAONhaCungCap implements Serializable {
         }
         return ncc;
     }
+	
+	public NhaCungCap getNhaCungCapByTen(String tenNhaCungCap) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        NhaCungCap nhaCungCap = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM NhaCungCap WHERE tenNhaCungCap = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, tenNhaCungCap);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                nhaCungCap = new NhaCungCap();
+                nhaCungCap.setIdNhaCungCap(rs.getString("idNhaCungCap"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("tenNhaCungCap"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("diaChi"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("soDienThoai"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return nhaCungCap;
+    }
+	
 }

@@ -66,8 +66,8 @@ public class DAOQuanLySanPham implements Serializable {
 				ps.setString(1, sp.getHinhAnhSanPham());
 				ps.setString(2, sp.getIdSanPham());
 				ps.setString(3, sp.getTenSanPham());
-				ps.setString(4, sp.getIdLoaiSanPham().getTenLoaiSanPham());
-				ps.setString(5, sp.getIdNhaCungCap().getTenNhaCungCap());
+				ps.setString(4, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+				ps.setString(5, sp.getIdNhaCungCap().getIdNhaCungCap());
 				ps.setDouble(6, sp.getKichThuoc());
 				ps.setString(7, sp.getMauSac());
 				ps.setInt(8, sp.getTrangThai().getValue());

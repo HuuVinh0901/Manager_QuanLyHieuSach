@@ -78,4 +78,44 @@ public class DAOLoaiSanPham implements Serializable {
         }
         return lsp;
     }
+	
+	 public LoaiSanPham getLoaiSanPhamByTen(String tenLoaiSanPham) {
+	        Connection con = null;
+	        PreparedStatement ps = null;
+	        ResultSet rs = null;
+	        LoaiSanPham loaiSanPham = null;
+
+	        try {
+	            con = ConnectDB.getConnection();
+	            String sql = "SELECT * FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
+	            ps = con.prepareStatement(sql);
+	            ps.setString(1, tenLoaiSanPham);
+	            rs = ps.executeQuery();
+
+	            if (rs.next()) {
+	                loaiSanPham = new LoaiSanPham();
+	                loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
+	                loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
+	                // Các thông tin khác nếu có
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (rs != null) {
+	                    rs.close();
+	                }
+	                if (ps != null) {
+	                    ps.close();
+	                }
+	                if (con != null) {
+	                    con.close();
+	                }
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        return loaiSanPham;
+	    }
 }
