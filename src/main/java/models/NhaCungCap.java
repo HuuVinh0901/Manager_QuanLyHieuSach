@@ -50,6 +50,10 @@ public class NhaCungCap {
 		return "NhaCungCap [idNhaCungCap=" + idNhaCungCap + ", tenNhaCungCap=" + tenNhaCungCap + ", diaChi=" + diaChi
 				+ ", soDienThoai=" + soDienThoai + "]";
 	}
+
+	public String toStringCbNhaCungCap() {
+	    return tenNhaCungCap;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(idNhaCungCap);

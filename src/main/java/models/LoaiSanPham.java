@@ -34,6 +34,10 @@ public class LoaiSanPham {
 	public String toString() {
 		return "LoaiSanPham [idLoaiSanPham=" + idLoaiSanPham + ", tenLoaiSanPham=" + tenLoaiSanPham + "]";
 	}
+	
+	public String toStringCbLoaiSanPham() {
+	    return tenLoaiSanPham;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(idLoaiSanPham);

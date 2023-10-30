@@ -81,8 +81,20 @@ public class DAONhaCungCap implements Serializable {
 	    }
 	    return ncc;
 	}
-
-
-	
-	
+	public NhaCungCap getNhaCungCapNameByID(String idNhaCungCap) throws SQLException {
+		NhaCungCap ncc = null;;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+        String tenLoaiSanPham = null;
+        String query = "select tenNhaCungCap from NhaCungCap where idNhaCungCap= ?";
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setString(1, idNhaCungCap);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    tenLoaiSanPham = resultSet.getString("tenLoaiSanPham");
+                }
+            }
+        }
+        return ncc;
+    }
 }

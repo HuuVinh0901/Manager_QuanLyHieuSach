@@ -19,7 +19,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
-import DAO.CategoryDAO;
+
 import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
 import dao.DAONhaCungCap;
@@ -32,7 +32,9 @@ import utils.TrangThaiSPEnum;
 public class QuanLySanPhamView extends JPanel implements ActionListener {
 	private JTabbedPane tabbedPane;
 	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtHinhAnh;
-	private JComboBox<String> cbLoaiSanPham, cbNhaCungCap, cbTinhTrangKhinhDoanh;
+	private JComboBox<String> cbTinhTrangKhinhDoanh;
+	private JComboBox<String> cbLoaiSanPham;
+	private JComboBox<String> cbNhaCungCap;
 	private JCheckBox chkThueVAT, chkTinhTrangKinhDoanh;
 	private JLabel lblTieuDe, lblAnhSanPham, lblHinhAnh, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham,
 			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh;
@@ -215,49 +217,72 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		}
 	}
 
+	
 	private void themSanPham() {
-		String hinhAnhSanPham = txtHinhAnh.getText();
-		String idSanPham = txtIdSanPham.getText();
-		String tenSanPham = txtTenSanPham.getText();
-		double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-		String mauSac = txtMauSac.getText();
-		boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-		TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-		double thue = tinhThue();
-		int soLuong = laySoLuong();
-		double giaBan = tinhGiaBan();
-		String tenLoaiSanPham = "";
-		String categoryNameCbo = cbLoaiSanPham.getSelectedItem().toString();
+	    String hinhAnhSanPham = txtHinhAnh.getText();
+	    String idSanPham = txtIdSanPham.getText();
+	    String tenSanPham = txtTenSanPham.getText();
+	    double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+	    String mauSac = txtMauSac.getText();
+	    boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+	    TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
+	    double thue = tinhThue();
+	    int soLuong = laySoLuong();
+	    double giaBan = tinhGiaBan();
 
-		// Lấy tên loại sản phẩm dựa trên idSanPham từ daoLoaiSanPham
-		if (!idSanPham.isEmpty()) {
-		    int idSanPhamInt = Integer.parseInt(idSanPham);
-		    tenLoaiSanPham = daoLoaiSanPham.getLoaiSanPhamNameByID(idSanPhamInt);
-		}
-        
-        
-//		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
-//		LoaiSanPham selectedLoaiSanPham = daoLoaiSanPham.getLoaiSanPhamByName(tenLoaiSanPham);
+	    String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
+	    String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
 
-		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
-		NhaCungCap selectedNhaCungCap = daoNhaCungCap.getNhaCungCapTheoTen(tenNhaCungCap);
+	    LoaiSanPham loaiSanPham = null;
+	    for (LoaiSanPham item :daoLoaiSanPham.getAllLoaiSanPham()) {
+	        if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
+	            loaiSanPham = item;
+	            break;
+	        }
+	    }
 
-		SanPham sp = new SanPham(hinhAnhSanPham, idSanPham, tenSanPham, tenLoaiSanPham, selectedNhaCungCap, kichThuoc, mauSac, trangThai);
-		try {
-			daoSanPham.themSanPham(sp);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    NhaCungCap nhaCungCap = null;
+	    for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+	        if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
+	            nhaCungCap = item;
+	            break;
+	        }
+	    }
 
-//		modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, selectedLoaiSanPham, selectedNhaCungCap,
-//				kichThuoc, mauSac, trangThai });
+	    if (loaiSanPham != null && nhaCungCap != null) {
+	        SanPham sp = new SanPham();
+	        sp.setHinhAnhSanPham(hinhAnhSanPham);
+	        sp.setIdSanPham(idSanPham);
+	        sp.setTenSanPham(tenSanPham);
+	        sp.setIdLoaiSanPham(loaiSanPham);
+	        sp.setIdNhaCungCap(nhaCungCap);
+	        sp.setKichThuoc(kichThuoc);
+	        sp.setMauSac(mauSac);
+	        sp.setTrangThai(trangThai);
+	        sp.setThue(thue);
+	        sp.setSoLuong(soLuong);
+	        sp.setGiaBan(giaBan);
+	        
+	        try {
+	            daoSanPham.themSanPham(sp);
+	            modelSP.addRow(new Object[] {
+	                    hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThai, thue, soLuong, giaBan
+	            });
+	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
+	        } catch (SQLException e) {
+	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
+	            e.printStackTrace();
+	        }
+	    } else {
+	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+	    }
 	}
+
 
 
 	private double tinhGiaBan() {
 		double giaBan = 0;
-		return giaBan;
+		return giaBan * 5;
 	}
 
 	private int laySoLuong() {

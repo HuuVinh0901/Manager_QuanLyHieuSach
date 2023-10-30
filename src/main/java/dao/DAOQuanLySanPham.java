@@ -55,49 +55,65 @@ public class DAOQuanLySanPham implements Serializable {
 		return dsSanPham;
 	}
 
-	public boolean themSanPham(SanPham sp) throws SQLException{
-	    Connection con = null;
-	    PreparedStatement ps = null;
-	    try {
-	        con = ConnectDB.getConnection();
-	        if (con != null && !con.isClosed()) {
-	            String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-	            ps = con.prepareStatement(sql);
-	            ps.setString(1, sp.getHinhAnhSanPham());
-	            ps.setString(2, sp.getIdSanPham());
-	            ps.setString(3, sp.getTenSanPham());
-	            ps.setString(4, sp.getIdLoaiSanPham().getTenLoaiSanPham());
-	            ps.setString(5, sp.getIdNhaCungCap().getTenNhaCungCap());
-	            ps.setDouble(6, sp.getKichThuoc());
-	            ps.setString(7, sp.getMauSac());
-	            ps.setInt(8, sp.getTrangThai().getValue());
-	            ps.setDouble(9, sp.getThue());
-	            ps.setInt(10, sp.getSoLuong());
-	            ps.setDouble(11, sp.getGiaBan());
+	public boolean themSanPham(SanPham sp) throws SQLException {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = ConnectDB.getConnection();
+			if (con != null && !con.isClosed()) {
+				String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+				ps = con.prepareStatement(sql);
+				ps.setString(1, sp.getHinhAnhSanPham());
+				ps.setString(2, sp.getIdSanPham());
+				ps.setString(3, sp.getTenSanPham());
+				ps.setString(4, sp.getIdLoaiSanPham().getTenLoaiSanPham());
+				ps.setString(5, sp.getIdNhaCungCap().getTenNhaCungCap());
+				ps.setDouble(6, sp.getKichThuoc());
+				ps.setString(7, sp.getMauSac());
+				ps.setInt(8, sp.getTrangThai().getValue());
+				ps.setDouble(9, sp.getThue());
+				ps.setInt(10, sp.getSoLuong());
+				ps.setDouble(11, sp.getGiaBan());
 
-	            int rowsAffected = ps.executeUpdate();
-	            return rowsAffected > 0;
-	        }
-	    } catch (SQLException e) {
-	        // Xử lý lỗi, báo cho người dùng
-	        e.printStackTrace();
-	    } finally {
-	        if (ps != null) {
-	            try {
-	                ps.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	        if (con != null) {
-	            try {
-	                con.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }
-	    return false;
+				int rowsAffected = ps.executeUpdate();
+				return rowsAffected > 0;
+			}
+		} catch (SQLException e) {
+			// Xử lý lỗi, báo cho người dùng
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (con != null) {
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
+	}
+
+	public String getIdFromTenLoaiSanPham(String tenLoaiSanPham) throws SQLException {
+		String id = null;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sql = "SELECT idLoaiSanPham FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
+		try (PreparedStatement statement = con.prepareStatement(sql)) {
+			statement.setString(1, tenLoaiSanPham);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					id = resultSet.getString("idLoaiSanPham");
+				}
+			}
+		}
+		return id;
 	}
 
 }
