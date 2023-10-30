@@ -96,7 +96,6 @@ public class DAOLoaiSanPham implements Serializable {
 	                loaiSanPham = new LoaiSanPham();
 	                loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
 	                loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
-	                // Các thông tin khác nếu có
 	            }
 	        } catch (SQLException e) {
 	            e.printStackTrace();

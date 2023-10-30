@@ -63,7 +63,7 @@ go
 CREATE TABLE LoaiSanPham (
     idLoaiSanPham NVARCHAR(50) PRIMARY KEY,
     tenLoaiSanPham NVARCHAR(30) NOT NULL
-);
+)
 
 
 go
