@@ -155,12 +155,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 
 		btnThem.addActionListener(this);
 
-		try {
-			ConnectDB.getinstance().connect();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+		
 		loadData();
 
 	}

@@ -169,4 +169,9 @@ go
 use master
 drop database QLHieuSach
 
+use QLHieuSach
+select *from SanPham
+select *from NhaCungCap
+select *from LoaiSanPham
+delete  from LoaiSanPham 
 

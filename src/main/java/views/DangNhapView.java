@@ -29,6 +29,8 @@ import javax.swing.border.LineBorder;
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 
+import connection.ConnectDB;
+
 
 public class DangNhapView extends JFrame implements ActionListener{
 //	private static final long serialVersionUID = 1L;
@@ -160,7 +162,11 @@ public class DangNhapView extends JFrame implements ActionListener{
 
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
-	
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

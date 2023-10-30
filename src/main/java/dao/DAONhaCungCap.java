@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import connection.ConnectDB;
 import models.NhaCungCap;
 
-public class DAONhaCungCap {
+public class DAONhaCungCap implements Serializable {
 	private void close(PreparedStatement pst) {
 		if(pst!=null) {
 			try {

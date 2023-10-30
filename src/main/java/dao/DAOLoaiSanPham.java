@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import utils.TrangThaiSPEnum;
 import views.LoaiNhaSanXuatView;
 import models.LoaiSanPham;
 
-public class DAOLoaiSanPham {
+public class DAOLoaiSanPham implements Serializable {
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
 			try {
@@ -61,42 +62,23 @@ public class DAOLoaiSanPham {
 		return false;
 	}
 
-	public LoaiSanPham getLoaiSanPhamByName(String tenLoaiSanPham) throws SQLException {
-	    LoaiSanPham loaiSanPham = null;
-	    Connection con = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
-
-	    try {
-	        con = ConnectDB.getinstance().getConnection();
-	        String sql = "SELECT * FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
-	        ps = con.prepareStatement(sql);
-	        ps.setString(1, tenLoaiSanPham);
-	        rs = ps.executeQuery();
-	        
-	        if (rs.next()) {
-	            loaiSanPham = new LoaiSanPham();
-	            loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
-	            loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
+	public String getLoaiSanPhamNameByID(int categoryID) {
+	    String query = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE id = ?";
+	    String categoryName = "";
+	    
+	    try (Connection con = ConnectDB.getinstance().getConnection();
+	         PreparedStatement ps = con.prepareStatement(query)) {
+	        ps.setInt(1, categoryID);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                categoryName = rs.getString("tenLoaiSanPham");
+	            }
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
-	    } finally {
-	        if (rs != null) {
-	            rs.close();
-	        }
-	        if (ps != null) {
-	            ps.close();
-	        }
-	        if (con != null) {
-	            con.close();
-	        }
 	    }
-	    return loaiSanPham;
+	    
+	    return categoryName;
 	}
-
-
-
-
 
 }

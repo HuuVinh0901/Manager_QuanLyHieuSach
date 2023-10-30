@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,13 +13,12 @@ import models.NhaCungCap;
 import models.SanPham;
 import utils.TrangThaiSPEnum;
 
-public class DAOQuanLySanPham {
+public class DAOQuanLySanPham implements Serializable {
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
 			try {
 				pst.close();
 			} catch (Exception e) {
-				// TODO: handle exception
 				e.printStackTrace();
 			}
 		}
@@ -28,8 +28,9 @@ public class DAOQuanLySanPham {
 		ArrayList<SanPham> dsSanPham = new ArrayList<>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
+		String sql = "SELECT * FROM SanPham";
 		try {
-			PreparedStatement ps = con.prepareStatement("SELECT * FROM SanPham");
+			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				SanPham lsp = new SanPham();
@@ -54,29 +55,49 @@ public class DAOQuanLySanPham {
 		return dsSanPham;
 	}
 
-	public boolean themSanPham(SanPham sp) throws SQLException {
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
-		String sql = "insert into SanPham (hinhAnhSanPham, idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan) values (?,?,?,?,?,?,?,?,?,?,?)";
-		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps = con.prepareStatement(sql);
-			ps.setString(1, sp.getHinhAnhSanPham());
-			ps.setString(2, sp.getIdSanPham());
-			ps.setString(3, sp.getTenSanPham());
-			ps.setString(4, sp.getIdLoaiSanPham().getTenLoaiSanPham());
-			ps.setString(5, sp.getIdNhaCungCap().getTenNhaCungCap());
-			ps.setDouble(6, sp.getKichThuoc());
-			ps.setString(7, sp.getMauSac());
-			ps.setInt(8, sp.getTrangThai().getValue());
-			ps.setDouble(9, sp.getThue());
-			ps.setInt(10, sp.getSoLuong());
-			ps.setDouble(11, sp.getGiaBan());
-			return ps.executeUpdate() > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		con.close();
-		return false;
+	public boolean themSanPham(SanPham sp) throws SQLException{
+	    Connection con = null;
+	    PreparedStatement ps = null;
+	    try {
+	        con = ConnectDB.getConnection();
+	        if (con != null && !con.isClosed()) {
+	            String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+	            ps = con.prepareStatement(sql);
+	            ps.setString(1, sp.getHinhAnhSanPham());
+	            ps.setString(2, sp.getIdSanPham());
+	            ps.setString(3, sp.getTenSanPham());
+	            ps.setString(4, sp.getIdLoaiSanPham().getTenLoaiSanPham());
+	            ps.setString(5, sp.getIdNhaCungCap().getTenNhaCungCap());
+	            ps.setDouble(6, sp.getKichThuoc());
+	            ps.setString(7, sp.getMauSac());
+	            ps.setInt(8, sp.getTrangThai().getValue());
+	            ps.setDouble(9, sp.getThue());
+	            ps.setInt(10, sp.getSoLuong());
+	            ps.setDouble(11, sp.getGiaBan());
+
+	            int rowsAffected = ps.executeUpdate();
+	            return rowsAffected > 0;
+	        }
+	    } catch (SQLException e) {
+	        // Xử lý lỗi, báo cho người dùng
+	        e.printStackTrace();
+	    } finally {
+	        if (ps != null) {
+	            try {
+	                ps.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        if (con != null) {
+	            try {
+	                con.close();
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	    return false;
 	}
+
 }

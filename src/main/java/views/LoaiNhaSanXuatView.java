@@ -178,12 +178,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		this.add(pnMain);
 
 		btnThem.addActionListener(this);
-		try {
-			ConnectDB.getinstance().connect();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+		
 		loadData();
 
 	}
@@ -215,7 +210,6 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		try {
 			daoNhaCungCap.themNhaCungCap(ncc);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		modelSP.addRow(new Object[] { idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai });
