@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
-import models.SanPham;
+import models.SanPhamCha;
 import utils.TrangThaiSPEnum;
 import views.LoaiNhaSanXuatView;
 import models.LoaiSanPham;

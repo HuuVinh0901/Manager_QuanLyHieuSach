@@ -28,7 +28,8 @@ import dao.DAONhaCungCap;
 import dao.DAOQuanLySanPham;
 import models.LoaiSanPham;
 import models.NhaCungCap;
-import models.SanPham;
+import models.SanPhamCha;
+import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
 public class QuanLySanPhamView extends JPanel implements ActionListener {
@@ -189,8 +190,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	}
 	private void loadDataIntoTable() {
 	    modelSP.setRowCount(0);
-	    ArrayList<SanPham> sanPhamList = daoSanPham.getAllSanPhamLoadData();
-	    for (SanPham sanPham : sanPhamList) {
+	    ArrayList<SanPhamCon> sanPhamList = daoSanPham.getAllSanPhamLoadData();
+	    for (SanPhamCon sanPham : sanPhamList) {
 	        String hinhAnh = sanPham.getHinhAnhSanPham();
 	        String idSanPham = sanPham.getIdSanPham();
 	        String tenSanPham = sanPham.getTenSanPham();
@@ -198,24 +199,21 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	        String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
 	        double kichThuoc = sanPham.getKichThuoc();
 	        String mauSac = sanPham.getMauSac();
-	        
-	        double thue = sanPham.getThue();
-	        int soLuong = sanPham.getSoLuong();
-	        double giaBan = sanPham.getGiaBan();
-	        modelSP.addRow(new Object[]{hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac, sanPham.getTrangThai(), thue, soLuong, giaBan});
+	        double thue = sanPham.thue();
+	        int soLuong = sanPham.soLuong();
+	        double giaBan = sanPham.giaBan(); 
+	        modelSP.addRow(new Object[]{hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac, sanPham.getTrangThai(), thue, giaBan, soLuong});
 	    }
 	}
 
-
 	private void loadData() {
 		modelSP.setRowCount(0);
-		for (SanPham sp : daoSanPham.getAllSanPham()) {
+		for (SanPhamCha sp : daoSanPham.getAllSanPham()) {
 			String tenLoaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
 			String tenNhaCungCap = sp.getIdNhaCungCap().getIdNhaCungCap();
 
 			String[] row = { sp.getHinhAnhSanPham(), sp.getIdSanPham(), sp.getTenSanPham(), tenLoaiSanPham,
-					tenNhaCungCap, sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "", sp.getThue() + "",
-					sp.getSoLuong() + "", sp.getGiaBan() + "" };
+					tenNhaCungCap, sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai()+"" };
 			modelSP.addRow(row);
 		}
 	}
@@ -243,79 +241,60 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	}
 
 	private void themSanPham() {
-		String hinhAnhSanPham = txtHinhAnh.getText();
-		String idSanPham = txtIdSanPham.getText();
-		String tenSanPham = txtTenSanPham.getText();
-		double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-		String mauSac = txtMauSac.getText();
-		boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-		TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-		double thue = tinhThue();
-		int soLuong = laySoLuong();
-		double giaBan = tinhGiaBan();
+	    String hinhAnhSanPham = txtHinhAnh.getText();
+	    String idSanPham = txtIdSanPham.getText();
+	    String tenSanPham = txtTenSanPham.getText();
+	    double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+	    String mauSac = txtMauSac.getText();
+	    boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+	    TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
 
-		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
-		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
+	    String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
+	    String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
 
-		LoaiSanPham loaiSanPham = null;
-		for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
-			if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
-				loaiSanPham = item;
-				break;
-			}
-		}
+	    LoaiSanPham loaiSanPham = null;
+	    for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
+	        if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
+	            loaiSanPham = item;
+	            break;
+	        }
+	    }
 
-		NhaCungCap nhaCungCap = null;
-		for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
-			if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
-				nhaCungCap = item;
-				break;
-			}
-		}
-
-		if (loaiSanPham != null && nhaCungCap != null) {
-			SanPham sp = new SanPham();
-			sp.setHinhAnhSanPham(hinhAnhSanPham);
-			sp.setIdSanPham(idSanPham);
-			sp.setTenSanPham(tenSanPham);
-			sp.setIdLoaiSanPham(loaiSanPham);
-			sp.setIdNhaCungCap(nhaCungCap);
-			sp.setKichThuoc(kichThuoc);
-			sp.setMauSac(mauSac);
-			sp.setTrangThai(trangThai);
-			sp.setThue(thue);
-			sp.setSoLuong(soLuong);
-			sp.setGiaBan(giaBan);
-
-			try {
-				daoSanPham.themSanPham(sp);
-				modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThai, thue, soLuong, giaBan });
-//				loadDataIntoTable();
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
-				e.printStackTrace();
-			}
-		} else {
-			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
-		}
+	    NhaCungCap nhaCungCap = null;
+	    for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+	        if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
+	            nhaCungCap = item;
+	            break;
+	        }
+	    }
+	    if (loaiSanPham != null && nhaCungCap != null) {
+	        SanPhamCon sp = new SanPhamCon();
+	        sp.setHinhAnhSanPham(hinhAnhSanPham);
+	        sp.setIdSanPham(idSanPham);
+	        sp.setTenSanPham(tenSanPham);
+	        sp.setIdLoaiSanPham(loaiSanPham);
+	        sp.setIdNhaCungCap(nhaCungCap);
+	        sp.setKichThuoc(kichThuoc);
+	        sp.setMauSac(mauSac);
+	        sp.setTrangThai(trangThai);
+	        try {
+	            // Gọi phương thức themSanPham trong daoSanPham, truyền vào đối tượng sp
+	            daoSanPham.themSanPham(sp);
+	            // Thêm dữ liệu vào bảng hiển thị
+	            modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
+	                    nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThai.getDescription() , sp.thue(),sp.giaBan(),sp.soLuong()});
+	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
+	        } catch (SQLException e) {
+	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
+	            e.printStackTrace();
+	        }
+	    } else {
+	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+	    }
 	}
+
 	
 
-	private double tinhGiaBan() {
-		double giaBan = 0;
-		return giaBan * 5;
-	}
-
-	private int laySoLuong() {
-		int soLuong = 0;
-		return soLuong;
-	}
-
-	private double tinhThue() {
-		double thue = 0.0;
-		return thue;
-	}
+	
 
 }

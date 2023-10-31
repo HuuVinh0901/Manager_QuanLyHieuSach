@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
-import models.SanPham;
+import models.SanPhamCha;
+import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
 public class DAOQuanLySanPham implements Serializable {
@@ -25,8 +26,8 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 	}
 
-	public ArrayList<SanPham> getAllSanPhamLoadData() {
-		ArrayList<SanPham> dsSanPham = new ArrayList<>();
+	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
@@ -38,7 +39,7 @@ public class DAOQuanLySanPham implements Serializable {
 				rs = ps.executeQuery();
 
 				while (rs.next()) {
-					SanPham lsp = new SanPham();
+					SanPhamCon lsp = new SanPhamCon();
 					lsp.setHinhAnhSanPham(rs.getString(1));
 					lsp.setIdSanPham(rs.getString(2));
 					lsp.setTenSanPham(rs.getString(3));
@@ -46,12 +47,12 @@ public class DAOQuanLySanPham implements Serializable {
 					lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
 					lsp.setKichThuoc(rs.getDouble(6));
 					lsp.setMauSac(rs.getString(7));
-					boolean trangThaiValue = rs.getBoolean("trangThai");
-		            TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-		            lsp.setTrangThai(trangThai);
-					lsp.setThue(rs.getDouble(9));
-					lsp.setSoLuong(rs.getInt(10));
-					lsp.setGiaBan(rs.getDouble(11));
+					String trangThai = rs.getString(8);
+					TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
+					lsp.setTrangThai(trangThaiEnum);
+					lsp.thue();
+					lsp.giaBan();
+					lsp.soLuong();
 					dsSanPham.add(lsp);
 				}
 			}
@@ -61,8 +62,8 @@ public class DAOQuanLySanPham implements Serializable {
 		return dsSanPham;
 	}
 
-	public ArrayList<SanPham> getAllSanPham() {
-		ArrayList<SanPham> dsSanPham = new ArrayList<>();
+	public ArrayList<SanPhamCha> getAllSanPham() {
+		ArrayList<SanPhamCha> dsSanPham = new ArrayList<>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "SELECT * FROM SanPham";
@@ -70,7 +71,7 @@ public class DAOQuanLySanPham implements Serializable {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				SanPham lsp = new SanPham();
+				SanPhamCha lsp = new SanPhamCon();
 				lsp.setHinhAnhSanPham(rs.getString(1));
 				lsp.setIdSanPham(rs.getString(2));
 				lsp.setTenSanPham(rs.getString(3));
@@ -81,9 +82,6 @@ public class DAOQuanLySanPham implements Serializable {
 				String trangThai = rs.getString(8);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
 				lsp.setTrangThai(trangThaiEnum);
-				lsp.setThue(rs.getDouble(9));
-				lsp.setSoLuong(rs.getInt(10));
-				lsp.setGiaBan(rs.getDouble(11));
 				dsSanPham.add(lsp);
 			}
 		} catch (SQLException e) {
@@ -92,7 +90,7 @@ public class DAOQuanLySanPham implements Serializable {
 		return dsSanPham;
 	}
 
-	public boolean themSanPham(SanPham sp) throws SQLException {
+	public boolean themSanPham(SanPhamCon sp) throws SQLException {
 		Connection con = null;
 		PreparedStatement ps = null;
 		try {
@@ -108,10 +106,9 @@ public class DAOQuanLySanPham implements Serializable {
 				ps.setDouble(6, sp.getKichThuoc());
 				ps.setString(7, sp.getMauSac());
 				ps.setInt(8, sp.getTrangThai().getValue());
-				ps.setDouble(9, sp.getThue());
-				ps.setInt(10, sp.getSoLuong());
-				ps.setDouble(11, sp.getGiaBan());
-
+				ps.setDouble(9, sp.thue()); 
+				ps.setInt(10, sp.soLuong()); 
+				ps.setDouble(11, sp.giaBan()); 
 				int rowsAffected = ps.executeUpdate();
 				return rowsAffected > 0;
 			}
@@ -151,5 +148,4 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return id;
 	}
-
 }
