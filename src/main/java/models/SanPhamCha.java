@@ -15,6 +15,8 @@ public abstract class SanPhamCha {
 	protected double kichThuoc;
 	protected String mauSac;
 	protected TrangThaiSPEnum trangThai;
+	protected int soLuong;
+	protected double giaNhap;
 
 	public SanPhamCha() {
 		super();
@@ -25,8 +27,14 @@ public abstract class SanPhamCha {
 		this.idSanPham = idSanPham;
 	}
 
+	
+	
+
+	
+
 	public SanPhamCha(String hinhAnhSanPham, String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
-			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai) {
+			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong,
+			double giaNhap) {
 		super();
 		this.hinhAnhSanPham = hinhAnhSanPham;
 		this.idSanPham = idSanPham;
@@ -36,6 +44,8 @@ public abstract class SanPhamCha {
 		this.kichThuoc = kichThuoc;
 		this.mauSac = mauSac;
 		this.trangThai = trangThai;
+		this.soLuong = soLuong;
+		this.giaNhap = giaNhap;
 	}
 
 	public String getHinhAnhSanPham() {
@@ -102,11 +112,28 @@ public abstract class SanPhamCha {
 		this.trangThai = trangThai;
 	}
 
+	public int getSoLuong() {
+		return soLuong;
+	}
+
+	public void setSoLuong(int soLuong) {
+		this.soLuong = soLuong;
+	}
+
+	public double getGiaNhap() {
+		return giaNhap;
+	}
+
+	public void setGiaNhap(double giaNhap) {
+		this.giaNhap = giaNhap;
+	}
+
 	@Override
 	public String toString() {
-		return "SanPham [hinhAnhSanPham=" + hinhAnhSanPham + ", idSanPham=" + idSanPham + ", tenSanPham=" + tenSanPham
-				+ ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc=" + kichThuoc
-				+ ", mauSac=" + mauSac + ", trangThai=" + trangThai + "]";
+		return "SanPhamCha [hinhAnhSanPham=" + hinhAnhSanPham + ", idSanPham=" + idSanPham + ", tenSanPham="
+				+ tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc="
+				+ kichThuoc + ", mauSac=" + mauSac + ", trangThai=" + trangThai + ", soLuong=" + soLuong + ", giaNhap="
+				+ giaNhap + "]";
 	}
 
 	@Override
@@ -127,5 +154,4 @@ public abstract class SanPhamCha {
 	}
 	public abstract double thue();
 	public abstract double giaBan();
-	public abstract int soLuong();
 }

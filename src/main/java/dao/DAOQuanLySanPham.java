@@ -30,7 +30,7 @@ public class DAOQuanLySanPham implements Serializable {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
-		String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+		String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
@@ -51,8 +51,9 @@ public class DAOQuanLySanPham implements Serializable {
 					TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
 					lsp.setTrangThai(trangThaiEnum);
 					lsp.thue();
+					lsp.setGiaNhap(rs.getDouble(10));
+					lsp.setSoLuong(rs.getInt(11));
 					lsp.giaBan();
-					lsp.soLuong();
 					dsSanPham.add(lsp);
 				}
 			}
@@ -96,7 +97,7 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			con = ConnectDB.getConnection();
 			if (con != null && !con.isClosed()) {
-				String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+				String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 				ps = con.prepareStatement(sql);
 				ps.setString(1, sp.getHinhAnhSanPham());
 				ps.setString(2, sp.getIdSanPham());
@@ -107,8 +108,9 @@ public class DAOQuanLySanPham implements Serializable {
 				ps.setString(7, sp.getMauSac());
 				ps.setInt(8, sp.getTrangThai().getValue());
 				ps.setDouble(9, sp.thue()); 
-				ps.setInt(10, sp.soLuong()); 
-				ps.setDouble(11, sp.giaBan()); 
+				ps.setDouble(10, sp.getGiaNhap());
+				ps.setInt(11, sp.getSoLuong());
+				ps.setDouble(12, sp.giaBan()); 
 				int rowsAffected = ps.executeUpdate();
 				return rowsAffected > 0;
 			}

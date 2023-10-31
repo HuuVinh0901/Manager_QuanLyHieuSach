@@ -91,10 +91,11 @@ CREATE TABLE SanPham (
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
 	thue FLOAT CHECK (thue >= 0),
+	giaNhap FLOAT (giaNhap >= 0),
 	soLuong INT ,
 	giaBan FLOAT,
-	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(tenLoaiSanPham),
-    FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(tenNhaCungCap)
+	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
+    FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
 )
 go
 CREATE TABLE ChuongTrinhKhuyenMai (
@@ -127,7 +128,8 @@ CREATE TABLE Sach (
     nhaCungCap NVARCHAR(50) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
-    trangThai BIT NOT NULL 
+    trangThai BIT NOT NULL ,
+	giaNhap FLOAT (giaNhap >= 0),
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap),
     FOREIGN KEY (tacGia) REFERENCES TacGia(idTacGia), 
@@ -153,3 +155,11 @@ select *from NhaCungCap
 select *from LoaiSanPham
 delete  from LoaiSanPham 
 
+
+SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan 
+FROM SanPham sp  
+JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
+JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
+
+
+SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
