@@ -62,7 +62,7 @@ CREATE TABLE NhaCungCap(
 go
 CREATE TABLE LoaiSanPham (
     idLoaiSanPham NVARCHAR(50) PRIMARY KEY,
-    tenLoaiSanPham NVARCHAR(30) NOT NULL
+    tenLoaiSanPham NVARCHAR(50) NOT NULL
 )
 
 
@@ -93,8 +93,8 @@ CREATE TABLE SanPham (
 	thue FLOAT CHECK (thue >= 0),
 	soLuong INT ,
 	giaBan FLOAT,
-	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
-    FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
+	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(tenLoaiSanPham),
+    FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(tenNhaCungCap)
 )
 go
 CREATE TABLE ChuongTrinhKhuyenMai (

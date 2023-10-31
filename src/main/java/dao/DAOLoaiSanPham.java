@@ -62,22 +62,22 @@ public class DAOLoaiSanPham implements Serializable {
 		return false;
 	}
 
-	public LoaiSanPham getLoaiSanPhamNameByID(String idLoaiSanPham) throws SQLException {
-		LoaiSanPham lsp = null;
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
-        String tenLoaiSanPham = null;
-        String query = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setString(1, idLoaiSanPham);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    tenLoaiSanPham = resultSet.getString("tenLoaiSanPham");
-                }
-            }
-        }
-        return lsp;
-    }
+	public String getLoaiSanPhamNameByID(String idLoaiSanPham) throws SQLException {
+	    String tenLoaiSanPham = null;
+	    ConnectDB.getinstance();
+	    Connection con = ConnectDB.getConnection();
+	    String query = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
+	    try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+	        preparedStatement.setString(1, idLoaiSanPham);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                tenLoaiSanPham = resultSet.getString("tenLoaiSanPham");
+	            }
+	        }
+	    }
+	    return tenLoaiSanPham;
+	}
+
 	
 	 public LoaiSanPham getLoaiSanPhamByTen(String tenLoaiSanPham) {
 	        Connection con = null;

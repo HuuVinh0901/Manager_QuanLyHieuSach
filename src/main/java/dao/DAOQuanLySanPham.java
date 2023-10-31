@@ -14,6 +14,7 @@ import models.SanPham;
 import utils.TrangThaiSPEnum;
 
 public class DAOQuanLySanPham implements Serializable {
+
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
 			try {
@@ -22,6 +23,42 @@ public class DAOQuanLySanPham implements Serializable {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public ArrayList<SanPham> getAllSanPhamLoadData() {
+		ArrayList<SanPham> dsSanPham = new ArrayList<>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+		try {
+			PreparedStatement ps = con.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			if (con != null) {
+				ps = con.prepareStatement(sql);
+				rs = ps.executeQuery();
+
+				while (rs.next()) {
+					SanPham lsp = new SanPham();
+					lsp.setHinhAnhSanPham(rs.getString(1));
+					lsp.setIdSanPham(rs.getString(2));
+					lsp.setTenSanPham(rs.getString(3));
+					lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
+					lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
+					lsp.setKichThuoc(rs.getDouble(6));
+					lsp.setMauSac(rs.getString(7));
+					boolean trangThaiValue = rs.getBoolean("trangThai");
+		            TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
+		            lsp.setTrangThai(trangThai);
+					lsp.setThue(rs.getDouble(9));
+					lsp.setSoLuong(rs.getInt(10));
+					lsp.setGiaBan(rs.getDouble(11));
+					dsSanPham.add(lsp);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsSanPham;
 	}
 
 	public ArrayList<SanPham> getAllSanPham() {
@@ -79,7 +116,6 @@ public class DAOQuanLySanPham implements Serializable {
 				return rowsAffected > 0;
 			}
 		} catch (SQLException e) {
-			// Xử lý lỗi, báo cho người dùng
 			e.printStackTrace();
 		} finally {
 			if (ps != null) {
