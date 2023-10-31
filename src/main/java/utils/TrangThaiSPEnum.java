@@ -2,7 +2,7 @@ package utils;
 
 public enum TrangThaiSPEnum {
     DANG_KINH_DOANH(1, "Đang kinh doanh"), 
-    NGUNG_KINH_DOANH(2, "Ngừng kinh doanh");
+    NGUNG_KINH_DOANH(0, "Ngừng kinh doanh");
 
     private final int value;
     private final String description;
@@ -35,6 +35,6 @@ public enum TrangThaiSPEnum {
                 return e;
             }
         }
-        return DANG_KINH_DOANH; // hoặc return null nếu không tìm thấy
+        return DANG_KINH_DOANH;
     }
 }

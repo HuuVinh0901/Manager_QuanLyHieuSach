@@ -199,13 +199,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	        String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
 	        double kichThuoc = sanPham.getKichThuoc();
 	        String mauSac = sanPham.getMauSac();
+	        String trangThai = sanPham.getTrangThai().getDescription();
 	        double thue = sanPham.thue();
 	        int soLuong = sanPham.soLuong();
 	        double giaBan = sanPham.giaBan(); 
-	        modelSP.addRow(new Object[]{hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac, sanPham.getTrangThai(), thue, giaBan, soLuong});
+	        modelSP.addRow(new Object[]{hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac, trangThai, thue, giaBan, soLuong});
 	    }
 	}
-
+	
 	private void loadData() {
 		modelSP.setRowCount(0);
 		for (SanPhamCha sp : daoSanPham.getAllSanPham()) {
@@ -278,11 +279,11 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	        sp.setMauSac(mauSac);
 	        sp.setTrangThai(trangThai);
 	        try {
-	            // Gọi phương thức themSanPham trong daoSanPham, truyền vào đối tượng sp
 	            daoSanPham.themSanPham(sp);
-	            // Thêm dữ liệu vào bảng hiển thị
+//	            loadDataIntoTable();
+	            String trangThaiDescription = trangThai.getDescription();
 	            modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-	                    nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThai.getDescription() , sp.thue(),sp.giaBan(),sp.soLuong()});
+	                    nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,trangThaiDescription , sp.thue(),sp.giaBan(),sp.soLuong()});
 	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 	        } catch (SQLException e) {
 	            JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
@@ -292,9 +293,4 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 	    }
 	}
-
-	
-
-	
-
 }

@@ -47,8 +47,8 @@ public class DAOQuanLySanPham implements Serializable {
 					lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
 					lsp.setKichThuoc(rs.getDouble(6));
 					lsp.setMauSac(rs.getString(7));
-					String trangThai = rs.getString(8);
-					TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
+					int trangThai = rs.getInt(8);
+					TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
 					lsp.setTrangThai(trangThaiEnum);
 					lsp.thue();
 					lsp.giaBan();
