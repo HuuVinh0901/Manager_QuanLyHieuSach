@@ -12,11 +12,11 @@ public class NhanVien {
 	private Date ngaySinh;
 	private boolean gioiTinh;
 	private String chucVu;
-	private String trangThai;
+	private boolean trangThai;
 	private float luong;
 	
 	public NhanVien(String idNhanVien, String tenNhanVien, String soDienThoai, String diaChi, String email,
-			Date ngaySinh, boolean gioiTinh, String chucVu, String trangThai, float luong) {
+			 Date ngaySinh,boolean gioiTinh, String chucVu, boolean trangThai, float luong) {
 		
 		this.idNhanVien = idNhanVien;
 		this.tenNhanVien = tenNhanVien;
@@ -89,12 +89,17 @@ public class NhanVien {
 	public void setChucVu(String chucVu) {
 		this.chucVu = chucVu;
 	}
-	public String getTrangThai() {
+	
+	public boolean isTrangThai() {
 		return trangThai;
 	}
-	public void setTrangThai(String trangThai) {
+
+
+	public void setTrangThai(boolean trangThai) {
 		this.trangThai = trangThai;
 	}
+
+
 	public float getLuong() {
 		return luong;
 	}
