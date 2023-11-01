@@ -8,10 +8,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import connection.ConnectDB;
+
 public class HomeView extends JPanel {
     private JLabel lblBackground;
 
     public HomeView() {
+    	try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         setLayout(new BorderLayout());
 
         ImageIcon imageIcon = new ImageIcon(getClass().getResource("/images/homeView.jpg"));

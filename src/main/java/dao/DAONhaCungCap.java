@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import connection.ConnectDB;
 import models.NhaCungCap;
 
-public class DAONhaCungCap {
+public class DAONhaCungCap implements Serializable {
 	private void close(PreparedStatement pst) {
 		if(pst!=null) {
 			try {
@@ -80,8 +81,62 @@ public class DAONhaCungCap {
 	    }
 	    return ncc;
 	}
-
+	public String getNhaCungCapNameByID(String idNhaCungCap) throws SQLException {
+	    String ncc = null;
+	    ConnectDB.getinstance();
+	    Connection con = ConnectDB.getConnection();
+	    String query = "select tenNhaCungCap from NhaCungCap where idNhaCungCap= ?";
+	    try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+	        preparedStatement.setString(1, idNhaCungCap);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                ncc = resultSet.getString("tenNhaCungCap");
+	            }
+	        }
+	    }
+	    return ncc;
+	}
 
 	
+	public NhaCungCap getNhaCungCapByTen(String tenNhaCungCap) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        NhaCungCap nhaCungCap = null;
+
+        try {
+            con = ConnectDB.getConnection();
+            String sql = "SELECT * FROM NhaCungCap WHERE tenNhaCungCap = ?";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, tenNhaCungCap);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                nhaCungCap = new NhaCungCap();
+                nhaCungCap.setIdNhaCungCap(rs.getString("idNhaCungCap"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("tenNhaCungCap"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("diaChi"));
+                nhaCungCap.setTenNhaCungCap(rs.getString("soDienThoai"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return nhaCungCap;
+    }
 	
 }
