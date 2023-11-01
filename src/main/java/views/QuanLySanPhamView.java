@@ -11,8 +11,11 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,16 +28,20 @@ import dao.DAONhaCungCap;
 import dao.DAOQuanLySanPham;
 import models.LoaiSanPham;
 import models.NhaCungCap;
-import models.SanPham;
+import models.SanPhamCha;
+import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
 public class QuanLySanPhamView extends JPanel implements ActionListener {
 	private JTabbedPane tabbedPane;
-	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtHinhAnh;
-	private JComboBox<String> cbLoaiSanPham, cbNhaCungCap, cbTinhTrangKhinhDoanh;
+	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtHinhAnh,
+			txtGiaNhap;
+	private JComboBox<String> cbTinhTrangKhinhDoanh;
+	private JComboBox<String> cbLoaiSanPham;
+	private JComboBox<String> cbNhaCungCap;
 	private JCheckBox chkThueVAT, chkTinhTrangKinhDoanh;
 	private JLabel lblTieuDe, lblAnhSanPham, lblHinhAnh, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham,
-			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh;
+			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh, lblGiaNhap;
 	private JTable sanPhamTable;
 	private JPanel pnCenter, pnChucNang, pnDanhMuc, pnMain;
 	private JButton btnThemSP, btnXoaSP, btnNhapSP, btnCapNhatSP, btnHienThiLS, btnLamMoi;
@@ -78,6 +85,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		txtMauSac = new JTextField();
 		lblSoLuong = new JLabel("Số Lượng (*):");
 		txtSoLuong = new JTextField();
+		lblGiaNhap = new JLabel("Giá Nhập (*)");
+		txtGiaNhap = new JTextField();
 		lblGiaBan = new JLabel("Giá Bán (*):");
 		txtGiaBan = new JTextField();
 		lblThueVAT = new JLabel("Thuế VAT:");
@@ -110,12 +119,19 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		pnCenter.add(txtKichThuoc);
 		pnCenter.add(lblMauSac);
 		pnCenter.add(txtMauSac);
+
 		pnCenter.add(lblSoLuong);
 		pnCenter.add(txtSoLuong);
+
+		pnCenter.add(lblGiaNhap);
+		pnCenter.add(txtGiaNhap);
+
 		pnCenter.add(lblGiaBan);
 		pnCenter.add(txtGiaBan);
+
 		pnCenter.add(lblThueVAT);
 		pnCenter.add(chkThueVAT);
+
 		pnCenter.add(lblTinhTrangKinhDoanh);
 		pnCenter.add(chkTinhTrangKinhDoanh);
 
@@ -151,6 +167,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		modelSP.addColumn("Màu Sắc");
 		modelSP.addColumn("Trạng Thái");
 		modelSP.addColumn("Thuế");
+		modelSP.addColumn("Giá Nhập");
 		modelSP.addColumn("Số Lượng");
 		modelSP.addColumn("Giá Bán");
 		tableSP.setModel(modelSP);
@@ -168,35 +185,51 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		tabbedPane.add("Sách", sachPanel);
 		add(tabbedPane);
 
-		btnThemSP.addActionListener(this);
-
-		try {
-			ConnectDB.getinstance().connect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		loadData();
 
+//		loadData();
+		loadDataIntoTable();
+		loadComboxBoxLoaiSanPham();
+		loadComboxBoxNhaCungCap();
+		btnThemSP.addActionListener(this);
+	}
+
+	private void loadDataIntoTable() {
+		modelSP.setRowCount(0);
+		ArrayList<SanPhamCon> sanPhamList = daoSanPham.getAllSanPhamLoadData();
+		for (SanPhamCon sanPham : sanPhamList) {
+			String hinhAnh = sanPham.getHinhAnhSanPham();
+			String idSanPham = sanPham.getIdSanPham();
+			String tenSanPham = sanPham.getTenSanPham();
+			String tenLoaiSanPham = sanPham.getIdLoaiSanPham().getIdLoaiSanPham();
+			String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
+			double kichThuoc = sanPham.getKichThuoc();
+			String mauSac = sanPham.getMauSac();
+			String trangThai = sanPham.getTrangThai().getDescription();
+			double thue = sanPham.thue();
+			double giaNhap = sanPham.getGiaNhap();
+			int soLuong = sanPham.getSoLuong();
+			double giaBan = sanPham.giaBan();
+			modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
+					mauSac, trangThai, thue, giaNhap,soLuong, giaBan });
+		}
 	}
 
 	private void loadData() {
 		modelSP.setRowCount(0);
-		for (SanPham sp : daoSanPham.getAllSanPham()) {
-			String[] row = { sp.getHinhAnhSanPham(), sp.getIdSanPham(), sp.getTenSanPham(),
-					sp.getIdLoaiSanPham().getTenLoaiSanPham(), sp.getIdNhaCungCap().getTenNhaCungCap(),
-					sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "", sp.getThue() + "",
-					sp.getSoLuong() + "", sp.getGiaBan() + "" };
+		for (SanPhamCha sp : daoSanPham.getAllSanPham()) {
+			String tenLoaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
+			String tenNhaCungCap = sp.getIdNhaCungCap().getIdNhaCungCap();
+
+			String[] row = { sp.getHinhAnhSanPham(), sp.getIdSanPham(), sp.getTenSanPham(), tenLoaiSanPham,
+					tenNhaCungCap, sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "" };
 			modelSP.addRow(row);
 		}
-
-		loadComboxBoxLoaiSanPham();
-		loadComboxBoxNhaCungCap();
 	}
 
 	private void loadComboxBoxLoaiSanPham() {
@@ -204,7 +237,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		for (LoaiSanPham loaiSanPham : danhSachLoaiSanPham) {
 			cbLoaiSanPham.addItem(loaiSanPham.getTenLoaiSanPham());
 		}
-
 	}
 
 	private void loadComboxBoxNhaCungCap() {
@@ -218,78 +250,62 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnThemSP)) {
-			try {
-				themSanPham();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			themSanPham();
 		}
 	}
 
-	private void themSanPham() throws SQLException {
-	    String hinhAnhSanPham = txtHinhAnh.getText();
-	    String idSanPham = txtIdSanPham.getText();
-	    String tenSanPham = txtTenSanPham.getText();
-	    String idLoaiSanPham = layIdLoaiSanPham();
-	    String idNhaCungCap = layIdNhaCungCap();
-	    double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-	    String mauSac = txtMauSac.getText();
-	    boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-	    TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-	    double thue = tinhThue();
-	    int soLuong = laySoLuong();
-	    double giaBan = tinhGiaBan();
+	private void themSanPham() {
+		String hinhAnhSanPham = txtHinhAnh.getText();
+		String idSanPham = txtIdSanPham.getText();
+		String tenSanPham = txtTenSanPham.getText();
+		double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+		String mauSac = txtMauSac.getText();
+		boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+		TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
+		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
+		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
+		int soLuong = Integer.parseInt(txtSoLuong.getText());
+		LoaiSanPham loaiSanPham = null;
+		for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
+			if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
+				loaiSanPham = item;
+				break;
+			}
+		}
 
-	    if (idLoaiSanPham != null && idNhaCungCap != null) {
-	        SanPham sp = new SanPham(hinhAnhSanPham, idSanPham, tenSanPham, new LoaiSanPham(idLoaiSanPham),
-	                new NhaCungCap(idNhaCungCap), kichThuoc, mauSac, trangThai);
-	        boolean themThanhCong = daoSanPham.themSanPham(sp);
-
-	        if (themThanhCong) {
-	            // Thêm sản phẩm vào table hoặc model
-	            modelSP.addRow(new Object[]{hinhAnhSanPham, idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap,
-	                    kichThuoc, mauSac, trangThaiValue, thue, soLuong, giaBan});
-	            JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công");
-	        } else {
-	            JOptionPane.showMessageDialog(this, "Không thể thêm sản phẩm", "Lỗi", JOptionPane.ERROR_MESSAGE);
-	        }
-	    } else {
-	        JOptionPane.showMessageDialog(this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp tương ứng", "Lỗi",
-	                JOptionPane.ERROR_MESSAGE);
-	    }
+		NhaCungCap nhaCungCap = null;
+		for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+			if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
+				nhaCungCap = item;
+				break;
+			}
+		}
+		if (loaiSanPham != null && nhaCungCap != null) {
+			SanPhamCon sp = new SanPhamCon();
+			sp.setHinhAnhSanPham(hinhAnhSanPham);
+			sp.setIdSanPham(idSanPham);
+			sp.setTenSanPham(tenSanPham);
+			sp.setIdLoaiSanPham(loaiSanPham);
+			sp.setIdNhaCungCap(nhaCungCap);
+			sp.setKichThuoc(kichThuoc);
+			sp.setMauSac(mauSac);
+			sp.setTrangThai(trangThai);
+			sp.setGiaNhap(giaNhap);
+			sp.setSoLuong(soLuong);
+			try {
+				daoSanPham.themSanPham(sp);
+				String trangThaiDescription = trangThai.getDescription();
+				modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
+						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,soLuong,
+						sp.giaBan() });
+				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
+				e.printStackTrace();
+			}
+		} else {
+			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+		}
 	}
-
-
-	private double tinhGiaBan() {
-		double giaBan = 0;
-		return giaBan;
-	}
-
-	private int laySoLuong() {
-		int soLuong = 0;
-		return soLuong;
-	}
-
-	private double tinhThue() {
-		double thue = 0.0;
-		return thue;
-	}
-	private String layIdLoaiSanPham() throws SQLException {
-	    String tenLoaiSanPham = cbLoaiSanPham.getSelectedItem().toString();
-	    LoaiSanPham loaiSanPham = daoLoaiSanPham.getLoaiSanPhamByName(tenLoaiSanPham);
-	    if (loaiSanPham != null) {
-	        return loaiSanPham.getIdLoaiSanPham();
-	    }
-	    return null; 
-	}
-	private String layIdNhaCungCap() throws SQLException {
-	    String tenNhaCungCap = cbNhaCungCap.getSelectedItem().toString();
-	    NhaCungCap nhaCungCap = daoNhaCungCap.getNhaCungCapTheoTen(tenNhaCungCap);
-	    if (nhaCungCap != null) {
-	        return nhaCungCap.getIdNhaCungCap();
-	    }
-	    return null; 
-	}
-
 }

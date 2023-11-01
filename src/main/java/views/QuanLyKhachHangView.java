@@ -7,6 +7,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -27,16 +35,26 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.codehaus.plexus.util.dag.DAG;
+
 import com.toedter.calendar.JDateChooser;
 
+import connection.ConnectDB;
 import controllers.MenuItem;
+import dao.DAOKhachHang;
+import dao.DAOQuanLySanPham;
+import models.KhachHang;
+import models.LoaiSanPham;
+import utils.GioiTinhEnum;
 
-public class QuanLyKhachHangView extends JPanel{
+public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseListener{
 	private JDateChooser chooserNgaySinh;
 	private JTextField txtTenKH;
 	private JTextField txtsdt;
 	private JTextField txtEmail;
 	private JTextField txtDiaChi;
+	
+	private JTextField txtId;
 	
 	
 	private JTextField txtNS;
@@ -54,13 +72,21 @@ public class QuanLyKhachHangView extends JPanel{
 	private JRadioButton rbNu;
 	
 	
-	private JTable tableKhachHang;
+	
 	private DefaultTableModel modelKhachHang;
 	private JButton btnThemKH;
 	private JButton btnCapNhatKH;
 	private JButton btnXoaKH;
 	private JButton btnLamMoi;
+	private ButtonGroup groupGT;
+	private SimpleDateFormat dfNgaySinh;
+	private DAOKhachHang daoKhachHang;
+	private JTable tableKH;
+	
 	public QuanLyKhachHangView() {
+		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+		daoKhachHang=new DAOKhachHang();
+		KhachHang kh=new KhachHang();
 		setLayout(new BorderLayout());
 ////		Tiêu đề
 		JPanel NhanVienPanel=new JPanel();
@@ -96,11 +122,11 @@ public class QuanLyKhachHangView extends JPanel{
 	    txtNS= new JTextField();
 	    rbNam=new JRadioButton("Nam");
 	    rbNu=new JRadioButton("Nữ");
+	    
 	    chooserNgaySinh = new JDateChooser();
 		chooserNgaySinh.getCalendarButton().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		chooserNgaySinh.setBounds(100, 310, 200, 40);
-		chooserNgaySinh.setDateFormatString("dd/MM/yyyy");
-//		
+		chooserNgaySinh.setDateFormatString("dd/MM/yyyy");	
 		chooserNgaySinh.setBorder(new LineBorder(new Color(114, 23, 153), 1, true));
 		chooserNgaySinh.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		chooserNgaySinh.getCalendarButton().setPreferredSize(new Dimension(20, 24));
@@ -108,7 +134,7 @@ public class QuanLyKhachHangView extends JPanel{
 		chooserNgaySinh.getCalendarButton().setToolTipText("Chọn ngày sinh");
 	    
         Box BoxCenter= Box.createVerticalBox();
-        Box b1,b2,b3,b4,b5,b6;
+        Box b1,b2,b3,b4,b5,b6,b7;
         b1=Box.createHorizontalBox();
         b1.add(lbTenKH);
         b1.add(txtTenKH);
@@ -128,6 +154,11 @@ public class QuanLyKhachHangView extends JPanel{
         b6.add(Box.createHorizontalStrut(420));
         b4=Box.createHorizontalBox();
 
+        
+        b7=Box.createHorizontalBox();
+        txtId=new JTextField();
+        b7.add(txtId);
+        
         b4.add(lbNgaySinh);
         b4.add(chooserNgaySinh);
         b5=Box.createHorizontalBox();
@@ -142,7 +173,6 @@ public class QuanLyKhachHangView extends JPanel{
         lbEmail.setPreferredSize(lbTenKH.getPreferredSize());
 		lbDiaChi.setPreferredSize(lbsdt.getPreferredSize());
 		lbGioiTinh.setPreferredSize(lbsdt.getPreferredSize());
-		
 		lbNgaySinh.setPreferredSize(lbTenKH.getPreferredSize());
 	    BoxCenter.add(Box.createVerticalStrut(10));
         BoxCenter.add(b1);
@@ -151,13 +181,15 @@ public class QuanLyKhachHangView extends JPanel{
         BoxCenter.add(Box.createVerticalStrut(10));
         BoxCenter.add(b3);
         BoxCenter.add(Box.createVerticalStrut(10));
-       
+        BoxCenter.add(b7);
         BoxCenter.setBorder(BorderFactory.createTitledBorder("Nhập thông tin khách hàng"));
 		
         //Tạo button groud giới tính
-        ButtonGroup groupGT = new ButtonGroup();
+        groupGT = new ButtonGroup();
         groupGT.add(rbNam);
         groupGT.add(rbNu);
+        rbNam.setActionCommand("Nam");
+        rbNu.setActionCommand("Nữ");
         
         lbTimKiem=new JLabel("Tìm kiếm nhân viên:");
         txtTimKiem=new JTextField();
@@ -178,25 +210,124 @@ public class QuanLyKhachHangView extends JPanel{
        
         
        //Tạo bảng
-        String[] columnNames = {"ID khách hàng", "Tên khách hàng","Số điện thoại","Email","Địa chỉ","Giới tính","Ngày sinh"};
-        Object[][] data = {{"NV00001","Vinh","0355420475","Vinh@gmail","Ben Tre","Nam","09/01/2003",}};
-        JTable table = new JTable(data, columnNames);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
+        modelKhachHang = new DefaultTableModel();
+		tableKH = new JTable();
+        modelKhachHang.addColumn("ID KhachHang");
+		modelKhachHang.addColumn("Tên khách hàng");
+		modelKhachHang.addColumn("Số điện thoại");
+		modelKhachHang.addColumn("Email");
+		modelKhachHang.addColumn("Địa chỉ");
+		modelKhachHang.addColumn("Ngày sinh");
+		modelKhachHang.addColumn("Giới tính");
+       
+        tableKH.setModel(modelKhachHang);
+        JScrollPane scrollPane = new JScrollPane(tableKH);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khách hàng"));
+       
         JPanel PanelMain= new JPanel();
         PanelMain.setLayout(new BorderLayout());
-//     
-        PanelMain.add(BoxCenter,BorderLayout.NORTH);
+    	PanelMain.add(BoxCenter,BorderLayout.NORTH);
         PanelMain.add(pnChucNang,BorderLayout.CENTER);
         PanelMain.add(scrollPane,BorderLayout.SOUTH);
-//        PanelMain.add(panelSearch,BorderLayout.WEST);
         NhanVienPanel.add(PanelMain,BorderLayout.SOUTH);
+    
+        btnLamMoi.addActionListener(this);
+		btnThemKH.addActionListener(this);
+		btnCapNhatKH.addActionListener(this);
+		btnXoaKH.addActionListener(this);
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		loadData();
         
-       
-  
 	}
-	
+	private void ThemKH() throws SQLException {
+		String idKhachHang = txtId.getText();
+		String tenKhachHang = txtTenKH.getText();
+		String email= txtEmail.getText();
+		String sdt=txtsdt.getText();
+		String diaChi=txtDiaChi.getText();
+		java.util.Date date = chooserNgaySinh.getDate();
+		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
+		Boolean GioiTinh=rbNam.isSelected();
+		
+		KhachHang kh=new KhachHang(idKhachHang, tenKhachHang, sdt, email, diaChi,ngaySinh,GioiTinh);
+		daoKhachHang.themKhachHang(kh);
+		modelKhachHang.addRow(new Object[] {idKhachHang, tenKhachHang, sdt, email, diaChi,dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ" });
+
+	}
+	private void loadData() {
+		modelKhachHang.setRowCount(0);
+		for (KhachHang kh : daoKhachHang.getAllDanhSachKH() ) {
+			modelKhachHang.addRow(new Object[] { kh.getIdKhachHang(), kh.getTenKhachHang(),kh.getSdt(), kh.getEmail(),kh.getDiaChi(),dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ"
+					});
+			
+		}
+	}
+
+	private void lamMoi() {
+		
+
+		txtTenKH.setText("");
+		txtDiaChi.setText("");
+		txtsdt.setText("");
+		txtEmail.setText("");
+		rbNam.setSelected(true);
+		rbNu.setSelected(false);
+		txtTenKH.requestFocus();
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if (o.equals(btnThemKH)) {
+			try {
+				ThemKH();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} 
+		 if(o.equals(btnLamMoi)) {
+			 lamMoi() ;}
+//		} else if (o.equals(btnXoa)) {
+//			xoaNV();
+//		} else if (o.equals(btnSua)) {
+//			suaNV();
+//		} else if (o.equals(btnTim)) {
+//			timNhanVien();
+////			timNV();
+		
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
 
 

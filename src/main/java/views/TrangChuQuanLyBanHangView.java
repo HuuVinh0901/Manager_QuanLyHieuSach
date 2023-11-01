@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 
+import connection.ConnectDB;
 import controllers.MenuItem;
 import views.QuanLyBanHangView;
 
@@ -35,6 +36,11 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private JPanel panelMenu;
 
 	public TrangChuQuanLyBanHangView() {
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		setTitle("Quản lý bán hàng");
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);

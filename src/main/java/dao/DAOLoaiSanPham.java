@@ -1,5 +1,6 @@
 package dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +10,12 @@ import java.util.ArrayList;
 import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
-import models.SanPham;
+import models.SanPhamCha;
 import utils.TrangThaiSPEnum;
 import views.LoaiNhaSanXuatView;
 import models.LoaiSanPham;
 
-public class DAOLoaiSanPham {
+public class DAOLoaiSanPham implements Serializable {
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
 			try {
@@ -61,42 +62,59 @@ public class DAOLoaiSanPham {
 		return false;
 	}
 
-	public LoaiSanPham getLoaiSanPhamByName(String tenLoaiSanPham) throws SQLException {
-	    LoaiSanPham loaiSanPham = null;
-	    Connection con = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
-
-	    try {
-	        con = ConnectDB.getinstance().getConnection();
-	        String sql = "SELECT * FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
-	        ps = con.prepareStatement(sql);
-	        ps.setString(1, tenLoaiSanPham);
-	        rs = ps.executeQuery();
-	        
-	        if (rs.next()) {
-	            loaiSanPham = new LoaiSanPham();
-	            loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
-	            loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } finally {
-	        if (rs != null) {
-	            rs.close();
-	        }
-	        if (ps != null) {
-	            ps.close();
-	        }
-	        if (con != null) {
-	            con.close();
+	public String getLoaiSanPhamNameByID(String idLoaiSanPham) throws SQLException {
+	    String tenLoaiSanPham = null;
+	    ConnectDB.getinstance();
+	    Connection con = ConnectDB.getConnection();
+	    String query = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
+	    try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+	        preparedStatement.setString(1, idLoaiSanPham);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                tenLoaiSanPham = resultSet.getString("tenLoaiSanPham");
+	            }
 	        }
 	    }
-	    return loaiSanPham;
+	    return tenLoaiSanPham;
 	}
 
+	
+	 public LoaiSanPham getLoaiSanPhamByTen(String tenLoaiSanPham) {
+	        Connection con = null;
+	        PreparedStatement ps = null;
+	        ResultSet rs = null;
+	        LoaiSanPham loaiSanPham = null;
 
+	        try {
+	            con = ConnectDB.getConnection();
+	            String sql = "SELECT * FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
+	            ps = con.prepareStatement(sql);
+	            ps.setString(1, tenLoaiSanPham);
+	            rs = ps.executeQuery();
 
+	            if (rs.next()) {
+	                loaiSanPham = new LoaiSanPham();
+	                loaiSanPham.setIdLoaiSanPham(rs.getString("idLoaiSanPham"));
+	                loaiSanPham.setTenLoaiSanPham(rs.getString("tenLoaiSanPham"));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } finally {
+	            try {
+	                if (rs != null) {
+	                    rs.close();
+	                }
+	                if (ps != null) {
+	                    ps.close();
+	                }
+	                if (con != null) {
+	                    con.close();
+	                }
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
 
-
+	        return loaiSanPham;
+	    }
 }

@@ -1,13 +1,13 @@
 package utils;
 
-public enum TrangThaiSPEnum {
-    DANG_KINH_DOANH(1, "Đang kinh doanh"), 
-    NGUNG_KINH_DOANH(0, "Ngừng kinh doanh");
+public enum GioiTinhEnum {
+    Nam(1, "Nam"), 
+    Nu(0, "Nữ");
 
     private final int value;
     private final String description;
 
-    TrangThaiSPEnum(int value, String description) {
+    GioiTinhEnum(int value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -20,21 +20,21 @@ public enum TrangThaiSPEnum {
         return description;
     }
 
-    public static TrangThaiSPEnum getById(int value) {
-        for (TrangThaiSPEnum e : values()) {
+    public static GioiTinhEnum getById(int value) {
+        for (GioiTinhEnum e : values()) {
             if (e.value == value) {
                 return e;
             }
         }
-        return DANG_KINH_DOANH;
+        return Nam;
     }
 
-    public static TrangThaiSPEnum getByName(String name) {
-        for (TrangThaiSPEnum e : values()) {
+    public static GioiTinhEnum getByName(String name) {
+        for (GioiTinhEnum e : values()) {
             if (e.name().equalsIgnoreCase(name)) {
                 return e;
             }
         }
-        return DANG_KINH_DOANH;
+        return Nam; // hoặc return null nếu không tìm thấy
     }
 }

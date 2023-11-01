@@ -1,28 +1,5 @@
 ﻿CREATE DATABASE QLHieuSach
-ON PRIMARY
-(NAME = N'QLHieuSach_data',
-FILENAME = N'F:\ashleynguci\PTUD\SQL\QLHieuSach_data.mdf',
-SIZE = 10MB,
-MAXSIZE = 20MB,
-FILEGROWTH = 20%)
-LOG ON
-(NAME = N'QLHieuSach_log',
-FILENAME = N'F:\ashleynguci\PTUD\SQL\QLHieuSach_log.ldf',
-SIZE = 5MB,
-MAXSIZE = 10MB,
-FILEGROWTH = 5MB);
 
--- Thêm tệp dữ liệu phụ (.ndf) vào nhóm tệp QLBHgroup1
-ALTER DATABASE QLHieuSach
-ADD FILEGROUP QLHieuSachgroup1;
-
-ALTER DATABASE QLHieuSach
-ADD FILE
-(NAME = N'QLBH_data1',
-FILENAME = N'F:\ashleynguci\PTUD\SQL\QLHieuSach_data1.ndf',
-SIZE = 10MB,
-MAXSIZE = 20MB,
-FILEGROWTH = 10MB);
 go
 -- Sử dụng cơ sở dữ liệu QLHieuSach
 USE QLHieuSach
@@ -77,16 +54,17 @@ CREATE TABLE PhieuNhapSanPham (
 )
 go
 CREATE TABLE NhaCungCap(
-	idNhaCungCap NVARCHAR(7) NOT NULL PRIMARY KEY,
+	idNhaCungCap NVARCHAR(50) NOT NULL PRIMARY KEY,
 	tenNhaCungCap NVARCHAR(50) NOT NULL,
 	diaChi NVARCHAR(50),
 	soDienThoai NVARCHAR(10)
 )
 go
-CREATE TABLE LoaiSanPham(
-	idLoaiSanPham NVARCHAR(7) NOT NULL PRIMARY KEY,
-	tenLoaiSanPham NVARCHAR(30) NOT NULL
+CREATE TABLE LoaiSanPham (
+    idLoaiSanPham NVARCHAR(50) PRIMARY KEY,
+    tenLoaiSanPham NVARCHAR(50) NOT NULL
 )
+
 
 go
 CREATE TABLE TacGia(
@@ -107,12 +85,13 @@ CREATE TABLE SanPham (
     hinhAnhSanPham NVARCHAR(255) NOT NULL, 
     idSanPham NVARCHAR(7) NOT NULL PRIMARY KEY, 
     tenSanPham NVARCHAR(30) NOT NULL, 
-	loaiSanPham NVARCHAR(7) NOT NULL,
-    nhaCungCap NVARCHAR(7) NOT NULL,
+	loaiSanPham NVARCHAR(50) NOT NULL,
+    nhaCungCap NVARCHAR(50) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
-	thue FLOAT CHECK (thue > 0),
+	thue FLOAT CHECK (thue >= 0),
+	giaNhap FLOAT CHECK (giaNhap >= 0),
 	soLuong INT ,
 	giaBan FLOAT,
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
@@ -137,7 +116,7 @@ CREATE TABLE ChiTietHoaDon (
 )
 go
 CREATE TABLE Sach (
-    idSanPham NVARCHAR(7) NOT NULL PRIMARY KEY, 
+    idSanPham NVARCHAR(50) NOT NULL PRIMARY KEY, 
 	tenSanPham NVARCHAR(30) NOT NULL, 
     tacGia NVARCHAR(7) NOT NULL, 
     theLoai NVARCHAR(7) NOT NULL,
@@ -145,11 +124,12 @@ CREATE TABLE Sach (
     ISBN NVARCHAR(255) NOT NULL, 
     soTrang INT CHECK (soTrang > 0), 
 	hinhAnhSanPham NVARCHAR(255) NOT NULL, 
-	loaiSanPham NVARCHAR(7) NOT NULL,
-    nhaCungCap NVARCHAR(7) NOT NULL,
+	loaiSanPham NVARCHAR(50) NOT NULL,
+    nhaCungCap NVARCHAR(50) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
-    trangThai BIT NOT NULL 
+    trangThai BIT NOT NULL ,
+	giaNhap FLOAT CHECK (giaNhap >= 0),
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap),
     FOREIGN KEY (tacGia) REFERENCES TacGia(idTacGia), 
@@ -169,4 +149,17 @@ go
 use master
 drop database QLHieuSach
 
+use QLHieuSach
+select *from SanPham
+select *from NhaCungCap
+select *from LoaiSanPham
+delete  from LoaiSanPham 
 
+
+SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan 
+FROM SanPham sp  
+JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
+JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
+
+
+SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
