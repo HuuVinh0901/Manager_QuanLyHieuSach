@@ -7,6 +7,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -29,9 +34,14 @@ import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
+import connection.ConnectDB;
 import controllers.MenuItem;
+import dao.DAOKhachHang;
+import dao.DAONhanVien;
+import models.KhachHang;
+import models.NhanVien;
 
-public class QuanLyNhanVIenView extends JPanel{
+public class QuanLyNhanVIenView extends JPanel implements ActionListener{
 	private JDateChooser chooserNgaySinh;
 	private JTextField txtTenNV;
 	private JTextField txtsdt;
@@ -41,6 +51,7 @@ public class QuanLyNhanVIenView extends JPanel{
 	private JTextField txtIDNhanVien;
 	private JTextField txtNS;
 	private JTextField txtTimKiem;
+	private JTextField txtID;
 	private JLabel lbTenNV;
 	private JLabel lbsdt;
 	private JLabel lbEmail;
@@ -61,7 +72,12 @@ public class QuanLyNhanVIenView extends JPanel{
 	private JButton btnCapNhatNV;
 	private JButton btnXoaNV;
 	private JButton btnLamMoi;
+	private SimpleDateFormat dfNgaySinh;
+	private DAONhanVien daoNhanVien;
 	public QuanLyNhanVIenView() {
+		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+		daoNhanVien=new DAONhanVien();
+		NhanVien nv=new NhanVien();
 		setLayout(new BorderLayout());
 ////		Tiêu đề
 		JPanel NhanVienPanel=new JPanel();
@@ -107,7 +123,6 @@ public class QuanLyNhanVIenView extends JPanel{
 		chooserNgaySinh.getCalendarButton().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		chooserNgaySinh.setBounds(100, 310, 200, 40);
 		chooserNgaySinh.setDateFormatString("dd/MM/yyyy");
-//		chooserNgaySinh.setDate(dNgayHienTai);
 		chooserNgaySinh.setBorder(new LineBorder(new Color(114, 23, 153), 1, true));
 		chooserNgaySinh.setFont(new Font("SansSerif", Font.PLAIN, 15));
 		chooserNgaySinh.getCalendarButton().setPreferredSize(new Dimension(30, 24));
@@ -134,7 +149,6 @@ public class QuanLyNhanVIenView extends JPanel{
         pnCenter.add(rbNu=new JRadioButton("Nữ"));
         
 		
-//		chooserNgaySinh.setIcon((ImageIcon) iconCalendar);
         
         //Tạo button groud giới tính
         ButtonGroup groupGT = new ButtonGroup();
@@ -148,23 +162,34 @@ public class QuanLyNhanVIenView extends JPanel{
         panelSearch.add(txtTimKiem);
         
         JPanel pnChucNang = new JPanel(new GridLayout(1,6,10,40));
-        
+        txtID=new JTextField();
         btnThemNV=new JButton("THÊM NHÂN VIÊN");
         btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
         btnXoaNV=new JButton("XÓA NHÂN VIÊN");
         btnLamMoi=new JButton("LÀM MỚI");
+        pnChucNang.add(txtID);
         pnChucNang.add(btnThemNV);
         pnChucNang.add(btnCapNhatNV);
         pnChucNang.add(btnXoaNV);
         pnChucNang.add(btnLamMoi);
         NhanVienPanel.add(pnChucNang,BorderLayout.CENTER);
         
-       //Tạo bảng
-        String[] columnNames = {"ID nhân viên", "Tên nhân viên","Số điện thoại","Email","Địa chỉ","Giới tính","Ngày sinh","Chức vụ","Trạng thái","Lương"};
-        Object[][] data = {{"NV00001","Vinh","0355420475","Vinh@gmail","Ben Tre","Nam","09/01/2003","Qly","Nghỉ","10000000"}};
-        JTable table = new JTable(data, columnNames);
-        
-        JScrollPane scrollPane = new JScrollPane(table);
+        //Tạo bảng
+        modelNhanVien = new DefaultTableModel();
+		tableNhanVien = new JTable();
+        modelNhanVien.addColumn("ID nhân viên");
+		modelNhanVien.addColumn("Tên nhân viên");
+		modelNhanVien.addColumn("Số điện thoại");
+		modelNhanVien.addColumn("Email");
+		modelNhanVien.addColumn("Địa chỉ");
+		modelNhanVien.addColumn("Ngày sinh");
+		modelNhanVien.addColumn("Giới tính");
+		modelNhanVien.addColumn("Chức vụ");
+		modelNhanVien.addColumn("Trạng thái");
+		modelNhanVien.addColumn("Lương");
+       
+        tableNhanVien.setModel(modelNhanVien);
+        JScrollPane scrollPane = new JScrollPane(tableNhanVien);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách nhân viên"));
         JPanel PanelMain= new JPanel();
         PanelMain.setLayout(new BorderLayout());
@@ -172,9 +197,76 @@ public class QuanLyNhanVIenView extends JPanel{
         PanelMain.add(pnCenter,BorderLayout.NORTH);
         PanelMain.add(pnChucNang,BorderLayout.CENTER);
         PanelMain.add(scrollPane,BorderLayout.SOUTH);
-//        PanelMain.add(panelSearch,BorderLayout.WEST);
         NhanVienPanel.add(PanelMain,BorderLayout.SOUTH);
+        
+        btnLamMoi.addActionListener(this);
+		btnThemNV.addActionListener(this);
+		btnCapNhatNV.addActionListener(this);
+		btnXoaNV.addActionListener(this);
+		try {
+			ConnectDB.getinstance().connect();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		loadData();
 
+	}
+	private void ThemKH() throws SQLException {
+		String idKhachHang = txtID.getText();
+		String tenKhachHang = txtTenNV.getText();
+		String email= txtEmail.getText();
+		String sdt=txtsdt.getText();
+		String diaChi=txtDiaChi.getText();
+		java.util.Date date = chooserNgaySinh.getDate();
+		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
+		Boolean GioiTinh=rbNam.isSelected();
+		String TrangThai=(String)cbTrangThai.getSelectedItem().toString();
+		Boolean TrangThaibooleanValue = Boolean.parseBoolean(TrangThai);
+		String chucVu=cbChucVu.getSelectedItem().toString();
+		Float luong=Float.parseFloat(txtLuong.getText());
+		NhanVien nv=new NhanVien(idKhachHang, tenKhachHang, sdt, diaChi, email, ngaySinh, GioiTinh,chucVu,TrangThaibooleanValue, luong);
+		daoNhanVien.themNhanVien(nv);
+		modelNhanVien.addRow(new Object[] {idKhachHang, tenKhachHang, sdt,  diaChi,email,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai,luong });
+
+	}
+	private void loadData() {
+		modelNhanVien.setRowCount(0);
+		for (NhanVien nv : daoNhanVien.getAllDanhSachNV() ) {
+			modelNhanVien.addRow(new Object[] { nv.getIdNhanVien(), nv.getTenNhanVien(),nv.getSoDienThoai(),nv.getDiaChi(), nv.getEmail(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc",nv.getLuong()
+					});
+			
+		}
+	}
+private void lamMoi() {
+		
+		txtID.setText("");
+		txtTenNV.setText("");
+		txtDiaChi.setText("");
+		txtsdt.setText("");
+		txtEmail.setText("");
+		rbNam.setSelected(true);
+		rbNu.setSelected(false);
+		cbChucVu.setSelectedItem("Quản lý");
+		cbTrangThai.setSelectedItem("Đang làm việc");
+		txtLuong.setText("");
+		
+		txtTenNV.requestFocus();
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if (o.equals(btnThemNV)) {
+			try {
+				ThemKH();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} 
+		 if(o.equals(btnLamMoi)) {
+			 lamMoi() ;}
 	}
 	
 }
