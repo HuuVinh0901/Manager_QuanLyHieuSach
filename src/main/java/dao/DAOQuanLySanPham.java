@@ -92,12 +92,12 @@ public class DAOQuanLySanPham implements Serializable {
 	}
 
 	public boolean themSanPham(SanPhamCon sp) throws SQLException {
-		Connection con = null;
-		PreparedStatement ps = null;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		try {
-			con = ConnectDB.getConnection();
+			PreparedStatement ps = con.prepareStatement(sql);
 			if (con != null && !con.isClosed()) {
-				String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 				ps = con.prepareStatement(sql);
 				ps.setString(1, sp.getHinhAnhSanPham());
 				ps.setString(2, sp.getIdSanPham());
@@ -107,49 +107,37 @@ public class DAOQuanLySanPham implements Serializable {
 				ps.setDouble(6, sp.getKichThuoc());
 				ps.setString(7, sp.getMauSac());
 				ps.setInt(8, sp.getTrangThai().getValue());
-				ps.setDouble(9, sp.thue()); 
+				ps.setDouble(9, sp.thue());
 				ps.setDouble(10, sp.getGiaNhap());
 				ps.setInt(11, sp.getSoLuong());
-				ps.setDouble(12, sp.giaBan()); 
-				int rowsAffected = ps.executeUpdate();
-				return rowsAffected > 0;
+				ps.setDouble(12, sp.giaBan());
+				return ps.executeUpdate() > 0;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (con != null) {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
 		}
+		con.close();
 		return false;
 	}
 
-	
 	public String getLatestProductID() throws SQLException {
-	    String productID = null;
-	    try (Connection connection = ConnectDB.getConnection();
-	         PreparedStatement preparedStatement = connection.prepareStatement("SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC");
-	         ResultSet resultSet = preparedStatement.executeQuery()) {
-
-	        if (resultSet.next()) {
-	            productID = resultSet.getString("idSanPham");
-	        }
-	    } catch (SQLException exception) {
-	        exception.printStackTrace();
-	    }
-	    return productID;
+		String productID = null;
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		try {
+			String sql = ("SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC");
+			pst = con.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			if (rs.next()) {
+				productID = rs.getString("idSanPham");
+			}
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+		} finally {
+			close(pst);
+		}
+		return productID;
 	}
 
-	
 }

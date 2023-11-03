@@ -57,8 +57,9 @@ public class DAOLoaiSanPham implements Serializable {
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			con.close();			
 		}
-		con.close();
 		return false;
 	}
 

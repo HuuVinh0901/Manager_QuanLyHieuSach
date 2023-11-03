@@ -286,7 +286,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		if (loaiSanPham != null && nhaCungCap != null) {
 			SanPhamCon sp = new SanPhamCon();
 			sp.setHinhAnhSanPham(hinhAnhSanPham);
-			sp.setIdSanPham(idSanPham);
+			sp.setIdSanPham(generateNewProductID());
 			sp.setTenSanPham(tenSanPham);
 			sp.setIdLoaiSanPham(loaiSanPham);
 			sp.setIdNhaCungCap(nhaCungCap);
@@ -301,7 +301,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 				modelSP.addRow(new Object[] { hinhAnhSanPham, generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),
 						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,soLuong,
 						sp.giaBan() });
-//				loadDataIntoTable();
+				loadDataIntoTable();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
@@ -311,21 +311,21 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 		}
 	}
-	private String generateNewProductID() {
-        String idPrefix = "SP";
-        int newProductIDNumber = 1;
-        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+	 private String generateNewProductID() {
+	        String idPrefix = "SP";
+	        int newProductIDNumber = 1;
+	        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+	        try {
+	            String previousProductID = daoSanPham.getLatestProductID();
+	            if (previousProductID != null && !previousProductID.isEmpty()) {
+	                int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
+	                newProductIDNumber = oldProductIDNumber + 1;
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
 
-        try {
-            String previousProductID = daoSanPham.getLatestProductID();
-            if (previousProductID != null && !previousProductID.isEmpty()) {
-                int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
-                newProductIDNumber = oldProductIDNumber + 1;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
-        return newProductID;
-    }
+	        String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+	        return newProductID;
+	    }
 }
