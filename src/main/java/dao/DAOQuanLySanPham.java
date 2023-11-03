@@ -135,19 +135,21 @@ public class DAOQuanLySanPham implements Serializable {
 		return false;
 	}
 
-	public String getIdFromTenLoaiSanPham(String tenLoaiSanPham) throws SQLException {
-		String id = null;
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
-		String sql = "SELECT idLoaiSanPham FROM LoaiSanPham WHERE tenLoaiSanPham = ?";
-		try (PreparedStatement statement = con.prepareStatement(sql)) {
-			statement.setString(1, tenLoaiSanPham);
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next()) {
-					id = resultSet.getString("idLoaiSanPham");
-				}
-			}
-		}
-		return id;
+	
+	public String getLatestProductID() throws SQLException {
+	    String productID = null;
+	    try (Connection connection = ConnectDB.getConnection();
+	         PreparedStatement preparedStatement = connection.prepareStatement("SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC");
+	         ResultSet resultSet = preparedStatement.executeQuery()) {
+
+	        if (resultSet.next()) {
+	            productID = resultSet.getString("idSanPham");
+	        }
+	    } catch (SQLException exception) {
+	        exception.printStackTrace();
+	    }
+	    return productID;
 	}
+
+	
 }
