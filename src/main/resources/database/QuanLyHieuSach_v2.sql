@@ -153,7 +153,7 @@ use QLHieuSach
 select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
-delete  from LoaiSanPham 
+delete  from SanPham 
 
 
 SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan 

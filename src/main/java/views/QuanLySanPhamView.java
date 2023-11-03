@@ -13,7 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -73,6 +75,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		txtHinhAnh = new JTextField();
 		lblIDSanPham = new JLabel("ID Sản Phẩm(*):");
 		txtIdSanPham = new JTextField();
+		txtIdSanPham.disable();
 		lblTenSanPham = new JLabel("Tên Sản Phẩm(*):");
 		txtTenSanPham = new JTextField();
 		lblNhaCungCap = new JLabel("Nhà Cung Cấp(*):");
@@ -216,7 +219,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			int soLuong = sanPham.getSoLuong();
 			double giaBan = sanPham.giaBan();
 			modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-					mauSac, trangThai, thue, giaNhap,soLuong, giaBan });
+					mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
 		}
 	}
 
@@ -282,23 +285,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			}
 		}
 		if (loaiSanPham != null && nhaCungCap != null) {
-			SanPhamCon sp = new SanPhamCon();
-			sp.setHinhAnhSanPham(hinhAnhSanPham);
-			sp.setIdSanPham(idSanPham);
-			sp.setTenSanPham(tenSanPham);
-			sp.setIdLoaiSanPham(loaiSanPham);
-			sp.setIdNhaCungCap(nhaCungCap);
-			sp.setKichThuoc(kichThuoc);
-			sp.setMauSac(mauSac);
-			sp.setTrangThai(trangThai);
-			sp.setGiaNhap(giaNhap);
-			sp.setSoLuong(soLuong);
+			SanPhamCon sp = new SanPhamCon(hinhAnhSanPham, generateNewProductID(), tenSanPham, loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap);
 			try {
 				daoSanPham.themSanPham(sp);
 				String trangThaiDescription = trangThai.getDescription();
-				modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,soLuong,
-						sp.giaBan() });
+				modelSP.addRow(new Object[] { hinhAnhSanPham, generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),
+						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,
+						soLuong, sp.giaBan() });
+				loadDataIntoTable();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
@@ -308,4 +302,22 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 		}
 	}
+	 private String generateNewProductID() {
+	        String idPrefix = "SP";
+	        int newProductIDNumber = 1;
+	        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+
+	        try {
+	            String previousProductID = daoSanPham.getLatestProductID();
+	            if (previousProductID != null && !previousProductID.isEmpty()) {
+	                int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
+	                newProductIDNumber = oldProductIDNumber + 1;
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+	        return newProductID;
+	    }
 }
