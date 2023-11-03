@@ -153,6 +153,10 @@ use QLHieuSach
 select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
+<<<<<<< HEAD
+=======
+delete  from SanPham 
+>>>>>>> 4c60267c3602ae07e852a6e7fb03216e22433bb4
 
 delete   from SanPham 
 delete  from NhaCungCap
