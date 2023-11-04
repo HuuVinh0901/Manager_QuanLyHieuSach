@@ -215,6 +215,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		tableSP.addMouseListener(this);
 		btnThemSP.addActionListener(this);
 		btnCapNhatSP.addActionListener(this);
+		btnLamMoi.addActionListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
 
@@ -280,7 +281,23 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			themSanPham();
 		} else if (o.equals(btnCapNhatSP)) {
 			capNhatSanPham();
+		}else if(o.equals(btnLamMoi)) {
+			lamMoi();
 		}
+	}
+
+	private void lamMoi() {
+		txtHinhAnh.setText("");
+		txtIdSanPham.setText("");
+		txtTenSanPham.setText("");
+		cbLoaiSanPham.setSelectedIndex(0);
+		cbNhaCungCap.setSelectedIndex(0);
+		txtKichThuoc.setText("");
+		txtMauSac.setText("");
+		txtGiaBan.setText("");
+		txtSoLuong.setText("");
+		txtGiaBan.setText("");
+		txtGiaNhap.setText("");
 	}
 
 	private void capNhatSanPham() {
@@ -430,7 +447,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				String selectedLoaiSanPham = (String) cbLoaiSanPhamSearch.getSelectedItem();
 				if (selectedLoaiSanPham.equals("Tất cả")) {
 					loadDataIntoTable();
-				} else {
+				}else {
 					ArrayList<SanPhamCon> sanPhamLoai = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
 					if (sanPhamLoai.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
@@ -476,14 +493,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			txtMauSac.setText(modelSP.getValueAt(row, 6).toString());
 			String trangThaiValue = modelSP.getValueAt(row, 7).toString(); 
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
-			switch (trangThai) {
-			case DANG_KINH_DOANH:
-				chkTinhTrangKinhDoanh.setSelected(true);
-				break;
-			case NGUNG_KINH_DOANH:
-				chkTinhTrangKinhDoanh.setSelected(false);
-				break;
-			}
+	        boolean isKinhDoanh = trangThai == TrangThaiSPEnum.DANG_KINH_DOANH;
+	        chkTinhTrangKinhDoanh.setSelected(isKinhDoanh);
 			txtGiaNhap.setText(modelSP.getValueAt(row, 9).toString());
 			txtSoLuong.setText(modelSP.getValueAt(row, 10).toString());
 			txtGiaBan.setText(modelSP.getValueAt(row, 11).toString());
