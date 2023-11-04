@@ -5,7 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import javax.management.RuntimeErrorException;
 
 import connection.ConnectDB;
 import models.LoaiSanPham;
@@ -28,39 +31,46 @@ public class DAOLoaiSanPham implements Serializable {
 	}
 
 	public ArrayList<LoaiSanPham> getAllLoaiSanPham() {
-		ArrayList<LoaiSanPham> dsLoaiSanPham = new ArrayList<>();
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
+		ArrayList<LoaiSanPham> dsLoaiSanPham = new ArrayList<LoaiSanPham>();
 		try {
-			PreparedStatement ps = con.prepareStatement("SELECT * FROM LoaiSanPham");
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			ConnectDB.getinstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT * FROM LoaiSanPham";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			while(rs.next()) {
 				LoaiSanPham lsp = new LoaiSanPham();
 				lsp.setIdLoaiSanPham(rs.getString(1));
 				lsp.setTenLoaiSanPham(rs.getString(2));
 				dsLoaiSanPham.add(lsp);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return dsLoaiSanPham;
 	}
 
-	public boolean themLoaiSanPham(LoaiSanPham lsp) throws SQLException {
+	public boolean themLoaiSanPham(LoaiSanPham lsp)  {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
-		String sql = "insert into LoaiSanPham values (?,?)";
+		PreparedStatement stmt = null;
+		int n = 0;
 		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, lsp.getIdLoaiSanPham());
-			ps.setString(2, lsp.getTenLoaiSanPham());
-			return ps.executeUpdate() > 0;
-		} catch (SQLException e) {
+			String sql = "insert into LoaiSanPham values (?,?)";
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, lsp.getIdLoaiSanPham());
+			stmt.setString(2, lsp.getTenLoaiSanPham());
+			n = stmt.executeUpdate();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			con.close();			
+			try {
+				stmt.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
 		}
-		return false;
+		return n>0;
 	}
 
 	public String getLoaiSanPhamNameByID(String idLoaiSanPham) throws SQLException {

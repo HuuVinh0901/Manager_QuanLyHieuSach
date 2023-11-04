@@ -52,7 +52,16 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	private DAOLoaiSanPham daoLoaiSanPham;
 	private DAONhaCungCap daoNhaCungCap;
 	private DAOQuanLySanPham daoSanPham;
-
+	private JLabel lblTuKhoa;
+	private JTextField txtTuKhoa;
+	private JButton btnTimKiem;
+	private JButton btnXemTatCa;
+	private JPanel pnChucNangCha;
+	private JPanel pnChucNangTimKiem;
+	private JComboBox<String> cbLoaiSanPhamSearch;
+	private JComboBox<String> cbNhaCungCapSearch;
+	private JLabel lblLoaiSanPhamSearch;
+	private JLabel lblNhaCungCapSearch;
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -121,40 +130,54 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		pnCenter.add(txtKichThuoc);
 		pnCenter.add(lblMauSac);
 		pnCenter.add(txtMauSac);
-
 		pnCenter.add(lblSoLuong);
 		pnCenter.add(txtSoLuong);
-
 		pnCenter.add(lblGiaNhap);
 		pnCenter.add(txtGiaNhap);
-
 		pnCenter.add(lblGiaBan);
 		pnCenter.add(txtGiaBan);
-
 		pnCenter.add(lblThueVAT);
 		pnCenter.add(chkThueVAT);
-
 		pnCenter.add(lblTinhTrangKinhDoanh);
 		pnCenter.add(chkTinhTrangKinhDoanh);
 
 		pnMain = new JPanel(new BorderLayout());
 
-		pnChucNang = new JPanel(new GridLayout(1, 6, 10, 40));
-		pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
+		pnChucNangCha = new JPanel(new BorderLayout(6,8));
+		pnChucNang = new JPanel(new GridLayout(1, 4, 10, 40));
+		pnChucNangCha.setBorder(BorderFactory.createTitledBorder("Chức năng"));
 		btnThemSP = new JButton("THÊM SẢN PHẨM");
-		btnNhapSP = new JButton("NHẬP SẢN PHẨM");
 		btnCapNhatSP = new JButton("CẬP NHẬT SẢN PHẨM");
 		btnXoaSP = new JButton("XÓA SẢN PHẨM");
-		btnHienThiLS = new JButton("LỊCH SỬ XÓA");
+		lblTuKhoa = new JLabel("Từ khóa:");
+		txtTuKhoa = new JTextField();
+		btnTimKiem = new JButton("Tìm kiếm");
+		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
+		
 		pnChucNang.add(btnThemSP);
-		pnChucNang.add(btnNhapSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnXoaSP);
-		pnChucNang.add(btnHienThiLS);
 		pnChucNang.add(btnLamMoi);
+		
+		pnChucNangTimKiem = new JPanel(new GridLayout(1, 8, 10, 10));
+		lblLoaiSanPhamSearch = new JLabel("Loại sản phẩm:");
+		lblNhaCungCapSearch = new JLabel("Nhà cung cấp:");
+		cbLoaiSanPhamSearch = new JComboBox<>();
+		cbNhaCungCapSearch = new JComboBox<>();
 
-		pnMain.add(pnChucNang, BorderLayout.NORTH);
+		pnChucNangTimKiem.add(lblLoaiSanPhamSearch);
+		pnChucNangTimKiem.add(cbLoaiSanPhamSearch);
+		pnChucNangTimKiem.add(lblNhaCungCapSearch);
+		pnChucNangTimKiem.add(cbNhaCungCapSearch);
+		pnChucNangTimKiem.add(lblTuKhoa);
+		pnChucNangTimKiem.add(txtTuKhoa);
+		pnChucNangTimKiem.add(btnTimKiem);
+		pnChucNangTimKiem.add(btnXemTatCa);
+
+		pnChucNangCha.add(pnChucNang, BorderLayout.NORTH);
+		pnChucNangCha.add(pnChucNangTimKiem,BorderLayout.SOUTH);
+		pnMain.add(pnChucNangCha, BorderLayout.NORTH);
 
 		pnDanhMuc = new JPanel(new BorderLayout());
 		pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
@@ -199,6 +222,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		loadComboxBoxLoaiSanPham();
 		loadComboxBoxNhaCungCap();
 		btnThemSP.addActionListener(this);
+		cbLoaiSanPhamSearch.addActionListener(this);
+		cbNhaCungCapSearch.addActionListener(this);
 	}
 
 	private void loadDataIntoTable() {
@@ -218,7 +243,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			int soLuong = sanPham.getSoLuong();
 			double giaBan = sanPham.giaBan();
 			modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-					mauSac, trangThai, thue, giaNhap,soLuong, giaBan });
+					mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
 		}
 	}
 
@@ -238,6 +263,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		ArrayList<LoaiSanPham> danhSachLoaiSanPham = daoLoaiSanPham.getAllLoaiSanPham();
 		for (LoaiSanPham loaiSanPham : danhSachLoaiSanPham) {
 			cbLoaiSanPham.addItem(loaiSanPham.getTenLoaiSanPham());
+			cbLoaiSanPhamSearch.addItem(loaiSanPham.getTenLoaiSanPham());
 		}
 	}
 
@@ -245,6 +271,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		ArrayList<NhaCungCap> danhSachNhaCungCap = daoNhaCungCap.getAllNhaCungCap();
 		for (NhaCungCap ncc : danhSachNhaCungCap) {
 			cbNhaCungCap.addItem(ncc.getTenNhaCungCap());
+			cbNhaCungCapSearch.addItem(ncc.getTenNhaCungCap());
 		}
 	}
 
@@ -253,7 +280,13 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		Object o = e.getSource();
 		if (o.equals(btnThemSP)) {
 			themSanPham();
+		}else if(e.equals(cbLoaiSanPhamSearch)) {
+			loadtableByLoaiSanPham();
 		}
+	}
+
+	private void loadtableByLoaiSanPham() {
+		
 	}
 
 	private void themSanPham() {
@@ -298,9 +331,9 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			try {
 				daoSanPham.themSanPham(sp);
 				String trangThaiDescription = trangThai.getDescription();
-				modelSP.addRow(new Object[] { hinhAnhSanPham, generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,soLuong,
-						sp.giaBan() });
+				modelSP.addRow(new Object[] { hinhAnhSanPham, generateNewProductID(), tenSanPham,
+						loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
+						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan() });
 				loadDataIntoTable();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 			} catch (SQLException e) {
@@ -311,21 +344,22 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 		}
 	}
-	 private String generateNewProductID() {
-	        String idPrefix = "SP";
-	        int newProductIDNumber = 1;
-	        String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-	        try {
-	            String previousProductID = daoSanPham.getLatestProductID();
-	            if (previousProductID != null && !previousProductID.isEmpty()) {
-	                int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
-	                newProductIDNumber = oldProductIDNumber + 1;
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
 
-	        String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
-	        return newProductID;
-	    }
+	private String generateNewProductID() {
+		String idPrefix = "SP";
+		int newProductIDNumber = 1;
+		String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		try {
+			String previousProductID = daoSanPham.getLatestProductID();
+			if (previousProductID != null && !previousProductID.isEmpty()) {
+				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
+				newProductIDNumber = oldProductIDNumber + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+		return newProductID;
+	}
 }
