@@ -215,6 +215,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		tableSP.addMouseListener(this);
 		btnThemSP.addActionListener(this);
 		btnCapNhatSP.addActionListener(this);
+		btnXemTatCa.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
@@ -283,6 +284,9 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			capNhatSanPham();
 		}else if(o.equals(btnLamMoi)) {
 			lamMoi();
+		}else if(o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadDataIntoTable();
 		}
 	}
 
@@ -458,22 +462,21 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 						loadtableByLoaiSanPham(selectedLoaiSanPham);
 					}
 				}
-			} else if (source == cbNhaCungCapSearch) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					String selectedNhaCungCap = (String) cbNhaCungCapSearch.getSelectedItem();
-					if (selectedNhaCungCap.equals("Tất cả")) {
+			}
+		}else if (source == cbNhaCungCapSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedNhaCungCap = (String) cbNhaCungCapSearch.getSelectedItem();
+				if (selectedNhaCungCap.equals("Tất cả")) {
+					loadDataIntoTable();
+				} else {
+					ArrayList<SanPhamCon> sanPhamList = daoSanPham.loadComboBoxByNhaCungCap(selectedNhaCungCap);
+					if (sanPhamList.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+								"Thông báo", JOptionPane.WARNING_MESSAGE);
 						loadDataIntoTable();
+						cbNhaCungCapSearch.setSelectedItem("Tất cả");
 					} else {
-						ArrayList<SanPhamCon> sanPhamList = daoSanPham.loadComboBoxByNhaCungCap(selectedNhaCungCap);
-						if (sanPhamList.isEmpty()) {
-							JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
-									"Thông báo", JOptionPane.WARNING_MESSAGE);
-							loadDataIntoTable();
-							cbNhaCungCapSearch.setSelectedItem("Tất cả");
-						} else {
-
-							loadtableByNhaCungCap(selectedNhaCungCap);
-						}
+						loadtableByNhaCungCap(selectedNhaCungCap);
 					}
 				}
 			}
