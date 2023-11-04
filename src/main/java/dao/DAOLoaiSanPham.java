@@ -32,6 +32,7 @@ public class DAOLoaiSanPham implements Serializable {
 
 	public ArrayList<LoaiSanPham> getAllLoaiSanPham() {
 		ArrayList<LoaiSanPham> dsLoaiSanPham = new ArrayList<LoaiSanPham>();
+		
 		try {
 			ConnectDB.getinstance();
 			Connection con = ConnectDB.getConnection();

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
@@ -26,40 +27,111 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 	}
 
-	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
-		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
+	public ArrayList<SanPhamCon> loadComboBoxByLoaiSanPham(String id) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
-		String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+		PreparedStatement statement = null;
 		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			if (con != null) {
-				ps = con.prepareStatement(sql);
-				rs = ps.executeQuery();
-
-				while (rs.next()) {
-					SanPhamCon lsp = new SanPhamCon();
-					lsp.setHinhAnhSanPham(rs.getString(1));
-					lsp.setIdSanPham(rs.getString(2));
-					lsp.setTenSanPham(rs.getString(3));
-					lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
-					lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
-					lsp.setKichThuoc(rs.getDouble(6));
-					lsp.setMauSac(rs.getString(7));
-					int trangThai = rs.getInt(8);
-					TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
-					lsp.setTrangThai(trangThaiEnum);
-					lsp.thue();
-					lsp.setGiaNhap(rs.getDouble(10));
-					lsp.setSoLuong(rs.getInt(11));
-					lsp.giaBan();
-					dsSanPham.add(lsp);
-				}
+			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE lsp.tenLoaiSanPham = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, id);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SanPhamCon lsp = new SanPhamCon();
+				lsp.setHinhAnhSanPham(rs.getString(1));
+				lsp.setIdSanPham(rs.getString(2));
+				lsp.setTenSanPham(rs.getString(3));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
+				lsp.setKichThuoc(rs.getDouble(6));
+				lsp.setMauSac(rs.getString(7));
+				int trangThai = rs.getInt(8);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(10));
+				lsp.setSoLuong(rs.getInt(11));
+				lsp.giaBan();
+				dsSanPham.add(lsp);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		return dsSanPham;
+	}
+
+	public ArrayList<SanPhamCon> loadComboBoxByNhaCungCap(String id) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE ncc.tenNhaCungCap= ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, id);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SanPhamCon lsp = new SanPhamCon();
+				lsp.setHinhAnhSanPham(rs.getString(1));
+				lsp.setIdSanPham(rs.getString(2));
+				lsp.setTenSanPham(rs.getString(3));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
+				lsp.setKichThuoc(rs.getDouble(6));
+				lsp.setMauSac(rs.getString(7));
+				int trangThai = rs.getInt(8);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(10));
+				lsp.setSoLuong(rs.getInt(11));
+				lsp.giaBan();
+				dsSanPham.add(lsp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dsSanPham;
+	}
+
+	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
+
+		try {
+			ConnectDB.getinstance();
+			Connection con = ConnectDB.getConnection();
+			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(sql);
+			while (rs.next()) {
+				SanPhamCon lsp = new SanPhamCon();
+				lsp.setHinhAnhSanPham(rs.getString(1));
+				lsp.setIdSanPham(rs.getString(2));
+				lsp.setTenSanPham(rs.getString(3));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
+				lsp.setKichThuoc(rs.getDouble(6));
+				lsp.setMauSac(rs.getString(7));
+				int trangThai = rs.getInt(8);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(10));
+				lsp.setSoLuong(rs.getInt(11));
+				lsp.giaBan();
+				dsSanPham.add(lsp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return dsSanPham;
 	}
 
@@ -140,4 +212,36 @@ public class DAOQuanLySanPham implements Serializable {
 		return productID;
 	}
 
+	public boolean capNhatSanPham(SanPhamCon sp) {
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement stmt = null;
+		int n = 0;
+		try {
+			stmt = con.prepareStatement("UPDATE SanPham " +
+			        "SET hinhAnhSanPham = ?, tenSanPham = ?, loaiSanPham = ?, nhaCungCap = ?, kichThuoc = ?, mauSac = ?, trangThai = ?, thue = ?, giaNhap = ?, soLuong = ? " +
+			        "WHERE idSanPham = ?");
+			stmt.setString(1, sp.getHinhAnhSanPham());
+			stmt.setString(2, sp.getTenSanPham());
+			stmt.setString(3, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+			stmt.setString(4, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+			stmt.setDouble(5, sp.getKichThuoc());
+			stmt.setString(6, sp.getMauSac());
+			stmt.setInt(7, sp.getTrangThai().getValue());
+			stmt.setDouble(8, sp.thue());
+			stmt.setDouble(9, sp.getGiaNhap());
+			stmt.setInt(10, sp.getSoLuong());
+			stmt.setString(11, sp.getIdSanPham());
+			n = stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+		return n > 0;
+	}
 }
