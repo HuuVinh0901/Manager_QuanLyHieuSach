@@ -11,9 +11,15 @@ import java.awt.Insets;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -32,14 +38,14 @@ import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
-public class QuanLySanPhamView extends JPanel implements ActionListener {
+public class QuanLySanPhamView extends JPanel implements ActionListener, ItemListener, MouseListener {
 	private JTabbedPane tabbedPane;
 	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtHinhAnh,
 			txtGiaNhap;
 	private JComboBox<String> cbTinhTrangKhinhDoanh;
 	private JComboBox<String> cbLoaiSanPham;
 	private JComboBox<String> cbNhaCungCap;
-	private JCheckBox chkThueVAT, chkTinhTrangKinhDoanh;
+	private JCheckBox chkTinhTrangKinhDoanh;
 	private JLabel lblTieuDe, lblAnhSanPham, lblHinhAnh, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham,
 			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh, lblGiaNhap;
 	private JTable sanPhamTable;
@@ -50,6 +56,16 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 	private DAOLoaiSanPham daoLoaiSanPham;
 	private DAONhaCungCap daoNhaCungCap;
 	private DAOQuanLySanPham daoSanPham;
+	private JLabel lblTuKhoa;
+	private JTextField txtTuKhoa;
+	private JButton btnTimKiem;
+	private JButton btnXemTatCa;
+	private JPanel pnChucNangCha;
+	private JPanel pnChucNangTimKiem;
+	private JComboBox<String> cbLoaiSanPhamSearch;
+	private JComboBox<String> cbNhaCungCapSearch;
+	private JLabel lblLoaiSanPhamSearch;
+	private JLabel lblNhaCungCapSearch;
 
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
@@ -73,6 +89,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		txtHinhAnh = new JTextField();
 		lblIDSanPham = new JLabel("ID Sản Phẩm(*):");
 		txtIdSanPham = new JTextField();
+		txtIdSanPham.setEditable(false);
 		lblTenSanPham = new JLabel("Tên Sản Phẩm(*):");
 		txtTenSanPham = new JTextField();
 		lblNhaCungCap = new JLabel("Nhà Cung Cấp(*):");
@@ -89,21 +106,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		txtGiaNhap = new JTextField();
 		lblGiaBan = new JLabel("Giá Bán (*):");
 		txtGiaBan = new JTextField();
-		lblThueVAT = new JLabel("Thuế VAT:");
-		chkThueVAT = new JCheckBox();
 		lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
 		chkTinhTrangKinhDoanh = new JCheckBox();
-
-//        
-//        Insets labelInsets = new Insets(0, 60, 0, 10); 
-//        Dimension labelSize = new Dimension(100, 30);
-//        
-//        JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//        lblIDSanPham.setBorder(new EmptyBorder(labelInsets));
-//        lblIDSanPham.setPreferredSize(labelSize);
-
-//		idPanel.add(lblIDSanPham);
-//		idPanel.add(txtIdSanPham);
 
 		pnCenter.add(lblHinhAnh);
 		pnCenter.add(txtHinhAnh);
@@ -119,40 +123,52 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		pnCenter.add(txtKichThuoc);
 		pnCenter.add(lblMauSac);
 		pnCenter.add(txtMauSac);
-
 		pnCenter.add(lblSoLuong);
 		pnCenter.add(txtSoLuong);
-
 		pnCenter.add(lblGiaNhap);
 		pnCenter.add(txtGiaNhap);
-
 		pnCenter.add(lblGiaBan);
 		pnCenter.add(txtGiaBan);
-
-		pnCenter.add(lblThueVAT);
-		pnCenter.add(chkThueVAT);
-
 		pnCenter.add(lblTinhTrangKinhDoanh);
 		pnCenter.add(chkTinhTrangKinhDoanh);
 
 		pnMain = new JPanel(new BorderLayout());
 
-		pnChucNang = new JPanel(new GridLayout(1, 6, 10, 40));
-		pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
+		pnChucNangCha = new JPanel(new BorderLayout(6, 8));
+		pnChucNang = new JPanel(new GridLayout(1, 4, 10, 40));
+		pnChucNangCha.setBorder(BorderFactory.createTitledBorder("Chức năng"));
 		btnThemSP = new JButton("THÊM SẢN PHẨM");
-		btnNhapSP = new JButton("NHẬP SẢN PHẨM");
 		btnCapNhatSP = new JButton("CẬP NHẬT SẢN PHẨM");
 		btnXoaSP = new JButton("XÓA SẢN PHẨM");
-		btnHienThiLS = new JButton("LỊCH SỬ XÓA");
+		lblTuKhoa = new JLabel("Từ khóa:");
+		txtTuKhoa = new JTextField();
+		btnTimKiem = new JButton("Tìm kiếm");
+		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
+
 		pnChucNang.add(btnThemSP);
-		pnChucNang.add(btnNhapSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnXoaSP);
-		pnChucNang.add(btnHienThiLS);
 		pnChucNang.add(btnLamMoi);
 
-		pnMain.add(pnChucNang, BorderLayout.NORTH);
+		pnChucNangTimKiem = new JPanel(new GridLayout(1, 8, 10, 10));
+		lblLoaiSanPhamSearch = new JLabel("Loại sản phẩm:");
+		lblNhaCungCapSearch = new JLabel("Nhà cung cấp:");
+		cbLoaiSanPhamSearch = new JComboBox<>();
+		cbNhaCungCapSearch = new JComboBox<>();
+
+		pnChucNangTimKiem.add(lblLoaiSanPhamSearch);
+		pnChucNangTimKiem.add(cbLoaiSanPhamSearch);
+		pnChucNangTimKiem.add(lblNhaCungCapSearch);
+		pnChucNangTimKiem.add(cbNhaCungCapSearch);
+		pnChucNangTimKiem.add(lblTuKhoa);
+		pnChucNangTimKiem.add(txtTuKhoa);
+		pnChucNangTimKiem.add(btnTimKiem);
+		pnChucNangTimKiem.add(btnXemTatCa);
+
+		pnChucNangCha.add(pnChucNang, BorderLayout.NORTH);
+		pnChucNangCha.add(pnChucNangTimKiem, BorderLayout.SOUTH);
+		pnMain.add(pnChucNangCha, BorderLayout.NORTH);
 
 		pnDanhMuc = new JPanel(new BorderLayout());
 		pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
@@ -196,7 +212,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		loadDataIntoTable();
 		loadComboxBoxLoaiSanPham();
 		loadComboxBoxNhaCungCap();
+		tableSP.addMouseListener(this);
 		btnThemSP.addActionListener(this);
+		btnCapNhatSP.addActionListener(this);
+		btnXemTatCa.addActionListener(this);
+		btnLamMoi.addActionListener(this);
+		cbLoaiSanPhamSearch.addItemListener(this);
+		cbNhaCungCapSearch.addItemListener(this);
+
 	}
 
 	private void loadDataIntoTable() {
@@ -216,7 +239,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			int soLuong = sanPham.getSoLuong();
 			double giaBan = sanPham.giaBan();
 			modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-					mauSac, trangThai, thue, giaNhap,soLuong, giaBan });
+					mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
 		}
 	}
 
@@ -234,15 +257,21 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 
 	private void loadComboxBoxLoaiSanPham() {
 		ArrayList<LoaiSanPham> danhSachLoaiSanPham = daoLoaiSanPham.getAllLoaiSanPham();
+		cbLoaiSanPham.removeAllItems();
+		cbLoaiSanPhamSearch.addItem("Tất cả");
 		for (LoaiSanPham loaiSanPham : danhSachLoaiSanPham) {
 			cbLoaiSanPham.addItem(loaiSanPham.getTenLoaiSanPham());
+			cbLoaiSanPhamSearch.addItem(loaiSanPham.getTenLoaiSanPham());
 		}
 	}
 
 	private void loadComboxBoxNhaCungCap() {
 		ArrayList<NhaCungCap> danhSachNhaCungCap = daoNhaCungCap.getAllNhaCungCap();
+		cbNhaCungCap.removeAllItems();
+		cbNhaCungCapSearch.addItem("Tất cả");
 		for (NhaCungCap ncc : danhSachNhaCungCap) {
 			cbNhaCungCap.addItem(ncc.getTenNhaCungCap());
+			cbNhaCungCapSearch.addItem(ncc.getTenNhaCungCap());
 		}
 	}
 
@@ -251,7 +280,93 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		Object o = e.getSource();
 		if (o.equals(btnThemSP)) {
 			themSanPham();
+		} else if (o.equals(btnCapNhatSP)) {
+			capNhatSanPham();
+		}else if(o.equals(btnLamMoi)) {
+			lamMoi();
+		}else if(o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadDataIntoTable();
 		}
+	}
+
+	private void lamMoi() {
+		txtHinhAnh.setText("");
+		txtIdSanPham.setText("");
+		txtTenSanPham.setText("");
+		cbLoaiSanPham.setSelectedIndex(0);
+		cbNhaCungCap.setSelectedIndex(0);
+		txtKichThuoc.setText("");
+		txtMauSac.setText("");
+		txtGiaBan.setText("");
+		txtSoLuong.setText("");
+		txtGiaBan.setText("");
+		txtGiaNhap.setText("");
+	}
+
+	private void capNhatSanPham() {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
+					JOptionPane.YES_NO_OPTION);
+			if (update == JOptionPane.YES_NO_OPTION) {
+				String hinhAnhSanPham = txtHinhAnh.getText().trim();
+
+			}
+		}
+
+	}
+
+	private void loadtableByLoaiSanPham(String selectedLoaiSanPham) {
+		modelSP.setRowCount(0);
+		try {
+			ArrayList<SanPhamCon> sanPhamList = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
+			for (SanPhamCon sanPham : sanPhamList) {
+				String hinhAnh = sanPham.getHinhAnhSanPham();
+				String idSanPham = sanPham.getIdSanPham();
+				String tenSanPham = sanPham.getTenSanPham();
+				String tenLoaiSanPham = sanPham.getIdLoaiSanPham().getIdLoaiSanPham();
+				String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
+				double kichThuoc = sanPham.getKichThuoc();
+				String mauSac = sanPham.getMauSac();
+				String trangThai = sanPham.getTrangThai().getDescription();
+				double thue = sanPham.thue();
+				double giaNhap = sanPham.getGiaNhap();
+				int soLuong = sanPham.getSoLuong();
+				double giaBan = sanPham.giaBan();
+				modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
+						mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void loadtableByNhaCungCap(String selectedNhaCungCap) {
+		modelSP.setRowCount(0);
+		try {
+			ArrayList<SanPhamCon> sanPhamList = daoSanPham.loadComboBoxByNhaCungCap(selectedNhaCungCap);
+			for (SanPhamCon sanPham : sanPhamList) {
+				String hinhAnh = sanPham.getHinhAnhSanPham();
+				String idSanPham = sanPham.getIdSanPham();
+				String tenSanPham = sanPham.getTenSanPham();
+				String tenLoaiSanPham = sanPham.getIdLoaiSanPham().getIdLoaiSanPham();
+				String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
+				double kichThuoc = sanPham.getKichThuoc();
+				String mauSac = sanPham.getMauSac();
+				String trangThai = sanPham.getTrangThai().getDescription();
+				double thue = sanPham.thue();
+				double giaNhap = sanPham.getGiaNhap();
+				int soLuong = sanPham.getSoLuong();
+				double giaBan = sanPham.giaBan();
+				modelSP.addRow(new Object[] { hinhAnh, idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
+						mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void themSanPham() {
@@ -284,7 +399,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		if (loaiSanPham != null && nhaCungCap != null) {
 			SanPhamCon sp = new SanPhamCon();
 			sp.setHinhAnhSanPham(hinhAnhSanPham);
-			sp.setIdSanPham(idSanPham);
+			sp.setIdSanPham(generateNewProductID());
 			sp.setTenSanPham(tenSanPham);
 			sp.setIdLoaiSanPham(loaiSanPham);
 			sp.setIdNhaCungCap(nhaCungCap);
@@ -296,9 +411,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 			try {
 				daoSanPham.themSanPham(sp);
 				String trangThaiDescription = trangThai.getDescription();
-				modelSP.addRow(new Object[] { hinhAnhSanPham, idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-						nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap,soLuong,
-						sp.giaBan() });
+				modelSP.addRow(new Object[] { hinhAnhSanPham, generateNewProductID(), tenSanPham,
+						loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
+						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan() });
+				loadDataIntoTable();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
@@ -307,5 +423,108 @@ public class QuanLySanPhamView extends JPanel implements ActionListener {
 		} else {
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 		}
+	}
+
+	private String generateNewProductID() {
+		String idPrefix = "SP";
+		int newProductIDNumber = 1;
+		String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		try {
+			String previousProductID = daoSanPham.getLatestProductID();
+			if (previousProductID != null && !previousProductID.isEmpty()) {
+				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
+				newProductIDNumber = oldProductIDNumber + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+		return newProductID;
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		Object source = e.getSource();
+		if (source == cbLoaiSanPhamSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedLoaiSanPham = (String) cbLoaiSanPhamSearch.getSelectedItem();
+				if (selectedLoaiSanPham.equals("Tất cả")) {
+					loadDataIntoTable();
+				}else {
+					ArrayList<SanPhamCon> sanPhamLoai = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
+					if (sanPhamLoai.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+								"Thông báo", JOptionPane.WARNING_MESSAGE);
+						loadDataIntoTable();
+						cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+					} else {
+						loadtableByLoaiSanPham(selectedLoaiSanPham);
+					}
+				}
+			}
+		}else if (source == cbNhaCungCapSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedNhaCungCap = (String) cbNhaCungCapSearch.getSelectedItem();
+				if (selectedNhaCungCap.equals("Tất cả")) {
+					loadDataIntoTable();
+				} else {
+					ArrayList<SanPhamCon> sanPhamList = daoSanPham.loadComboBoxByNhaCungCap(selectedNhaCungCap);
+					if (sanPhamList.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+								"Thông báo", JOptionPane.WARNING_MESSAGE);
+						loadDataIntoTable();
+						cbNhaCungCapSearch.setSelectedItem("Tất cả");
+					} else {
+						loadtableByNhaCungCap(selectedNhaCungCap);
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			txtHinhAnh.setText(modelSP.getValueAt(row, 0).toString());
+			txtIdSanPham.setText(modelSP.getValueAt(row, 1).toString());
+			txtTenSanPham.setText(modelSP.getValueAt(row, 2).toString());
+			cbLoaiSanPham.setSelectedItem(modelSP.getValueAt(row, 3).toString());
+			cbNhaCungCap.setSelectedItem(modelSP.getValueAt(row, 4).toString());
+			txtKichThuoc.setText(modelSP.getValueAt(row, 5).toString());
+			txtMauSac.setText(modelSP.getValueAt(row, 6).toString());
+			String trangThaiValue = modelSP.getValueAt(row, 7).toString(); 
+			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
+	        boolean isKinhDoanh = trangThai == TrangThaiSPEnum.DANG_KINH_DOANH;
+	        chkTinhTrangKinhDoanh.setSelected(isKinhDoanh);
+			txtGiaNhap.setText(modelSP.getValueAt(row, 9).toString());
+			txtSoLuong.setText(modelSP.getValueAt(row, 10).toString());
+			txtGiaBan.setText(modelSP.getValueAt(row, 11).toString());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
