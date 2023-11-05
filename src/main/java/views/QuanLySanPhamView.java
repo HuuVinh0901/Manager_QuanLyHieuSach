@@ -217,6 +217,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnCapNhatSP.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
 		btnLamMoi.addActionListener(this);
+		btnXoaSP.addActionListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
 		txtTuKhoa.addKeyListener(this);
@@ -286,7 +287,31 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		}else if(o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadDataIntoTable();
+		}else if(o.equals(btnXoaSP)) {
+			xoaSanPham();
 		}
+	}
+
+	private void xoaSanPham() {
+		int row = tableSP.getSelectedRow();
+		if(row == -1) {
+			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
+		}else {
+			try {
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!","Cảnh báo",JOptionPane.YES_NO_OPTION);
+				if(hoiNhac==JOptionPane.YES_OPTION) {
+					modelSP.removeRow(row);
+					String idSanPham = txtIdSanPham.getText();
+					daoSanPham.xoaSanPham(idSanPham);
+					JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+					lamMoi();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Xóa sản phẩm không thành công");
+			}
+		}
+		
 	}
 
 	private void lamMoi() {
@@ -308,7 +333,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	    if (row >= 0) {
 	        int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
 	                JOptionPane.YES_NO_OPTION);
-	        if (update == JOptionPane.YES_NO_OPTION) {
+	        if (update == JOptionPane.YES_OPTION) {
 	            String idSanPham = txtIdSanPham.getText().trim();
 	            String tenSanPham = txtTenSanPham.getText().trim();
 	            double kichThuoc = Double.parseDouble(txtKichThuoc.getText());

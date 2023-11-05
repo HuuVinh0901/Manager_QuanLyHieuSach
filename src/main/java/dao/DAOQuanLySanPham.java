@@ -219,4 +219,13 @@ public class DAOQuanLySanPham implements Serializable {
 			return false;
 		}
 	}
+	public void xoaSanPham(String idSanPham) {
+		String sql ="DELETE FROM SanPham WHERE idSanPham =?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, idSanPham);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
