@@ -207,11 +207,9 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		String soDienThoai = txtSoDienThoai.getText();
 
 		NhaCungCap ncc = new NhaCungCap(idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai);
-		try {
+	
 			daoNhaCungCap.themNhaCungCap(ncc);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
 		modelSP.addRow(new Object[] { idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai });
 	}
 }
