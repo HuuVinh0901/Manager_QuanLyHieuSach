@@ -142,7 +142,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnThemSP = new JButton("THÊM SẢN PHẨM");
 		btnCapNhatSP = new JButton("CẬP NHẬT SẢN PHẨM");
 		btnXoaSP = new JButton("XÓA SẢN PHẨM");
-		lblTuKhoa = new JLabel("Từ khóa:");
+		lblTuKhoa = new JLabel("Tìm kiếm theo tên sản phẩm:");
 		txtTuKhoa = new JTextField();
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
@@ -153,7 +153,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnChucNang.add(btnXoaSP);
 		pnChucNang.add(btnLamMoi);
 
-		pnChucNangTimKiem = new JPanel(new GridLayout(1, 8, 10, 10));
+		pnChucNangTimKiem = new JPanel(new GridLayout(1, 7, 10, 10));
 		lblLoaiSanPhamSearch = new JLabel("Loại sản phẩm:");
 		lblNhaCungCapSearch = new JLabel("Nhà cung cấp:");
 		cbLoaiSanPhamSearch = new JComboBox<>();
@@ -304,16 +304,58 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	}
 
 	private void capNhatSanPham() {
-		int row = tableSP.getSelectedRow();
-		if (row >= 0) {
-			int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
-					JOptionPane.YES_NO_OPTION);
-			if (update == JOptionPane.YES_NO_OPTION) {
-				
+	    int row = tableSP.getSelectedRow();
+	    if (row >= 0) {
+	        int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
+	                JOptionPane.YES_NO_OPTION);
+	        if (update == JOptionPane.YES_NO_OPTION) {
+	            String idSanPham = txtIdSanPham.getText().trim();
+	            String tenSanPham = txtTenSanPham.getText().trim();
+	            double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+	            String mauSac = txtMauSac.getText();
+	            boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+	            TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
+	            double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+	            int soLuong = Integer.parseInt(txtSoLuong.getText());
 
-			}
-		}
+	            LoaiSanPham loaiSanPham = null;
+	            for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
+	                if (item.getTenLoaiSanPham().equals(cbLoaiSanPham.getSelectedItem().toString())) {
+	                    loaiSanPham = item;
+	                    break;
+	                }
+	            }
 
+	            NhaCungCap nhaCungCap = null;
+	            for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+	                if (item.getTenNhaCungCap().equals(cbNhaCungCap.getSelectedItem().toString())) {
+	                    nhaCungCap = item;
+	                    break;
+	                }
+	            }
+	            if (loaiSanPham != null && nhaCungCap != null) {
+	                SanPhamCon sp = new SanPhamCon();
+	                sp.setIdSanPham(idSanPham);
+	                sp.setTenSanPham(tenSanPham);
+	                sp.setIdLoaiSanPham(loaiSanPham);
+	                sp.setIdNhaCungCap(nhaCungCap);
+	                sp.setKichThuoc(kichThuoc);
+	                sp.setMauSac(mauSac);
+	                sp.setTrangThai(trangThai);
+	                sp.setGiaNhap(giaNhap);
+	                sp.setSoLuong(soLuong);
+
+	                daoSanPham.capNhatSanPham(sp);
+	                JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Cập nhật sản phẩm thành công!");
+	                loadDataIntoTable();
+	                lamMoi();
+	            } else {
+	                JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+	            }
+	        }
+	    } else {
+	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
+	    }
 	}
 
 	private void loadtableByLoaiSanPham(String selectedLoaiSanPham) {
@@ -404,19 +446,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			sp.setTrangThai(trangThai);
 			sp.setGiaNhap(giaNhap);
 			sp.setSoLuong(soLuong);
-			try {
-				daoSanPham.themSanPham(sp);
-				String trangThaiDescription = trangThai.getDescription();
-				modelSP.addRow(new Object[] {  generateNewProductID(), tenSanPham,
-						loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
-						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan()});
-				loadDataIntoTable();
-				lamMoi();
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
-				e.printStackTrace();
-			}
+			daoSanPham.themSanPham(sp);
+			String trangThaiDescription = trangThai.getDescription();
+			modelSP.addRow(new Object[] {  generateNewProductID(), tenSanPham,
+					loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
+					trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan()});
+			loadDataIntoTable();
+			lamMoi();
+			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 		} else {
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 		}
