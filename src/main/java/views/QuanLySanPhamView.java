@@ -8,6 +8,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,16 +43,15 @@ import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
-public class QuanLySanPhamView extends JPanel implements ActionListener, ItemListener, MouseListener ,KeyListener{
+public class QuanLySanPhamView extends JPanel implements ActionListener, ItemListener, MouseListener, KeyListener {
 	private JTabbedPane tabbedPane;
-	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan,
-			txtGiaNhap;
+	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan, txtGiaNhap;
 	private JComboBox<String> cbTinhTrangKhinhDoanh;
 	private JComboBox<String> cbLoaiSanPham;
 	private JComboBox<String> cbNhaCungCap;
 	private JCheckBox chkTinhTrangKinhDoanh;
-	private JLabel lblTieuDe, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham,
-			lblKichThuoc, lblMauSac, lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh, lblGiaNhap;
+	private JLabel lblTieuDe, lblIDSanPham, lblTenSanPham, lblNhaCungCap, lblLoaiSanPham, lblKichThuoc, lblMauSac,
+			lblSoLuong, lblGiaBan, lblThueVAT, lblTinhTrangKinhDoanh, lblGiaNhap;
 	private JTable sanPhamTable;
 	private JPanel pnCenter, pnChucNang, pnDanhMuc, pnMain;
 	private JButton btnThemSP, btnXoaSP, btnNhapSP, btnCapNhatSP, btnHienThiLS, btnLamMoi;
@@ -112,7 +113,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
 		chkTinhTrangKinhDoanh = new JCheckBox();
 
-
 		pnCenter.add(lblIDSanPham);
 		pnCenter.add(txtIdSanPham);
 		pnCenter.add(lblTenSanPham);
@@ -147,7 +147,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
-		
+
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnXoaSP);
@@ -221,6 +221,34 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
 		txtTuKhoa.addKeyListener(this);
+		txtKichThuoc.addKeyListener(this);
+		txtSoLuong.addKeyListener(this);
+		txtGiaNhap.addKeyListener(this);
+		txtMauSac.addKeyListener(this);
+		txtTenSanPham.addKeyListener(this);
+
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					if (e.getKeyCode() == KeyEvent.VK_F5) {
+						lamMoi();
+						loadDataIntoTable();
+					}
+				}else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
+					System.out.println("Xoa thanh cong");
+					xoaSanPham();
+				} else if(e.getKeyCode()==KeyEvent.VK_F2) {
+					capNhatSanPham();
+				}else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
+                    txtTuKhoa.requestFocusInWindow();
+                }
+				return false;
+			}
+		});
 	}
 
 	private void loadDataIntoTable() {
@@ -238,8 +266,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			double giaNhap = sanPham.getGiaNhap();
 			int soLuong = sanPham.getSoLuong();
 			double giaBan = sanPham.giaBan();
-			modelSP.addRow(new Object[] {  idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-					mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
+			modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
+					trangThai, thue, giaNhap, soLuong, giaBan });
 		}
 	}
 
@@ -249,8 +277,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			String tenLoaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
 			String tenNhaCungCap = sp.getIdNhaCungCap().getIdNhaCungCap();
 
-			String[] row = {  sp.getIdSanPham(), sp.getTenSanPham(), tenLoaiSanPham,
-					tenNhaCungCap, sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "" };
+			String[] row = { sp.getIdSanPham(), sp.getTenSanPham(), tenLoaiSanPham, tenNhaCungCap,
+					sp.getKichThuoc() + "", sp.getMauSac(), sp.getTrangThai() + "" };
 			modelSP.addRow(row);
 		}
 	}
@@ -282,24 +310,25 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			themSanPham();
 		} else if (o.equals(btnCapNhatSP)) {
 			capNhatSanPham();
-		}else if(o.equals(btnLamMoi)) {
+		} else if (o.equals(btnLamMoi)) {
 			lamMoi();
-		}else if(o.equals(btnXemTatCa)) {
+		} else if (o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadDataIntoTable();
-		}else if(o.equals(btnXoaSP)) {
+		} else if (o.equals(btnXoaSP)) {
 			xoaSanPham();
 		}
 	}
 
 	private void xoaSanPham() {
 		int row = tableSP.getSelectedRow();
-		if(row == -1) {
+		if (row == -1) {
 			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
-		}else {
+		} else {
 			try {
-				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!","Cảnh báo",JOptionPane.YES_NO_OPTION);
-				if(hoiNhac==JOptionPane.YES_OPTION) {
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!", "Cảnh báo",
+						JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
 					modelSP.removeRow(row);
 					String idSanPham = txtIdSanPham.getText();
 					daoSanPham.xoaSanPham(idSanPham);
@@ -311,7 +340,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				JOptionPane.showMessageDialog(this, "Xóa sản phẩm không thành công");
 			}
 		}
-		
+
 	}
 
 	private void lamMoi() {
@@ -329,58 +358,60 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	}
 
 	private void capNhatSanPham() {
-	    int row = tableSP.getSelectedRow();
-	    if (row >= 0) {
-	        int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
-	                JOptionPane.YES_NO_OPTION);
-	        if (update == JOptionPane.YES_OPTION) {
-	            String idSanPham = txtIdSanPham.getText().trim();
-	            String tenSanPham = txtTenSanPham.getText().trim();
-	            double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-	            String mauSac = txtMauSac.getText();
-	            boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-	            TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-	            double giaNhap = Double.parseDouble(txtGiaNhap.getText());
-	            int soLuong = Integer.parseInt(txtSoLuong.getText());
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
+					JOptionPane.YES_NO_OPTION);
+			if (update == JOptionPane.YES_OPTION) {
+				String idSanPham = txtIdSanPham.getText().trim();
+				String tenSanPham = txtTenSanPham.getText().trim();
+				double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+				String mauSac = txtMauSac.getText();
+				boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+				TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH
+						: TrangThaiSPEnum.NGUNG_KINH_DOANH;
+				double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+				int soLuong = Integer.parseInt(txtSoLuong.getText());
 
-	            LoaiSanPham loaiSanPham = null;
-	            for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
-	                if (item.getTenLoaiSanPham().equals(cbLoaiSanPham.getSelectedItem().toString())) {
-	                    loaiSanPham = item;
-	                    break;
-	                }
-	            }
+				LoaiSanPham loaiSanPham = null;
+				for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
+					if (item.getTenLoaiSanPham().equals(cbLoaiSanPham.getSelectedItem().toString())) {
+						loaiSanPham = item;
+						break;
+					}
+				}
 
-	            NhaCungCap nhaCungCap = null;
-	            for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
-	                if (item.getTenNhaCungCap().equals(cbNhaCungCap.getSelectedItem().toString())) {
-	                    nhaCungCap = item;
-	                    break;
-	                }
-	            }
-	            if (loaiSanPham != null && nhaCungCap != null) {
-	                SanPhamCon sp = new SanPhamCon();
-	                sp.setIdSanPham(idSanPham);
-	                sp.setTenSanPham(tenSanPham);
-	                sp.setIdLoaiSanPham(loaiSanPham);
-	                sp.setIdNhaCungCap(nhaCungCap);
-	                sp.setKichThuoc(kichThuoc);
-	                sp.setMauSac(mauSac);
-	                sp.setTrangThai(trangThai);
-	                sp.setGiaNhap(giaNhap);
-	                sp.setSoLuong(soLuong);
+				NhaCungCap nhaCungCap = null;
+				for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+					if (item.getTenNhaCungCap().equals(cbNhaCungCap.getSelectedItem().toString())) {
+						nhaCungCap = item;
+						break;
+					}
+				}
+				if (loaiSanPham != null && nhaCungCap != null) {
+					SanPhamCon sp = new SanPhamCon();
+					sp.setIdSanPham(idSanPham);
+					sp.setTenSanPham(tenSanPham);
+					sp.setIdLoaiSanPham(loaiSanPham);
+					sp.setIdNhaCungCap(nhaCungCap);
+					sp.setKichThuoc(kichThuoc);
+					sp.setMauSac(mauSac);
+					sp.setTrangThai(trangThai);
+					sp.setGiaNhap(giaNhap);
+					sp.setSoLuong(soLuong);
 
-	                daoSanPham.capNhatSanPham(sp);
-	                JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Cập nhật sản phẩm thành công!");
-	                loadDataIntoTable();
-	                lamMoi();
-	            } else {
-	                JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
-	            }
-	        }
-	    } else {
-	        JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
-	    }
+					daoSanPham.capNhatSanPham(sp);
+					JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Cập nhật sản phẩm thành công!");
+					loadDataIntoTable();
+					lamMoi();
+				} else {
+					JOptionPane.showMessageDialog(QuanLySanPhamView.this,
+							"Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+				}
+			}
+		} else {
+			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
+		}
 	}
 
 	private void loadtableByLoaiSanPham(String selectedLoaiSanPham) {
@@ -400,8 +431,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				double giaNhap = sanPham.getGiaNhap();
 				int soLuong = sanPham.getSoLuong();
 				double giaBan = sanPham.giaBan();
-				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-						mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
+				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
+						trangThai, thue, giaNhap, soLuong, giaBan });
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -425,8 +456,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				double giaNhap = sanPham.getGiaNhap();
 				int soLuong = sanPham.getSoLuong();
 				double giaBan = sanPham.giaBan();
-				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc,
-						mauSac, trangThai, thue, giaNhap, soLuong, giaBan });
+				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
+						trangThai, thue, giaNhap, soLuong, giaBan });
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -473,9 +504,9 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			sp.setSoLuong(soLuong);
 			daoSanPham.themSanPham(sp);
 			String trangThaiDescription = trangThai.getDescription();
-			modelSP.addRow(new Object[] {  generateNewProductID(), tenSanPham,
-					loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
-					trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan()});
+			modelSP.addRow(new Object[] { generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),
+					nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap, soLuong,
+					sp.giaBan() });
 			loadDataIntoTable();
 			lamMoi();
 			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
@@ -510,7 +541,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				String selectedLoaiSanPham = (String) cbLoaiSanPhamSearch.getSelectedItem();
 				if (selectedLoaiSanPham.equals("Tất cả")) {
 					loadDataIntoTable();
-				}else {
+				} else {
 					ArrayList<SanPhamCon> sanPhamLoai = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
 					if (sanPhamLoai.isEmpty()) {
 						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
@@ -522,7 +553,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 					}
 				}
 			}
-		}else if (source == cbNhaCungCapSearch) {
+		} else if (source == cbNhaCungCapSearch) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				String selectedNhaCungCap = (String) cbNhaCungCapSearch.getSelectedItem();
 				if (selectedNhaCungCap.equals("Tất cả")) {
@@ -552,10 +583,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			cbNhaCungCap.setSelectedItem(modelSP.getValueAt(row, 3).toString());
 			txtKichThuoc.setText(modelSP.getValueAt(row, 4).toString());
 			txtMauSac.setText(modelSP.getValueAt(row, 5).toString());
-			String trangThaiValue = modelSP.getValueAt(row, 6).toString(); 
+			String trangThaiValue = modelSP.getValueAt(row, 6).toString();
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
-	        boolean isKinhDoanh = trangThai == TrangThaiSPEnum.DANG_KINH_DOANH;
-	        chkTinhTrangKinhDoanh.setSelected(isKinhDoanh);
+			boolean isKinhDoanh = trangThai == TrangThaiSPEnum.DANG_KINH_DOANH;
+			chkTinhTrangKinhDoanh.setSelected(isKinhDoanh);
 			txtGiaNhap.setText(modelSP.getValueAt(row, 8).toString());
 			txtSoLuong.setText(modelSP.getValueAt(row, 9).toString());
 			txtGiaBan.setText(modelSP.getValueAt(row, 10).toString());
@@ -589,24 +620,45 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void keyReleased(KeyEvent e) {
-	    Object o = e.getSource();
-	    if (o.equals(txtTuKhoa)) {
-	        DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
-	        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
-	        tableSP.setRowSorter(tr);
-	        tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTuKhoa.getText().trim(), 1));
-	    }
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			Object o = e.getSource();
+			if (o == txtTenSanPham || o == txtKichThuoc || o == txtMauSac || o == txtSoLuong || o == txtGiaNhap
+					|| o == cbLoaiSanPham || o == cbNhaCungCap) {
+				themSanPham();
+			}
+		} else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			lamMoi();
+		} else if (tableSP.getSelectedRow() != -1) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) {
+				lamMoi();
+				loadDataIntoTable();
+			}
+
+		}
 	}
 
+	@Override
+	public void keyReleased(KeyEvent e) {
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if (o.equals(txtTuKhoa)) {
+				DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tableSP.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTuKhoa.getText().trim(), 1));
+			} else if (e.getKeyCode() == KeyEvent.VK_F5) {
+				lamMoi();
+				loadDataIntoTable();
+			} else if (e.getKeyCode() == KeyEvent.VK_F10) {
+				lamMoi();
+				loadDataIntoTable();
+			}
+		});
+	}
 
 }
