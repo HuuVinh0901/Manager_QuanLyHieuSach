@@ -33,7 +33,7 @@ public class DAOQuanLySanPham implements Serializable {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong,sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
 					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE lsp.tenLoaiSanPham = ?";
 			statement = con.prepareStatement(sql);
@@ -69,7 +69,7 @@ public class DAOQuanLySanPham implements Serializable {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
 					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE ncc.tenNhaCungCap= ?";
 			statement = con.prepareStatement(sql);

@@ -108,6 +108,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtGiaNhap = new JTextField();
 		lblGiaBan = new JLabel("Giá Bán (*):");
 		txtGiaBan = new JTextField();
+		txtGiaBan.setEditable(false);
 		lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
 		chkTinhTrangKinhDoanh = new JCheckBox();
 
@@ -146,7 +147,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
-
+		
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnXoaSP);
@@ -175,7 +176,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnDanhMuc.setBorder(BorderFactory.createTitledBorder("Danh mục"));
 		modelSP = new DefaultTableModel();
 		tableSP = new JTable();
-		modelSP.addColumn("Hình Ảnh");
 		modelSP.addColumn("ID Sản Phẩm");
 		modelSP.addColumn("Tên Sản Phẩm");
 		modelSP.addColumn("Loại Sản Phẩm");
@@ -194,7 +194,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 
 		// Bảng
 		sanPhamTable = new JTable();
-
 		sanPhamPanel.add(pnCenter, BorderLayout.NORTH);
 		sanPhamPanel.add(pnMain, BorderLayout.CENTER);
 
@@ -410,7 +409,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				String trangThaiDescription = trangThai.getDescription();
 				modelSP.addRow(new Object[] {  generateNewProductID(), tenSanPham,
 						loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
-						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan() });
+						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan()});
 				loadDataIntoTable();
 				lamMoi();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
