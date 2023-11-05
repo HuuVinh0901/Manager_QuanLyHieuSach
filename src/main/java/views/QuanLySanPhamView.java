@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
@@ -27,6 +29,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
@@ -38,7 +41,7 @@ import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
-public class QuanLySanPhamView extends JPanel implements ActionListener, ItemListener, MouseListener {
+public class QuanLySanPhamView extends JPanel implements ActionListener, ItemListener, MouseListener ,KeyListener{
 	private JTabbedPane tabbedPane;
 	private JTextField txtTenSanPham, txtIdSanPham, txtKichThuoc, txtSoLuong, txtMauSac, txtGiaBan,
 			txtGiaNhap;
@@ -161,7 +164,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnChucNangTimKiem.add(cbNhaCungCapSearch);
 		pnChucNangTimKiem.add(lblTuKhoa);
 		pnChucNangTimKiem.add(txtTuKhoa);
-		pnChucNangTimKiem.add(btnTimKiem);
+//		pnChucNangTimKiem.add(btnTimKiem);
 		pnChucNangTimKiem.add(btnXemTatCa);
 
 		pnChucNangCha.add(pnChucNang, BorderLayout.NORTH);
@@ -217,7 +220,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnLamMoi.addActionListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
-
+		txtTuKhoa.addKeyListener(this);
 	}
 
 	private void loadDataIntoTable() {
@@ -298,6 +301,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtSoLuong.setText("");
 		txtGiaBan.setText("");
 		txtGiaNhap.setText("");
+		txtTuKhoa.setText("");
 	}
 
 	private void capNhatSanPham() {
@@ -408,6 +412,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 						loaiSanPham.getTenLoaiSanPham(), nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac,
 						trangThaiDescription, sp.thue(), giaNhap, soLuong, sp.giaBan() });
 				loadDataIntoTable();
+				lamMoi();
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Lỗi khi thêm sản phẩm!");
@@ -519,4 +524,28 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
+	    Object o = e.getSource();
+	    if (o.equals(txtTuKhoa)) {
+	        DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
+	        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+	        tableSP.setRowSorter(tr);
+	        tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTuKhoa.getText().trim(), 1));
+	    }
+	}
+
+
 }
