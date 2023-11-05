@@ -19,6 +19,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -229,6 +231,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 
 		this.setFocusable(true);
 		this.requestFocusInWindow();
+		tableSP.requestFocus();
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
 			@Override
@@ -238,14 +241,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 						lamMoi();
 						loadDataIntoTable();
 					}
-				}else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
+				} else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
 					System.out.println("Xoa thanh cong");
 					xoaSanPham();
-				} else if(e.getKeyCode()==KeyEvent.VK_F2) {
+				} else if (e.getKeyCode() == KeyEvent.VK_F2) {
 					capNhatSanPham();
-				}else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
-                    txtTuKhoa.requestFocusInWindow();
-                }
+				} else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
+					txtTuKhoa.requestFocusInWindow();
+				}
 				return false;
 			}
 		});
@@ -375,7 +378,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 
 				LoaiSanPham loaiSanPham = null;
 				for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
-					if (item.getTenLoaiSanPham().equals(cbLoaiSanPham.getSelectedItem().toString())) {
+					if (item.getTenLoaiSanPham().equals(cbLoaiSanPham.getSelectedItem())) {
 						loaiSanPham = item;
 						break;
 					}
@@ -383,7 +386,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 
 				NhaCungCap nhaCungCap = null;
 				for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
-					if (item.getTenNhaCungCap().equals(cbNhaCungCap.getSelectedItem().toString())) {
+					if (item.getTenNhaCungCap().equals(cbNhaCungCap.getSelectedItem())) {
 						nhaCungCap = item;
 						break;
 					}
@@ -657,8 +660,22 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			} else if (e.getKeyCode() == KeyEvent.VK_F10) {
 				lamMoi();
 				loadDataIntoTable();
+			}else if(o.equals(txtGiaNhap)) {
+				calculateSellingPrice(txtGiaNhap,txtGiaBan);
 			}
 		});
+	}
+
+	private void calculateSellingPrice(JTextField txtGiaNhap2, JTextField txtGiaBan2) {
+		 try {
+	            double giaNhap = Double.parseDouble(txtGiaNhap2.getText());
+	            double thue = giaNhap * 0.05; 
+	            double sellingPrice = giaNhap + (giaNhap * 0.55) + thue; 
+	            txtGiaBan2.setText(String.valueOf(sellingPrice));
+	        } catch (NumberFormatException ex) {
+	        	txtGiaBan2.setText("Vui lòng nhập số hợp lệ.");
+	        }
+		
 	}
 
 }

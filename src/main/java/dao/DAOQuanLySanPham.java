@@ -204,7 +204,7 @@ public class DAOQuanLySanPham implements Serializable {
 		try (PreparedStatement pst = connection.prepareStatement(sql)){
 			pst.setString(1, sp.getTenSanPham());
 			pst.setString(2, sp.getIdLoaiSanPham().getIdLoaiSanPham());
-			pst.setString(3, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+			pst.setString(3, sp.getIdNhaCungCap().getIdNhaCungCap());
 			pst.setDouble(4, sp.getKichThuoc());
 			pst.setString(5, sp.getMauSac());
 			pst.setInt(6, sp.getTrangThai().getValue());
