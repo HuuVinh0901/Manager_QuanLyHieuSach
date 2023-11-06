@@ -9,10 +9,10 @@ public class SanPhamCon extends SanPhamCha {
 
 	}
 
-	public SanPhamCon(String hinhAnhSanPham, String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
+	public SanPhamCon( String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
 			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong,
 			double giaNhap) {
-		super(hinhAnhSanPham, idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong,
+		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong,
 				giaNhap);
 		// TODO Auto-generated constructor stub
 	}
@@ -24,7 +24,7 @@ public class SanPhamCon extends SanPhamCha {
 
 	@Override
 	public String toString() {
-		return "SanPhamCon [hinhAnhSanPham=" + hinhAnhSanPham + ", idSanPham=" + idSanPham + ", tenSanPham="
+		return "SanPhamCon [dSanPham=" + idSanPham + ", tenSanPham="
 				+ tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc="
 				+ kichThuoc + ", mauSac=" + mauSac + ", trangThai=" + trangThai + ", thue()=" + thue() + ", giaNhap="
 				+ giaNhap + ", soLuong=" + soLuong + ", giaBan()=" + giaBan() + "]";
