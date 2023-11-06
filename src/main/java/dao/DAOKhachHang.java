@@ -5,7 +5,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler;
 
 import connection.ConnectDB;
 import models.KhachHang;
@@ -67,5 +70,95 @@ public class DAOKhachHang {
 			e.printStackTrace();
 		}
 		return listKH;
+	}
+	public void updateKhachHang(KhachHang kh) {
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		String sql = "update KhachHang set tenKhachHang = ?, soDienThoai = ?, email = ?, diaChi = ?, ngaySinh = ?, gioiTinh = ?  where idKhachHang = ?";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, kh.getTenKhachHang());
+			pst.setString(2, kh.getSdt());
+			pst.setString(3, kh.getEmail());
+			pst.setString(4, kh.getDiaChi());
+			pst.setDate(5, kh.getNgaySinh());
+			pst.setBoolean(6, kh.isGioiTinh());
+			pst.setString(7, kh.getIdKhachHang());
+			pst.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close(pst);
+		}
+	}
+	public void DeleteKH(String maXoa) {
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		String sql = "delete from KhachHang where idKhachHang = ? ";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, maXoa);
+			pst.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close(pst);
+		}
+	}
+	public ArrayList<KhachHang> getMa(String maTim) {
+		ArrayList<KhachHang> lstNV = new ArrayList<KhachHang>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sqlMa = "select * from KhachHang where idKhachHang = '" + maTim + "'";
+
+		try {
+			Statement stm = con.createStatement();
+			ResultSet rsMa = stm.executeQuery(sqlMa);
+			while (rsMa.next()) {
+				KhachHang kh = new KhachHang();
+				kh.setIdKhachHang(rsMa.getString(1));
+				kh.setTenKhachHang(rsMa.getString(2));
+				kh.setSdt(rsMa.getString(3));
+				kh.setEmail(rsMa.getString(4));
+				kh.setDiaChi(rsMa.getString(5));
+				kh.setNgaySinh(rsMa.getDate(6));
+				kh.setGioiTinh(rsMa.getBoolean(7));
+				
+				lstNV.add(kh);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lstNV;
+	}
+	public ArrayList<KhachHang> getTen(String tenTim) {
+		ArrayList<KhachHang> lstNV = new ArrayList<KhachHang>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sqlMa = "select * from KhachHang where tenKhachHang = '" + tenTim + "'";
+
+		try {
+			Statement stm = con.createStatement();
+			ResultSet rsMa = stm.executeQuery(sqlMa);
+			while (rsMa.next()) {
+				KhachHang kh = new KhachHang();
+				kh.setIdKhachHang(rsMa.getString(1));
+				kh.setTenKhachHang(rsMa.getString(2));
+				kh.setSdt(rsMa.getString(3));
+				kh.setEmail(rsMa.getString(4));
+				kh.setDiaChi(rsMa.getString(5));
+				kh.setNgaySinh(rsMa.getDate(6));
+				kh.setGioiTinh(rsMa.getBoolean(7));
+				
+				lstNV.add(kh);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lstNV;
 	}
 }
