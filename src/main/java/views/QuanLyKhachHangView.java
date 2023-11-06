@@ -11,8 +11,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -25,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -33,6 +39,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler;
 import javax.swing.table.DefaultTableModel;
 
 import org.codehaus.plexus.util.dag.DAG;
@@ -57,10 +64,11 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 	private JTextField txtId;
 	
 	
-	private JTextField txtNS;
+	
 	private JTextField txtTimKiem;
 	private JLabel lbTenKH;
 	private JLabel lbsdt;
+	private JLabel lbid;
 	private JLabel lbEmail;
 	private JLabel lbDiaChi;
 	private JLabel lbNgaySinh;
@@ -78,11 +86,12 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 	private JButton btnCapNhatKH;
 	private JButton btnXoaKH;
 	private JButton btnLamMoi;
+	private JButton btnTimKiem;
 	private ButtonGroup groupGT;
 	private SimpleDateFormat dfNgaySinh;
 	private DAOKhachHang daoKhachHang;
 	private JTable tableKH;
-	
+	private JComboBox<Object> cbTimKiem;
 	public QuanLyKhachHangView() {
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 		daoKhachHang=new DAOKhachHang();
@@ -119,10 +128,10 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 	    
 	    lbGioiTinh=new JLabel("Giới tính: ");
 	    lbNgaySinh=new JLabel("Ngày sinh: ");
-	    txtNS= new JTextField();
+	  
 	    rbNam=new JRadioButton("Nam");
 	    rbNu=new JRadioButton("Nữ");
-	    
+	    cbTimKiem = new JComboBox<Object>(new Object[] { "Tìm kiếm theo ID", "Tìm kiếm theo tên" });
 	    chooserNgaySinh = new JDateChooser();
 		chooserNgaySinh.getCalendarButton().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		chooserNgaySinh.setBounds(100, 310, 200, 40);
@@ -156,7 +165,10 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 
         
         b7=Box.createHorizontalBox();
+        lbid=new JLabel("ID nhân viên:");
         txtId=new JTextField();
+        txtId.setEditable(false);
+        b7.add(lbid);
         b7.add(txtId);
         
         b4.add(lbNgaySinh);
@@ -174,6 +186,7 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 		lbDiaChi.setPreferredSize(lbsdt.getPreferredSize());
 		lbGioiTinh.setPreferredSize(lbsdt.getPreferredSize());
 		lbNgaySinh.setPreferredSize(lbTenKH.getPreferredSize());
+		lbid.setPreferredSize(lbTenKH.getPreferredSize());
 	    BoxCenter.add(Box.createVerticalStrut(10));
         BoxCenter.add(b1);
         BoxCenter.add(Box.createVerticalStrut(10));
@@ -193,22 +206,26 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
         
         lbTimKiem=new JLabel("Tìm kiếm nhân viên:");
         txtTimKiem=new JTextField();
-        JPanel panelSearch=new JPanel();
-        panelSearch.add(lbTimKiem);
-        panelSearch.add(txtTimKiem);
         
-        JPanel pnChucNang = new JPanel(new GridLayout(1,6,10,40));
         
+        JPanel pnChucNang = new JPanel(new GridLayout(2,6,10,40));
+        JPanel pnChucNang1 = new JPanel(new GridLayout(1,6,10,40));
+        JPanel pnChucNang2 = new JPanel(new GridLayout(1,6,10,40));
         btnThemKH=new JButton("THÊM KHÁCH HÀNG");
         btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
         btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
         btnLamMoi=new JButton("LÀM MỚI");
-        pnChucNang.add(btnThemKH);
-        pnChucNang.add(btnCapNhatKH);
-        pnChucNang.add(btnXoaKH);
-        pnChucNang.add(btnLamMoi);
-       
-        
+        btnTimKiem=new JButton("TÌM");
+        pnChucNang1.add(btnThemKH);
+        pnChucNang1.add(btnCapNhatKH);
+        pnChucNang1.add(btnXoaKH);
+        pnChucNang1.add(btnLamMoi);
+        pnChucNang2.add(cbTimKiem);
+        pnChucNang2.add(lbTimKiem);
+        pnChucNang2.add(txtTimKiem);
+        pnChucNang2.add(btnTimKiem);
+        pnChucNang.add(pnChucNang1);
+        pnChucNang.add(pnChucNang2);
        //Tạo bảng
         modelKhachHang = new DefaultTableModel();
 		tableKH = new JTable();
@@ -235,6 +252,8 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 		btnThemKH.addActionListener(this);
 		btnCapNhatKH.addActionListener(this);
 		btnXoaKH.addActionListener(this);
+		btnTimKiem.addActionListener(this);
+		tableKH.addMouseListener(this);
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -245,7 +264,7 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
         
 	}
 	private void ThemKH() throws SQLException {
-		String idKhachHang = txtId.getText();
+		String idKhachHang = autoID();
 		String tenKhachHang = txtTenKH.getText();
 		String email= txtEmail.getText();
 		String sdt=txtsdt.getText();
@@ -267,10 +286,153 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 			
 		}
 	}
-
-	private void lamMoi() {
+	private void XoaDuLieuTable() {
+		DefaultTableModel dm = (DefaultTableModel) tableKH.getModel();
+		dm.getDataVector().removeAllElements();
+	}
+	private void loadDanhSachTimKiem(ArrayList<KhachHang> lstKH) {
+		XoaDuLieuTable();
 		
+		for (KhachHang kh : lstKH) {
+			
+			modelKhachHang.addRow(new Object[] { kh.getIdKhachHang(), kh.getTenKhachHang(),kh.getSdt(), kh.getEmail(),kh.getDiaChi(),dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ"
+			});
+		}
+	}
+	private void timTheoID() {
+		String idTim = txtTimKiem.getText().trim();
+		
+		ArrayList<KhachHang> lstKH = new ArrayList<KhachHang>() ;
+		lstKH=daoKhachHang.getMa(idTim);
+		if(idTim.equals("")) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập ID cần tìm", "Thông báo",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			if(lstKH.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Không tìm thấy khách hàng có mã "+idTim, "Thông báo",
+						JOptionPane.ERROR_MESSAGE);
+				txtTimKiem.requestFocus();
+				txtTimKiem.selectAll();
+			}
+			
+			else {
+				loadDanhSachTimKiem(lstKH);
+				
+			}
+		}
+	}
+	private void timTheoTen() {
+		String tenTim = txtTimKiem.getText().trim();
+		
+		ArrayList<KhachHang> lstKH = new ArrayList<KhachHang>() ;
+		lstKH=daoKhachHang.getTen(tenTim);
+		if(tenTim.equals("")) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập tên cần tìm", "Thông báo",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			if(lstKH.isEmpty()) {
+				JOptionPane.showMessageDialog(this, "Không tìm thấy khách hàng có tên "+tenTim, "Thông báo",
+						JOptionPane.ERROR_MESSAGE);
+				txtTimKiem.requestFocus();
+				txtTimKiem.selectAll();
+			}
+			
+			else {
+				loadDanhSachTimKiem(lstKH);
+				
+			}
+		}
+	}
+	private String autoID() throws SQLException {
+			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+	        java.util.Date date = new java.util.Date();
+			
+			  ConnectDB.getinstance();
+			  Connection con = ConnectDB.getConnection();
+			  String query = "SELECT MAX(idKhachHang) FROM KhachHang";
+	          PreparedStatement preparedStatement = con.prepareStatement(query);
+	          
+	          ResultSet resultSet = preparedStatement.executeQuery();
+	
+	          String lastID = null;
+	          if (resultSet.next()) {
+	              lastID = resultSet.getString(1);
+	          }
+	
+	          String newID;
+	          if (lastID != null) {
+	              int number = Integer.parseInt(lastID.substring(10));
+	              number++; // Tăng giá trị số tiếp theo
+	              newID = "KH" + dateFormat.format(date) + String.format("%4d", number).replace(" ", "0");
+	          } else {
+	              newID = "KH" + dateFormat.format(date) + "0001";
+	          }
+	
+	          preparedStatement.close();
+	         return newID;
+	     
+	}
+	private void CapNhatKH() {
+		String id = txtId.getText();
+		String ten = txtTenKH.getText();
+		String diaChi = txtDiaChi.getText();
+		String soDienThoai = txtsdt.getText();
+		String email = txtEmail.getText();
+	
+	
+		java.util.Date date = chooserNgaySinh.getDate();
+		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
+		Boolean gioiTinh=null;
+		if(rbNam.isSelected()) {
+			gioiTinh=true;
+		}
+		if(rbNu.isSelected()) {
+			gioiTinh=false;
+		}
+		KhachHang kh=new KhachHang();
+		kh.setTenKhachHang(ten);
+		kh.setSdt(soDienThoai);
+		kh.setNgaySinh(ngaySinh);
+		kh.setEmail(email);
+		kh.setDiaChi(diaChi);
+		kh.setGioiTinh(gioiTinh);
+		kh.setIdKhachHang(id);
 
+		try {
+			daoKhachHang.updateKhachHang(kh);
+			loadData();
+			JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+		}
+}
+	private void xoaKH() {
+		int row = tableKH.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Phải chọn dòng cần xoá");
+		} else {
+			try {
+				int HopThoai = JOptionPane.showConfirmDialog(this, "Bạn có muốn xoá dòng này không?", "Cảnh báo",
+						JOptionPane.YES_NO_OPTION);
+				if (HopThoai == JOptionPane.YES_OPTION) {
+					modelKhachHang.removeRow(row);
+					String manv = txtId.getText();
+					daoKhachHang.DeleteKH(manv);
+					JOptionPane.showMessageDialog(this, "Xoá khách hàng thành công");
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Xoá khách hàng thất bại");
+			}
+		}
+	}
+	private void lamMoi() {
+		loadData();
+		txtId.setText("");
 		txtTenKH.setText("");
 		txtDiaChi.setText("");
 		txtsdt.setText("");
@@ -292,20 +454,46 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 			}
 		} 
 		 if(o.equals(btnLamMoi)) {
-			 lamMoi() ;}
-//		} else if (o.equals(btnXoa)) {
-//			xoaNV();
-//		} else if (o.equals(btnSua)) {
-//			suaNV();
-//		} else if (o.equals(btnTim)) {
-//			timNhanVien();
-////			timNV();
+			 lamMoi() ;
+		} else if (o.equals(btnXoaKH)) {
+			xoaKH();
+		}
+		 if (o.equals(btnCapNhatKH)) {
+			CapNhatKH();
+		}
+		 if (o.equals(btnTimKiem)) {
+			if(cbTimKiem.getSelectedItem().toString()=="Tìm kiếm theo ID")
+			{
+				timTheoID();
+			}
+			if(cbTimKiem.getSelectedItem().toString()=="Tìm kiếm theo tên")
+			{
+				timTheoTen();
+			}
+			}
+//			timNV();
 		
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		int row = tableKH.getSelectedRow();
+		txtId.setText(modelKhachHang.getValueAt(row, 0).toString());
+		txtTenKH.setText(modelKhachHang.getValueAt(row, 1).toString());
+		txtsdt.setText(modelKhachHang.getValueAt(row, 2).toString());
+		txtEmail.setText(modelKhachHang.getValueAt(row, 3).toString());
+		txtDiaChi.setText(modelKhachHang.getValueAt(row, 4).toString());
+		String ngaySinh=modelKhachHang.getValueAt(row, 5).toString();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+		java.util.Date valueNgaySinh=null;
+		try {
+			valueNgaySinh = dateFormat.parse(ngaySinh);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        chooserNgaySinh.setDate(valueNgaySinh);
+		rbNam.setSelected(modelKhachHang.getValueAt(row, 6).toString()=="Nam");
+		rbNu.setSelected(modelKhachHang.getValueAt(row,6).toString()=="Nữ");
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {

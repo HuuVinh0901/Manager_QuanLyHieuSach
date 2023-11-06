@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
+import models.KhachHang;
 import models.NhanVien;
 
 public class DAONhanVien {
@@ -24,7 +26,7 @@ public class DAONhanVien {
 	public boolean themNhanVien(NhanVien nv) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
-		String sql = "insert into NhanVien values (?,?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into NhanVien values (?,?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 
@@ -37,7 +39,7 @@ public class DAONhanVien {
 			ps.setBoolean(7, nv.isGioiTinh());
 			ps.setString(8, nv.getChucVu());
 			ps.setBoolean(9, nv.isTrangThai());
-			ps.setFloat(10, nv.getLuong());
+			
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -64,7 +66,7 @@ public class DAONhanVien {
 				nv.setGioiTinh(rs.getBoolean(7));
 				nv.setChucVu(rs.getString(8));
 				nv.setTrangThai(rs.getBoolean(9));
-				nv.setLuong(rs.getFloat(10));
+				
 				listNV.add(nv);
 			}
 		} catch (SQLException e) {
@@ -72,7 +74,122 @@ public class DAONhanVien {
 		}
 		return listNV;
 	}
+	public void updateKhachHang(NhanVien nv) {
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		String sql = "update NhanVien set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(2, nv.getSoDienThoai());
+			pst.setString(3, nv.getDiaChi());
+			pst.setString(4, nv.getEmail());
+			pst.setDate(5, nv.getNgaySinh());
+			pst.setBoolean(6, nv.isGioiTinh());
+			pst.setString(7,nv.getChucVu());
+			pst.setBoolean(6, nv.isTrangThai());
+			pst.setString(7, nv.getIdNhanVien());
+			pst.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close(pst);
+		}
+	}
+	public void DeleteNV(String maXoa) {
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		String sql = "delete from NhanVien where idNhanVien = ? ";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, maXoa);
+			pst.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close(pst);
+		}
+	}
+	public void updateNhanVien(NhanVien nv) {
+		ConnectDB.getinstance();
+		PreparedStatement pst = null;
+		Connection con = ConnectDB.getConnection();
+		String sql = "update NhanVien set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ?, ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(2, nv.getSoDienThoai());
+			pst.setString(3, nv.getDiaChi());
+			pst.setString(4, nv.getEmail());
+			pst.setDate(5, nv.getNgaySinh());
+			pst.setBoolean(6, nv.isGioiTinh());
+			pst.setString(7,nv.getChucVu());
+			pst.setBoolean(8, nv.isTrangThai());
+			pst.setString(9, nv.getIdNhanVien());
+			pst.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} finally {
+			close(pst);
+		}
+	}
+	public ArrayList<NhanVien> getMa(String maTim) {
+		ArrayList<NhanVien> lstNV = new ArrayList<NhanVien>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sqlMa = "select * from NhanVien where idNhanVien = '" + maTim + "'";
 
-	
+		try {
+			Statement stm = con.createStatement();
+			ResultSet rsMa = stm.executeQuery(sqlMa);
+			while (rsMa.next()) {
+				NhanVien nv = new NhanVien();
+				nv.setIdNhanVien(rsMa.getString(1));
+				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setSoDienThoai(rsMa.getString(3));
+				nv.setDiaChi(rsMa.getString(4));
+				nv.setEmail(rsMa.getString(5));
+				nv.setNgaySinh(rsMa.getDate(6));
+				nv.setGioiTinh(rsMa.getBoolean(7));
+				nv.setChucVu(rsMa.getString(8));
+				nv.setTrangThai(rsMa.getBoolean(9));
+				lstNV.add(nv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lstNV;
+	}
+	public ArrayList<NhanVien> getTen(String tenTim) {
+		ArrayList<NhanVien> lstNV = new ArrayList<NhanVien>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sqlMa = "select * from NhanVien where tenNhanVien = '" + tenTim + "'";
 
+		try {
+			Statement stm = con.createStatement();
+			ResultSet rsMa = stm.executeQuery(sqlMa);
+			while (rsMa.next()) {
+				NhanVien nv = new NhanVien();
+				nv.setIdNhanVien(rsMa.getString(1));
+				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setSoDienThoai(rsMa.getString(3));
+				nv.setDiaChi(rsMa.getString(4));
+				nv.setEmail(rsMa.getString(5));
+				nv.setNgaySinh(rsMa.getDate(6));
+				nv.setGioiTinh(rsMa.getBoolean(7));
+				nv.setChucVu(rsMa.getString(8));
+				nv.setTrangThai(rsMa.getBoolean(9));
+				lstNV.add(nv);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lstNV;
+	}
 }
