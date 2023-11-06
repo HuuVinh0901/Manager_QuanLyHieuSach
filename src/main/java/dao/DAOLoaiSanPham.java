@@ -48,7 +48,7 @@ public class DAOLoaiSanPham {
         return dsLoaiSanPham;
     }
 
-    public boolean themLoaiSanPham(LoaiSanPham lsp) {
+    public boolean themLoaiSanPham(LoaiSanPham lsp) throws SQLException{
         String sql = "INSERT INTO LoaiSanPham (idLoaiSanPham, tenLoaiSanPham) VALUES (?, ?)";
         try (PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setString(1, lsp.getIdLoaiSanPham());
@@ -93,5 +93,55 @@ public class DAOLoaiSanPham {
             e.printStackTrace();
         }
         return null;
+    }
+    public String getLatestLoaiSanPhamID() {
+		String loaiSanPhamID = null;
+		String sql = "SELECT TOP 1 idLoaiSanPham FROM LoaiSanPham ORDER BY idLoaiSanPham DESC";
+		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+			if (rs.next()) {
+				loaiSanPhamID = rs.getString("idLoaiSanPham");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return loaiSanPhamID;
+	}
+    
+    public boolean checkIdLoaiSanPham(String idLoaiSanPham) {
+	    String sql = "SELECT COUNT(*) FROM LoaiSanPham WHERE idLoaiSanPham = ?";
+	    try (PreparedStatement pst = connection.prepareStatement(sql)) {
+	        pst.setString(1, idLoaiSanPham);
+	        try (ResultSet rs = pst.executeQuery()) {
+	            if (rs.next()) {
+	                int count = rs.getInt(1);
+	                return count > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return true;
+	}
+    
+    public boolean capNhatLoaiSanPham(LoaiSanPham lsp) {
+    	String sql = "UPDATE LoaiSanPham SET tenLoaiSanPham = ?  WHERE idLoaiSanPham = ?";
+    	try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, lsp.getTenLoaiSanPham());
+			pst.setString(2, lsp.getIdLoaiSanPham());
+			int n = pst.executeUpdate();
+			return n > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+    }
+    public void xoaLoaiSanPham(String idLoaiSanPham) {
+    	String sql = "DELETE LoaiSanPham WHERE idLoaiSanPham = ?";
+    	try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, idLoaiSanPham);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 }

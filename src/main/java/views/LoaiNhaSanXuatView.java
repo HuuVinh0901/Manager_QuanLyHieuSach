@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
@@ -23,14 +25,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import connection.ConnectDB;
 import dao.DAONhaCungCap;
 import models.NhaCungCap;
 
-public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseListener {
+public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseListener, KeyListener {
 	private JPanel pnMain;
 	private JPanel pnHeader, pnTitle;
 	private JPanel pnCener;
@@ -54,7 +59,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 	private JLabel lblSoDienThoai;
 	private JTextField txtDiaChi;
 	private JTextField txtSoDienThoai;
-
+	private JButton btnXemTatCa;
 	private DAONhaCungCap daoNhaCungCap;
 
 	public LoaiNhaSanXuatView() {
@@ -155,10 +160,11 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 		pnSouthNorth = new JPanel(new FlowLayout(5));
 		lblTuKhoa = new JLabel("Từ khóa:");
 		txtTimKiem = new JTextField(20);
-		btnTimKiem = new JButton("Tìm kiếm");
+		btnXemTatCa = new JButton("Xem tất cả");
 		pnSouthNorth.add(lblTuKhoa);
 		pnSouthNorth.add(txtTimKiem);
-		pnSouthNorth.add(btnTimKiem);
+		pnSouthNorth.add(btnXemTatCa);
+
 		// phan bottom
 		pnSouthBottom = new JPanel(new BorderLayout());
 		pnSouthBottom = new JPanel(new BorderLayout());
@@ -189,8 +195,12 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 		btnCapNhat.addActionListener(this);
 		btnXoa.addActionListener(this);
 		tableSP.addMouseListener(this);
+		txtTimKiem.addKeyListener(this);
+		btnXemTatCa.addActionListener(this);
 		loadData();
-
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		tableSP.requestFocus();
 	}
 
 	private void loadData() {
@@ -212,6 +222,9 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 			capNhatNhaCungCap();
 		}else if(o.equals(btnXoa)) {
 			xoaNhaCungCap();
+		}else if(o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadData();
 		}
 
 	}
@@ -357,4 +370,28 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 	}
 
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if(o.equals(txtTimKiem)) {
+				DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tableSP.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)"+txtTimKiem.getText().trim(),1,3));
+			}
+		});
+	}
 }
