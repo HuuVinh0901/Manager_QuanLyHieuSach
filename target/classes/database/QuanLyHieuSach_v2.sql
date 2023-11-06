@@ -45,23 +45,23 @@ CREATE TABLE HoaDon (
     FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
 )
 go
-CREATE TABLE PhieuNhapSanPham (
-    idPhieuNhapSanPham NVARCHAR(7) NOT NULL PRIMARY KEY, 
-    ngayNhap DATE CHECK (ngayNhap <= GETDATE()),
-    nhanVien NVARCHAR(7) NOT NULL, 
-	tongTien FLOAT,
-    FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
-)
+--CREATE TABLE PhieuNhapSanPham (
+--    idPhieuNhapSanPham NVARCHAR(7) NOT NULL PRIMARY KEY, 
+--    ngayNhap DATE CHECK (ngayNhap <= GETDATE()),
+--    nhanVien NVARCHAR(7) NOT NULL, 
+--	tongTien FLOAT,
+--    FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
+--)
 go
 CREATE TABLE NhaCungCap(
-	idNhaCungCap NVARCHAR(50) NOT NULL PRIMARY KEY,
+	idNhaCungCap NVARCHAR(15) NOT NULL PRIMARY KEY,
 	tenNhaCungCap NVARCHAR(50) NOT NULL,
 	diaChi NVARCHAR(50),
 	soDienThoai NVARCHAR(10)
 )
 go
 CREATE TABLE LoaiSanPham (
-    idLoaiSanPham NVARCHAR(50) PRIMARY KEY,
+    idLoaiSanPham NVARCHAR(15) PRIMARY KEY,
     tenLoaiSanPham NVARCHAR(50) NOT NULL
 )
 
@@ -84,8 +84,8 @@ go
 CREATE TABLE SanPham (
     idSanPham NVARCHAR(14) NOT NULL PRIMARY KEY, 
     tenSanPham NVARCHAR(30) NOT NULL, 
-	loaiSanPham NVARCHAR(50) NOT NULL,
-    nhaCungCap NVARCHAR(50) NOT NULL,
+	loaiSanPham NVARCHAR(15) NOT NULL,
+    nhaCungCap NVARCHAR(15) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
@@ -122,8 +122,8 @@ CREATE TABLE Sach (
     namXuatBan DATE NOT NULL CHECK (YEAR(namXuatBan) <= YEAR(GETDATE())),
     ISBN NVARCHAR(255) NOT NULL, 
     soTrang INT CHECK (soTrang > 0), 
-	loaiSanPham NVARCHAR(50) NOT NULL,
-    nhaCungCap NVARCHAR(50) NOT NULL,
+	loaiSanPham NVARCHAR(15) NOT NULL,
+    nhaCungCap NVARCHAR(15) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
@@ -133,15 +133,15 @@ CREATE TABLE Sach (
     FOREIGN KEY (tacGia) REFERENCES TacGia(idTacGia), 
     FOREIGN KEY (theLoai) REFERENCES TheLoai(idTheLoai)
 )
-CREATE TABLE ChiTietPhieuNhapSanPham (
-    soLuongNhap INT CHECK (soLuongNhap > 0), 
-    giaNhap FLOAT CHECK (giaNhap > 0), 
-    phieuNhapSanPham NVARCHAR(7) NOT NULL,
-    idsanPham NVARCHAR(14) NOT NULL, 
-	PRIMARY KEY (phieuNhapSanPham, idsanPham),
-    FOREIGN KEY (phieuNhapSanPham) REFERENCES PhieuNhapSanPham(idPhieuNhapSanPham),
-    FOREIGN KEY (idsanPham) REFERENCES SanPham(idSanPham) 
-)
+--CREATE TABLE ChiTietPhieuNhapSanPham (
+--    soLuongNhap INT CHECK (soLuongNhap > 0), 
+--    giaNhap FLOAT CHECK (giaNhap > 0), 
+--    phieuNhapSanPham NVARCHAR(7) NOT NULL,
+--    idsanPham NVARCHAR(14) NOT NULL, 
+--	PRIMARY KEY (phieuNhapSanPham, idsanPham),
+--    FOREIGN KEY (phieuNhapSanPham) REFERENCES PhieuNhapSanPham(idPhieuNhapSanPham),
+--    FOREIGN KEY (idsanPham) REFERENCES SanPham(idSanPham) 
+--)
 go
 
 use master
@@ -190,3 +190,7 @@ FROM SanPham sp
 JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
 JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap 
 WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
+
+SELECT TOP 1 idNhaCungCap FROM NhaCungCap ORDER BY idNhaCungCap DESC
+
+SELECT COUNT(*) FROM NhaCungCap WHERE idNhaCungCap = 'NCC202311060001'
