@@ -3,7 +3,7 @@ package models;
 import java.sql.Date;
 import java.util.Objects;
 
-import utils.GioiTinhEnum;
+
 
 public class KhachHang {
 	private String idKhachHang;

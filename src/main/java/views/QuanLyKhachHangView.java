@@ -52,7 +52,7 @@ import dao.DAOKhachHang;
 import dao.DAOQuanLySanPham;
 import models.KhachHang;
 import models.LoaiSanPham;
-import utils.GioiTinhEnum;
+
 
 public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseListener{
 	private JDateChooser chooserNgaySinh;
