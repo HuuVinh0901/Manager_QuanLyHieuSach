@@ -82,7 +82,6 @@ CREATE TABLE TheLoai(
 )
 go
 CREATE TABLE SanPham (
-    hinhAnhSanPham NVARCHAR(255) NOT NULL, 
     idSanPham NVARCHAR(14) NOT NULL PRIMARY KEY, 
     tenSanPham NVARCHAR(30) NOT NULL, 
 	loaiSanPham NVARCHAR(50) NOT NULL,
@@ -123,7 +122,6 @@ CREATE TABLE Sach (
     namXuatBan DATE NOT NULL CHECK (YEAR(namXuatBan) <= YEAR(GETDATE())),
     ISBN NVARCHAR(255) NOT NULL, 
     soTrang INT CHECK (soTrang > 0), 
-	hinhAnhSanPham NVARCHAR(255) NOT NULL, 
 	loaiSanPham NVARCHAR(50) NOT NULL,
     nhaCungCap NVARCHAR(50) NOT NULL,
     kichThuoc FLOAT NOT NULL, 
@@ -153,10 +151,10 @@ use QLHieuSach
 select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
-<<<<<<< HEAD
-=======
+
+
 delete  from SanPham 
->>>>>>> 4c60267c3602ae07e852a6e7fb03216e22433bb4
+
 
 delete   from SanPham 
 delete  from NhaCungCap
@@ -184,4 +182,11 @@ WHERE lsp.tenLoaiSanPham ='dsada'
 
 sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan
 				+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
-				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap" + "WHERE lsp.tenLoaiSanPham = ?
+				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap" + "WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
+
+
+SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong
+FROM SanPham sp
+JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
+JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap 
+WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
