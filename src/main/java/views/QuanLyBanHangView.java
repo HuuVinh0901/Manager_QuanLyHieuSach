@@ -13,6 +13,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -118,6 +121,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		txtTenNV = new JTextField(20);
 		txtTenNV.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtTenNV.setEditable(false);
+		txtTenNV.setText("Trần Vũ Duy");
 		txtTenKH = new JTextField(20);
 		txtTenKH.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtTenKH.setEditable(false);
@@ -126,11 +130,13 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		txtTongTien = new JTextField(20);
 		txtTongTien.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtTongTien.setEditable(false);
+		txtTongTien.setText("0.0");
 		txtTienKhachDua = new JTextField(20);
 		txtTienKhachDua.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtThueVat = new JTextField(20);
-		txtThueVat.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		txtThueVat.setFont(new Font("SansSerif", Font.BOLD, 14));
 		txtThueVat.setEditable(false);
+		txtThueVat.setText("50%");
 		txtTienTraKhach = new JTextField(20);
 		txtTienTraKhach.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtTienTraKhach.setEditable(false);
@@ -162,12 +168,17 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		pn1.add(pnSanPham);
 		
 		tblSanPham = new JTable();
-		modelSP = new DefaultTableModel();
+		
+		modelSP = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		modelSP.addColumn("Mã sản phẩm");
 		modelSP.addColumn("Tên sản phẩm");
 		modelSP.addColumn("Loại sản phẩm");
 		modelSP.addColumn("Giá bán");
-//		modelSP.addColumn("Giá khuyến mãi");
 		tblSanPham.setModel(modelSP);
 		JScrollPane scrollTblSP = new JScrollPane(tblSanPham);
 		scrollTblSP.setBorder(BorderFactory.createTitledBorder("Sản phẩm"));
@@ -181,7 +192,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		
 		
 		tblGioHang = new JTable();
-		modelGioHang = new DefaultTableModel();
+		modelGioHang = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		modelGioHang.addColumn("Mã sản phẩm");
 		modelGioHang.addColumn("Tên sản phẩm");
 		modelGioHang.addColumn("Giá bán");
@@ -218,7 +234,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		
 		
 		tblkhachHang = new JTable();
-		modelKH = new DefaultTableModel();
+		modelKH = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		modelKH.addColumn("Mã khách hàng");
 		modelKH.addColumn("Tên khách hàng");
 		modelKH.addColumn("Số điện thoại");
@@ -241,12 +262,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		chooserNgayLap.getCalendarButton().setToolTipText("Chọn ngày sinh");
 		pnTinhTien.add(lblNgayLap);
 		pnTinhTien.add(chooserNgayLap); 
+		pnTinhTien.add(lblThueVat);
+		pnTinhTien.add(txtThueVat);
 		pnTinhTien.add(lblTongTien);
 		pnTinhTien.add(txtTongTien);
 		pnTinhTien.add(lblTienKhachDua);
 		pnTinhTien.add(txtTienKhachDua);
-		pnTinhTien.add(lblThueVat);
-		pnTinhTien.add(txtThueVat);
 		pnTinhTien.add(lblTienTraKhach);
 		pnTinhTien.add(txtTienTraKhach);
 		pn3.add(pnTinhTien);
@@ -290,6 +311,23 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
         tblGioHang.addMouseListener(this);
         tblSanPham.addMouseListener(this);
         tblkhachHang.addMouseListener(this);
+        txtTienKhachDua.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            	tinhTienTraKhach();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	tinhTienTraKhach();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                // Không sử dụng cho JTextField
+            }
+        });
+        
         txtTimKiemSP.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -339,6 +377,39 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
         
 	}
 	
+	private void lamMoiHD() {
+//		txtMaHD.setText("");
+//		txtTenKH.setText("");
+//		txtTongTien.setText("0.0");
+//		chooserNgayLap.setDate();
+		
+	}
+	
+	private void tinhTienTraKhach() {
+		Double tienDua = Double.parseDouble(txtTienKhachDua.getText().toString());
+		Double tongTien = Double.parseDouble(txtTongTien.getText().toString());
+		Double tienTra = 0.0;
+		if (tienDua > tongTien) {
+			tienTra = tienDua - tongTien ;
+			txtTienTraKhach.setText(String.valueOf(tienTra));
+		} else {
+			txtTienTraKhach.setText(String.valueOf(tienTra));
+		}
+	}
+	
+	private void tinhTongTien() {
+		int rowCountGioHang = modelGioHang.getRowCount();
+		Double tongTien = 0.0;
+		if (rowCountGioHang > 0) {
+			for (int i = 0; i < rowCountGioHang; i++) {
+				tongTien += Double.parseDouble(modelGioHang.getValueAt(i, 4).toString());
+			}
+			tongTien = tongTien + (tongTien * 0.5);
+		}
+		txtTongTien.setText(String.valueOf(tongTien));
+		
+	}
+	
 	private void handleTimKiemSP(String cond) {
 		if (!cond.equals("")) {
 			for (SanPhamCha sp : daoQLSP.getSanPhamTimKiem(cond)) {
@@ -361,8 +432,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		if (!cond.equals("")) {
 			for (KhachHang kh : daoKhachHang.getKhachHangTimKiem(cond)) {
 				
-				String[] row = { kh.getIdKhachHang(), kh.getTenKhachHang(), kh.getSdt()
-						 };
+				String[] row = { kh.getIdKhachHang(), kh.getTenKhachHang(), kh.getSdt()};
 				modelKH.addRow(row);
 			}
 		}
@@ -386,6 +456,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 						double thanhTien = Double.parseDouble(modelGioHang.getValueAt(i, 2).toString()) * soLuong;
 						modelGioHang.setValueAt(String.valueOf(soLuong), i, 3);
 						modelGioHang.setValueAt(String.valueOf(thanhTien), i, 4);
+						tinhTongTien();
 					}
 				}
 			} else {
@@ -396,6 +467,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				String thanhTien = String.valueOf(Double.parseDouble(soLuong) * Double.parseDouble(giaBan));
 				String[] row = {ma, ten, giaBan, soLuong, thanhTien};
 				modelGioHang.addRow(row);
+				tinhTongTien();
 			}
 		} else {
 			JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm muốn thêm giỏ hàng");
@@ -405,6 +477,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	
 	private void lamMoiGioHang() {
 		modelGioHang.setRowCount(0);
+		tinhTongTien();
 	}
 	
 	private void xoaGioHang() {
@@ -416,8 +489,14 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 					JOptionPane.YES_NO_OPTION);
 			if (hoiNhac == JOptionPane.YES_OPTION) {
 				modelGioHang.removeRow(row);
+				tinhTongTien();
 			}
 		}
+	}
+	
+	private void phatSinhMaHD() {
+		String currentDate = new SimpleDateFormat("yyMMddHHmmss").format(new java.util.Date());
+		txtMaHD.setText("HD" + currentDate);
 	}
 	
 	@Override
@@ -426,6 +505,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		if (row >= 0) {
 			txtMaSP.setText(modelSP.getValueAt(row, 0).toString());
 			txtSoLuong.setText(String.valueOf(1));
+		}
+		
+		int rowKH = tblkhachHang.getSelectedRow();
+		if (rowKH >= 0) {
+			txtTenKH.setText(modelKH.getValueAt(rowKH, 1).toString());
+			phatSinhMaHD();
 		}
 		
 	}
