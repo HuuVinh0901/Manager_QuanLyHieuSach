@@ -84,7 +84,7 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
 	public QuanLyNhanVIenView() {
-		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+//		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 		daoNhanVien=new DAONhanVien();
 		NhanVien nv=new NhanVien();
 		setLayout(new BorderLayout());
