@@ -39,6 +39,10 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 	private JPanel pnContainer;
 	private JPanel pnThongTinCha;
 	private JPanel pnThongTin;
+	private JPanel pnThongTinCT1;
+	private JPanel pnThongTinCT2;
+	private JPanel pnThongTinCT3;
+	private JPanel pnThongTinCT4;
 	private JPanel pnThongTinChucNang;
 	private JPanel pnSounth;
 	private JPanel pnSounthNorth;
@@ -89,13 +93,13 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		
 		
 		lblIdTheLoai = new JLabel("Mã thể loại:");
-		txtIdtheLoai = new JTextField();
+		txtIdtheLoai = new JTextField(20);
 		lblTenTheLoai = new JLabel("Tên thể loại:");
-		txtTentheLoai = new JTextField();
+		txtTentheLoai = new JTextField(20);
 		lblSoLuongSach = new JLabel("Số lượng sách:");
-		txtSoLuongSach = new JTextField();
+		txtSoLuongSach = new JTextField(20);
 		lblMoTa = new JLabel("Mô tả:");
-		txtMoTa = new JTextField();
+		txtMoTa = new JTextField(20);
 		
 		lblTuKhoa = new JLabel("Từ khóa:");
 		txtTuKhoa = new JTextField(20);
@@ -109,22 +113,32 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		
 		pnThongTinCha = new JPanel(new BorderLayout());
 		pnThongTinCha.setBorder(BorderFactory.createTitledBorder("Thông tin chi tiết"));
-		pnThongTin = new JPanel(new GridLayout(2,4,20,10));
-		pnThongTin.add(lblIdTheLoai);
-		pnThongTin.add(txtIdtheLoai);
-		pnThongTin.add(lblTenTheLoai);
-		pnThongTin.add(txtTentheLoai);
-		pnThongTin.add(lblSoLuongSach);
-		pnThongTin.add(txtSoLuongSach);
-		pnThongTin.add(lblMoTa);
-		pnThongTin.add(txtMoTa);
+		pnThongTin = new JPanel(new GridLayout(2,8,20,10));
+		pnThongTinCT1 = new JPanel(new FlowLayout(FlowLayout.LEFT,20,5));
+		pnThongTinCT2 = new JPanel(new FlowLayout(FlowLayout.LEFT,20,5));
+		Insets btnInsert = new Insets(0, 70, 0, 0);
+		pnThongTin.setBorder(new EmptyBorder(btnInsert));
 		
+		Dimension labelSize = new Dimension(87, 30);
+		lblIdTheLoai.setPreferredSize(labelSize);
+		lblTenTheLoai.setPreferredSize(labelSize);
+		lblMoTa.setPreferredSize(labelSize);
+		pnThongTinCT1.add(lblIdTheLoai);
+		pnThongTinCT1.add(txtIdtheLoai);
+		pnThongTinCT1.add(lblTenTheLoai);
+		pnThongTinCT1.add(txtTentheLoai);
+		pnThongTinCT2.add(lblSoLuongSach);
+		pnThongTinCT2.add(txtSoLuongSach);
+		pnThongTinCT2.add(lblMoTa);
+		pnThongTinCT2.add(txtMoTa);
+		pnThongTin.add(pnThongTinCT1);
+		pnThongTin.add(pnThongTinCT2);
 		pnThongTinChucNang = new JPanel(new FlowLayout(5));
 		pnThongTinChucNang.add(btnThem);
 		pnThongTinChucNang.add(btnCapNhat);
 		pnThongTinChucNang.add(btnXoa);
 		pnThongTinChucNang.add(btnLamMoi);
-		
+		pnThongTinChucNang.setBorder(new EmptyBorder(btnInsert));
 		
 		pnSounth = new JPanel(new BorderLayout());
 		pnSounthNorth = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
