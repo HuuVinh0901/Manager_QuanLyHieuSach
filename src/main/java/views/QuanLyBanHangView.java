@@ -853,7 +853,5 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		}
 		
 	}
-
-
 	
 }
