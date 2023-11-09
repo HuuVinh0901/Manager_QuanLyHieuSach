@@ -12,7 +12,6 @@ import models.TacGia;
 public class DAOTacGia {
 	private Connection connection;
 
-
 	public DAOTacGia() {
 		connection = ConnectDB.getinstance().getConnection();
 	}
@@ -35,30 +34,27 @@ public class DAOTacGia {
 		return dsTacGia;
 	}
 
-	class khongNullException extends RuntimeException{
+	class khongNullException extends RuntimeException {
 		public khongNullException(String thongDiep) {
 			super(thongDiep);
 		}
 	}
-	public boolean themTacGia(TacGia tg) throws SQLException , NullPointerException{
-		if(tg.getTenTacGia()!=null) {
-			throw new khongNullException("Chuoi null");
-		}else {
-			
-			String sql = "INSERT INTO TacGia values (?,?,?,?)";
-			try (PreparedStatement pst = connection.prepareStatement(sql)) {
-				pst.setString(1, tg.getIdTacGia());
-				pst.setString(2, tg.getTenTacGia());
-				pst.setDate(3, tg.getNgaySinh());
-				pst.setInt(4, tg.getSoLuongTacPham());
-				int n = pst.executeUpdate();
-				return n > 0;
-			} catch (SQLException e) {
-				System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
-				System.out.println("Error Code                       : " + e.getErrorCode());
-				System.out.println("Error Message                    : " + e.getMessage());
-				return false;
-			}
+
+	public boolean themTacGia(TacGia tg) throws SQLException {
+
+		String sql = "INSERT INTO TacGia values (?,?,?,?)";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, tg.getIdTacGia());
+			pst.setString(2, tg.getTenTacGia());
+			pst.setDate(3, tg.getNgaySinh());
+			pst.setInt(4, tg.getSoLuongTacPham());
+			int n = pst.executeUpdate();
+			return n > 0;
+		} catch (SQLException e) {
+			System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
+			System.out.println("Error Code                       : " + e.getErrorCode());
+			System.out.println("Error Message                    : " + e.getMessage());
+			return false;
 		}
 	}
 

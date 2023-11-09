@@ -121,7 +121,7 @@ CREATE TABLE Sach (
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
 	thue FLOAT CHECK (thue >= 0),
-	soLuong INT ,
+	soLuong INT,
 	giaNhap FLOAT CHECK (giaNhap >= 0),
 	giaBan FLOAT,
 	giaMoi FLOAT CHECK (giaMoi >=0)
@@ -186,3 +186,17 @@ WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
 SELECT TOP 1 idNhaCungCap FROM NhaCungCap ORDER BY idNhaCungCap DESC
 
 SELECT COUNT(*) FROM NhaCungCap WHERE idNhaCungCap = 'NCC202311060001'
+
+select *from Sach
+select *from LoaiSanPham
+select *from NhaCungCap
+select *from TacGia
+select *from TheLoai
+
+
+select s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan
+FROM Sach s 
+JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham
+JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap
+JOIN TacGia tg ON tg.idTacGia = s.tacGia
+JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
