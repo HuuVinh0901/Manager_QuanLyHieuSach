@@ -108,7 +108,7 @@ CREATE TABLE ChiTietHoaDon (
 )
 go
 CREATE TABLE Sach (
-    idSanPham NVARCHAR(50) NOT NULL PRIMARY KEY, 
+    idSanPham NVARCHAR(13) NOT NULL PRIMARY KEY, 
 	tenSanPham NVARCHAR(30) NOT NULL, 
     tacGia NVARCHAR(14) NOT NULL, 
     theLoai NVARCHAR(14) NOT NULL,
@@ -120,7 +120,11 @@ CREATE TABLE Sach (
     kichThuoc FLOAT NOT NULL, 
     mauSac NVARCHAR(255) NOT NULL, 
     trangThai BIT NOT NULL ,
+	thue FLOAT CHECK (thue >= 0),
+	soLuong INT ,
 	giaNhap FLOAT CHECK (giaNhap >= 0),
+	giaBan FLOAT,
+	giaMoi FLOAT CHECK (giaMoi >=0)
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap),
     FOREIGN KEY (tacGia) REFERENCES TacGia(idTacGia), 
@@ -136,6 +140,10 @@ select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
 select *from TacGia
+select *from TheLoai
+select *from Sach
+
+
 
 delete  from SanPham 
 

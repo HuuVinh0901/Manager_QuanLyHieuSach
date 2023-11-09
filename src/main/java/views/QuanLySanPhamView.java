@@ -81,7 +81,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		setLayout(new BorderLayout(8, 6));
 		tabbedPane = new JTabbedPane();
 		// tab sách
-		JPanel sachPanel = new JPanel();
+		QuanLySachView  sachPanel = new QuanLySachView();
+//		JPanel sachPanel = new JPanel();
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
 		sanPhamPanel.setLayout(new BorderLayout());
@@ -198,6 +199,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		sanPhamPanel.add(pnCenter, BorderLayout.NORTH);
 		sanPhamPanel.add(pnMain, BorderLayout.CENTER);
 
+		
+		
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
 		tabbedPane.add("Sách", sachPanel);
 		add(tabbedPane);
