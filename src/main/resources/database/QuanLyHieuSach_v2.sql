@@ -193,10 +193,11 @@ select *from NhaCungCap
 select *from TacGia
 select *from TheLoai
 
-
-select s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan
+go
+select s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan 
 FROM Sach s 
-JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham
-JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap
-JOIN TacGia tg ON tg.idTacGia = s.tacGia
+JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham 
+JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap 
+JOIN TacGia tg ON tg.idTacGia = s.tacGia 
 JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
+WHERE lsp.idLoaiSanPham = ?
