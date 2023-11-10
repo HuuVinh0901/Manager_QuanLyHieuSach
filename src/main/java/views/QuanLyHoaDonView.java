@@ -64,7 +64,7 @@ public class QuanLyHoaDonView extends JPanel {
         modelHoaDon.addColumn("Tổng tiền");
         tblHoaDon.setModel(modelHoaDon);
 		JScrollPane scrollTblHD = new JScrollPane(tblHoaDon);
-//		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
+		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Danh sách hoá đơn"));
 		
 		GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
