@@ -27,6 +27,55 @@ public class DAOKhachHang {
 			}
 		}
 	}
+	
+	public String getSDTTheoMa(String maKH) {
+        String sdt = null;
+        String sql = "SELECT soDienThoai FROM KhachHang WHERE idKhachHang = ?";
+        ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+        try {
+        	PreparedStatement statement = con.prepareStatement(sql);
+        	statement.setString(1, maKH);
+        	ResultSet resultSet = statement.executeQuery();
+        	if (resultSet.next()) {
+        		sdt = resultSet.getString("soDienThoai");
+        	}
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return sdt;
+    }
+	
+	public ArrayList<KhachHang> getKhachHangTimKiem(String cond) {
+		ArrayList<KhachHang> listKH = new ArrayList<KhachHang>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM KhachHang WHERE soDienThoai LIKE '%" + cond + "%' OR"
+					+ " idKhachHang LIKE '%" + cond + "%' OR" 
+					+ " tenKhachHang LIKE N'%" + cond + "%'" ;
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				KhachHang kh=new KhachHang();
+				kh.setIdKhachHang(rs.getString(1));
+				kh.setTenKhachHang(rs.getString(2));
+				kh.setSdt(rs.getString(3));
+				kh.setEmail(rs.getString(4));
+				kh.setDiaChi(rs.getString(5));
+				kh.setNgaySinh(rs.getDate(6));
+				kh.setGioiTinh(rs.getBoolean(7));
+				listKH.add(kh);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listKH;
+	}
+	
 	public boolean themKhachHang(KhachHang kh) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
