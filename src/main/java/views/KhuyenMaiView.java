@@ -98,8 +98,9 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		daoQLSP=new DAOQuanLySanPham();
 		dfNgayBD = new SimpleDateFormat("dd/MM/yyyy");
 		JLabel lbTieuDe=new JLabel("CHƯƠNG TRÌNH KHUYẾN MÃI");
-		lbTieuDe.setFont(new Font("Arial", Font.BOLD, 25));
-		lbTieuDe.setForeground(Color.black);
+		lbTieuDe.setFont(new Font("Tahoma", Font.BOLD, 25));
+		lbTieuDe.setForeground(new Color(26, 102, 227));
+		
 		cbLoai = new JComboBox<>();
 		cbLoai.addItem(LoaiKMEnum.Giam_10);
 		cbLoai.addItem(LoaiKMEnum.Giam_20);

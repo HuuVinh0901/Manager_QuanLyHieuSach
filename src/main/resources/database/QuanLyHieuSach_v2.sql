@@ -35,7 +35,7 @@ CREATE TABLE KhachHang(
 )
 go
 CREATE TABLE HoaDon (
-    idDonHang NVARCHAR(7) NOT NULL PRIMARY KEY, 
+    idDonHang NVARCHAR(14) NOT NULL PRIMARY KEY, 
     ngayLap DATE NOT NULL, 
     khachHang NVARCHAR(7) NOT NULL, 
     nhanVien NVARCHAR(7) NOT NULL, 
@@ -106,7 +106,7 @@ CREATE TABLE ChuongTrinhKhuyenMai (
 go
 CREATE TABLE ChiTietHoaDon (
     soLuong INT CHECK (soLuong > 0), 
-    idDonHang NVARCHAR(7) NOT NULL , 
+    idDonHang NVARCHAR(14) NOT NULL , 
     idSanPham NVARCHAR(14) NOT NULL, 
 	thanhTien FLOAT,
 	PRIMARY KEY (idDonHang, idSanPham),
