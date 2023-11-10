@@ -91,4 +91,9 @@ public class SachCon extends SanPhamCha {
 		return super.giaNhap + (super.giaNhap * 0.55) + thue();
 	}
 
+	@Override
+	public double giaKM() {
+		return super.giaNhap+(super.giaNhap*0.55)+thue();
+	}
+
 }

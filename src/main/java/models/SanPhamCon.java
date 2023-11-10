@@ -22,12 +22,14 @@ public class SanPhamCon extends SanPhamCha {
 		// TODO Auto-generated constructor stub
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "SanPhamCon [dSanPham=" + idSanPham + ", tenSanPham="
-				+ tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc="
-				+ kichThuoc + ", mauSac=" + mauSac + ", trangThai=" + trangThai + ", thue()=" + thue() + ", giaNhap="
-				+ giaNhap + ", soLuong=" + soLuong + ", giaBan()=" + giaBan() + "]";
+		return "SanPhamCon [idSanPham=" + idSanPham + ", tenSanPham=" + tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham
+				+ ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc=" + kichThuoc + ", mauSac=" + mauSac + ", trangThai="
+				+ trangThai + ", soLuong=" + soLuong + ", giaNhap=" + giaNhap + ", thue()=" + thue() + ", giaBan()="
+				+ giaBan() + ", giaKM()=" + giaKM() + "]";
 	}
 
 	@Override

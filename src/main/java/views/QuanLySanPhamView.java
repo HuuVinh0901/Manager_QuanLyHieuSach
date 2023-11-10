@@ -39,6 +39,7 @@ import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
 import dao.DAONhaCungCap;
 import dao.DAOQuanLySanPham;
+import dao.DAOSach;
 import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
@@ -73,7 +74,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private JComboBox<String> cbNhaCungCapSearch;
 	private JLabel lblLoaiSanPhamSearch;
 	private JLabel lblNhaCungCapSearch;
-
+	private QuanLySachView sachPanel;
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -82,7 +83,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		setLayout(new BorderLayout(8, 6));
 		tabbedPane = new JTabbedPane();
 		// tab sách
-		QuanLySachView  sachPanel = new QuanLySachView();
+		sachPanel = new QuanLySachView();
 //		JPanel sachPanel = new JPanel();
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
@@ -205,7 +206,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
 		tabbedPane.add("Sách", sachPanel);
 		add(tabbedPane);
-
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -213,7 +213,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			e.printStackTrace();
 		}
 
-//		loadData();
 		loadDataIntoTable();
 		loadComboxBoxLoaiSanPham();
 		loadComboxBoxNhaCungCap();
@@ -231,6 +230,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtGiaNhap.addKeyListener(this);
 		txtMauSac.addKeyListener(this);
 		txtTenSanPham.addKeyListener(this);
+		tabbedPane.addKeyListener(this);
 
 		this.setFocusable(true);
 		this.requestFocusInWindow();
@@ -647,7 +647,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				loadDataIntoTable();
 			}
 
-		}
+		}else  if (e.getKeyCode() == KeyEvent.VK_TAB) {
+            // Switch to the "package views" tab
+            tabbedPane.setSelectedIndex(1);
+        }
 	}
 
 	@Override

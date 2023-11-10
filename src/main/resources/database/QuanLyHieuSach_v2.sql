@@ -86,16 +86,11 @@ CREATE TABLE SanPham (
 	giaNhap FLOAT CHECK (giaNhap >= 0),
 	soLuong INT ,
 	giaBan FLOAT,
+	giaKhuyenMai FLOAT,
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap)
 )
-go
-CREATE TABLE ChuongTrinhKhuyenMai (
-    idCTKM NVARCHAR(7) NOT NULL PRIMARY KEY,
-    soTienGiamGia FLOAT NOT NULL, 
-    idSanPham NVARCHAR(14) NOT NULL, 
-    FOREIGN KEY (idSanPham) REFERENCES SanPham(idSanPham) 
-)
+
 go
 CREATE TABLE ChiTietHoaDon (
     soLuong INT CHECK (soLuong > 0), 
@@ -124,12 +119,29 @@ CREATE TABLE Sach (
 	soLuong INT,
 	giaNhap FLOAT CHECK (giaNhap >= 0),
 	giaBan FLOAT,
-	giaMoi FLOAT CHECK (giaMoi >=0)
+	giaKhuyenMai FLOAT
 	FOREIGN KEY (loaiSanPham) REFERENCES LoaiSanPham(idLoaiSanPham),
     FOREIGN KEY (nhaCungCap) REFERENCES NhaCungCap(idNhaCungCap),
     FOREIGN KEY (tacGia) REFERENCES TacGia(idTacGia), 
     FOREIGN KEY (theLoai) REFERENCES TheLoai(idTheLoai)
 )
+
+CREATE TABLE KhuyenMai (
+    idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
+    tenKM NVARCHAR(20) NOT NULL, 
+    ngayBatDau DATE DEFAULT GETDATE(), 
+    trangThai bit,
+	loaiKM NVARCHAR(8)
+)
+CREATE TABLE ApDungKhuyenMai (
+    idSP nvarchar(14),
+    idKM nvarchar(14),
+    PRIMARY KEY (idSP, idKM),
+    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
+)
+select *from KhuyenMai
+select *from ApDungKhuyenMai
 go
 
 use master
@@ -146,47 +158,9 @@ select *from Sach
 
 
 delete  from SanPham 
-
-
 delete   from SanPham 
 delete  from NhaCungCap
 delete  from LoaiSanPham
-
-SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan 
-FROM SanPham sp  
-JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
-JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
-
-
-SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
-SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC
-
-SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan 
-FROM SanPham sp 
-JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham
-JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap;
-
-SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan
-FROM SanPham sp 
-JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
-JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap
-WHERE lsp.tenLoaiSanPham ='dsada' 
-
-sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan
-				+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
-				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap" + "WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
-
-
-SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong
-FROM SanPham sp
-JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
-JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap 
-WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
-
-<<<<<<< HEAD
-SELECT TOP 1 idNhaCungCap FROM NhaCungCap ORDER BY idNhaCungCap DESC
-
-SELECT COUNT(*) FROM NhaCungCap WHERE idNhaCungCap = 'NCC202311060001'
 
 select *from Sach
 select *from LoaiSanPham
@@ -195,26 +169,7 @@ select *from TacGia
 select *from TheLoai
 
 go
-select s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan 
-FROM Sach s 
-JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham 
-JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap 
-JOIN TacGia tg ON tg.idTacGia = s.tacGia 
-JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
-WHERE lsp.idLoaiSanPham = ?
-=======
-CREATE TABLE KhuyenMai (
-    idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
-    tenKM NVARCHAR(20) NOT NULL, 
-	loaiKM NVARCHAR(8),
-    ngayBatDau DATE DEFAULT GETDATE(), 
-    trangThai bit
-)
-CREATE TABLE ApDungKhuyenMai (
-    idSP nvarchar(14),
-    idKM nvarchar(14),
-    PRIMARY KEY (idSP, idKM),
-    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
-    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
-);
->>>>>>> main
+
+SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaKhuyenMai FROM Sach s JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap JOIN TacGia tg ON tg.idTacGia = s.tacGia JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
+
+

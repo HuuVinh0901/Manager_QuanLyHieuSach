@@ -44,6 +44,7 @@ import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SachCon;
 import models.SanPhamCha;
+import models.SanPhamCon;
 import models.TacGia;
 import models.TheLoai;
 import utils.TrangThaiSPEnum;
@@ -124,34 +125,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	public QuanLySachView() {
 		init();
-		initComponent();
-		loadData();
-		loadComboBoxByLoaiSanPham();
-		loadComboxBoxByNhaCungCap();
-		loadComboBoxByTheLoai();
-		loadComBoBoxByTacGia();
-	}
-
-	private void initComponent() {
-		daoLoaiSanPham = new DAOLoaiSanPham();
-		daoNhaCungCap = new DAONhaCungCap();
-		daoTheLoai = new DAOTheLoai();
-		daoTacGia = new DAOTacGia();
-		daoSach = new DAOSach();
-
-		table = new JTable();
-		model = new DefaultTableModel();
-
-		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
-
-		btnCapNhatSP.addActionListener(this);
-		btnLamMoi.addActionListener(this);
-		btnThemSP.addActionListener(this);
-		btnTimKiem.addActionListener(this);
-		btnXemTatCa.addActionListener(this);
-		btnXoaSP.addActionListener(this);
-		table.addMouseListener(this);
-
+		
 	}
 
 	private void loadComboBoxByTheLoai() {
@@ -204,14 +178,14 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 	}
 
 	private String generateNewProductID() {
-		String idPrefix = "SP";
+		String idPrefix = "S";
 		int newProductIDNumber = 1;
 		String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		try {
 			daoSach = new DAOSach();
 			String previousProductID = daoSach.getLatestProductID();
 			if (previousProductID != null && !previousProductID.isEmpty()) {
-				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(10));
+				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(9));
 				newProductIDNumber = oldProductIDNumber + 1;
 			}
 		} catch (Exception e) {
@@ -224,37 +198,34 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	private void loadData() {
 		model.setRowCount(0);
-		try {
-			ArrayList<SachCon> dsSach = daoSach.getAllSachLoadData();
-			for (SachCon s : dsSach) {
-				String idSanPham = s.getIdSanPham();
-				String tenSanPham = s.getTenSanPham();
-				String tenTacGia = s.getTacGia().getIdTacGia();
-				String tenTheLoai = s.getTheLoai().getIdTheLoai();
-				String ISBN = s.getISBN();
-				int soTrang = s.getSoTrang();
-				String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
-				String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
-				double kichThuoc = s.getKichThuoc();
-				String mauSac = s.getMauSac();
-				String trangThai = s.getTrangThai().getDescription();
-				int soLuong = s.getSoLuong();
-				double giaNhap = s.getGiaNhap();
-				double giaBan = s.giaBan();
-
-				model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai,
-						dfNgaySinh.format(s.getNamXuatBan()), ISBN, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac,
-						trangThai, soLuong, giaNhap, giaBan });
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		ArrayList<SachCon> dsSach = daoSach.getAllSachLoadData();
+		for (SachCon s : dsSach) {
+			String tenTacGia = s.getTacGia().getIdTacGia();
+			String tenTheLoai = s.getTheLoai().getIdTheLoai();
+			String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
+			String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
+			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai, s.getNamXuatBan() + "",
+					s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap, s.getKichThuoc() + "", s.getMauSac(),
+					s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "", s.getGiaNhap() + "", s.giaBan() + "" };
+			model.addRow(row);
 		}
 
 	}
 
 	private void init() {
 		setLayout(new BorderLayout());
+		
+		daoSach = new DAOSach();
+		daoLoaiSanPham = new DAOLoaiSanPham();
+		daoNhaCungCap = new DAONhaCungCap();
+		daoTheLoai = new DAOTheLoai();
+		daoTacGia = new DAOTacGia();
+
+		table = new JTable();
+		model = new DefaultTableModel();
+
+		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+
 		// center
 		pnCenter = new JPanel();
 		pnCenter.setLayout(new GridLayout(5, 6, 10, 10));
@@ -419,6 +390,18 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 		add(pnCenter, BorderLayout.NORTH);
 		add(pnMain, BorderLayout.CENTER);
+		btnCapNhatSP.addActionListener(this);
+		btnLamMoi.addActionListener(this);
+		btnThemSP.addActionListener(this);
+		btnTimKiem.addActionListener(this);
+		btnXemTatCa.addActionListener(this);
+		btnXoaSP.addActionListener(this);
+		table.addMouseListener(this);
+		loadData();
+		loadComboBoxByLoaiSanPham();
+		loadComboxBoxByNhaCungCap();
+		loadComboBoxByTheLoai();
+		loadComBoBoxByTacGia();
 	}
 
 	@Override
@@ -508,20 +491,21 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			s.setTrangThai(trangThai);
 			s.setSoLuong(soLuong);
 			s.setGiaNhap(giaNhap);
-			
+
 			boolean kiemTra;
 			try {
 				kiemTra = daoSach.themSach(s);
 				if (kiemTra) {
-					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGias, theLoais, namXuatBans, ISBN, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai,s.thue(), soLuong, giaNhap,s.giaBan()});
-					loadData();
+					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGias, theLoais, namXuatBans, ISBN, soTrang,
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, s.thue(), soLuong, giaNhap,
+							s.giaBan() });
 					JOptionPane.showMessageDialog(this, "Thêm thông tin thành công");
+					loadData();
 					lamMoi();
 				} else {
 					JOptionPane.showMessageDialog(this, "Lỗi khi thêm thông tin");
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
