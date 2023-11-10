@@ -54,7 +54,11 @@ import dao.DAONhanVien;
 import models.KhachHang;
 import models.NhanVien;
 
-public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseListener,KeyListener{
+
+public class QuanLyNhanVienView extends JPanel implements ActionListener,MouseListener,KeyListener{
+
+
+
 	private JDateChooser chooserNgaySinh;
 	private JTextField txtTenNV;
 	private JTextField txtsdt;
@@ -88,7 +92,7 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 	private JButton btnXemTatCa;
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
-	public QuanLyNhanVIenView() {
+	public QuanLyNhanVienView() {
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 		daoNhanVien=new DAONhanVien();
 		NhanVien nv=new NhanVien();
