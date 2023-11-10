@@ -16,7 +16,7 @@ public abstract class SanPhamCha {
 	protected TrangThaiSPEnum trangThai;
 	protected int soLuong;
 	protected double giaNhap;
-
+	
 	public SanPhamCha() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -111,6 +111,8 @@ public abstract class SanPhamCha {
 	public void setGiaNhap(double giaNhap) {
 		this.giaNhap = giaNhap;
 	}
+	
+	
 
 	@Override
 	public String toString() {
@@ -140,4 +142,5 @@ public abstract class SanPhamCha {
 	public abstract double thue();
 
 	public abstract double giaBan();
+	public abstract double giaKM();
 }

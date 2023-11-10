@@ -39,4 +39,8 @@ public class SanPhamCon extends SanPhamCha {
 	public double giaBan() {
 		return super.giaNhap+(super.giaNhap*0.55)+thue();
 	}
+	@Override
+	public double giaKM() {
+		return super.giaNhap+(super.giaNhap*0.55)+thue();
+	}
 }

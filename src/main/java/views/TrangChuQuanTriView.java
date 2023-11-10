@@ -90,6 +90,14 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLyKhachHangView());
 			}
 		});
+		MenuItem QLKM = new MenuItem(iconStaff, "Chương trình khuyến mãi", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new KhuyenMaiView());
+			}
+		});
 		MenuItem QLHD = new MenuItem(iconStaff, "Quản lý hóa đơn", null);
 		MenuItem subTKCa = new MenuItem(iconSubMenu, "Thống kê theo ca", null);
 		MenuItem subTKCP = new MenuItem(iconSubMenu, "Thống kê chi phí", null);
@@ -107,7 +115,7 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
 				subCaiDatHDSD);
-		addMenu(QLSP, QLNV, QLTKNV, QLKH, QLHD, TKBC, CaiDat);
+		addMenu(QLSP, QLNV, QLTKNV, QLKH,QLKM, QLHD, TKBC, CaiDat);
 
 	}
 
