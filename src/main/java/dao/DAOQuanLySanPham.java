@@ -215,7 +215,6 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-			
 			pst.setDouble(12,sp.giaKM());
 			int n = pst.executeUpdate();
 			return n >0 ;
