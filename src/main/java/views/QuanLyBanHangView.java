@@ -494,6 +494,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 						// TODO Auto-generated method stub
 						return 0;
 					}
+
+					@Override
+					public double giaKM() {
+						// TODO Auto-generated method stub
+						return 0;
+					}
 				};
 				double thanhTien = Double.parseDouble(modelGioHang.getValueAt(i, 4).toString());
 				ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, hd, sp, thanhTien);

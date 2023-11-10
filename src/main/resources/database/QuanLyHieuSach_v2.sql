@@ -190,3 +190,18 @@ FROM SanPham sp
 JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
 JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap 
 WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
+
+CREATE TABLE KhuyenMai (
+    idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
+    tenKM NVARCHAR(20) NOT NULL, 
+	loaiKM NVARCHAR(8),
+    ngayBatDau DATE DEFAULT GETDATE(), 
+    trangThai bit
+)
+CREATE TABLE ApDungKhuyenMai (
+    idSP nvarchar(14),
+    idKM nvarchar(14),
+    PRIMARY KEY (idSP, idKM),
+    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
+);
