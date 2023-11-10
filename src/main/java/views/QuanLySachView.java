@@ -8,12 +8,18 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Date;
+import java.util.Locale;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -28,9 +34,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -49,7 +58,7 @@ import models.TacGia;
 import models.TheLoai;
 import utils.TrangThaiSPEnum;
 
-public class QuanLySachView extends JPanel implements ActionListener, MouseListener, KeyListener {
+public class QuanLySachView extends JPanel implements ActionListener, MouseListener, KeyListener, ItemListener {
 	private JTabbedPane tabbedPane;
 
 	private JLabel lblTieuDe, lblIDSanPham, lblTinhTrangKinhDoanh;
@@ -114,6 +123,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	private JCheckBox chkTinhTrangKinhDoanh;
 	private SimpleDateFormat dfNgaySinh;
+	private NumberFormat currencyVN;
 	private JDateChooser chooserXuatBan;
 
 	private TrangThaiSPEnum trangThai;
@@ -122,10 +132,11 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 	private DAOTheLoai daoTheLoai;
 	private DAOTacGia daoTacGia;
 	private DAOSach daoSach;
+	private DecimalFormat df;
 
 	public QuanLySachView() {
 		init();
-		
+
 	}
 
 	private void loadComboBoxByTheLoai() {
@@ -200,13 +211,17 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		model.setRowCount(0);
 		ArrayList<SachCon> dsSach = daoSach.getAllSachLoadData();
 		for (SachCon s : dsSach) {
+			double thuePhanTram = s.thue() * 100;
+			currencyVN = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+			df = new DecimalFormat("#,###.##");
 			String tenTacGia = s.getTacGia().getIdTacGia();
 			String tenTheLoai = s.getTheLoai().getIdTheLoai();
 			String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
 			String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
-			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai, s.getNamXuatBan() + "",
-					s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap, s.getKichThuoc() + "", s.getMauSac(),
-					s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "", s.getGiaNhap() + "", s.giaBan() + "" };
+			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai,
+					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
+					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", df.format(thuePhanTram) + "%",
+					s.getSoLuong() + "", s.getGiaNhap() + "", s.giaBan() + "" };
 			model.addRow(row);
 		}
 
@@ -214,7 +229,8 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	private void init() {
 		setLayout(new BorderLayout());
-		
+		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+		df = new DecimalFormat("#,###.##");
 		daoSach = new DAOSach();
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -397,6 +413,12 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		btnXemTatCa.addActionListener(this);
 		btnXoaSP.addActionListener(this);
 		table.addMouseListener(this);
+		txtGiaNhap.addKeyListener(this);
+		cbLoaiSanPhamSearch.addItemListener(this);
+		cbNhaCungCapSearch.addItemListener(this);
+		cbTacGiaSearch.addItemListener(this);
+		cbTheLoaiSearch.addItemListener(this);
+		txtTuKhoa.addKeyListener(this);
 		loadData();
 		loadComboBoxByLoaiSanPham();
 		loadComboxBoxByNhaCungCap();
@@ -411,28 +433,86 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			lamMoi();
 		} else if (o.equals(btnThemSP)) {
 			themSach();
+		} else if (o.equals(btnCapNhatSP)) {
+			capNhatSach();
+		} else if (o.equals(btnXoaSP)) {
+			xoaSP();
+		} else if (o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadData();
 		}
 
 	}
 
-	private void themSach() {
-		String idSanPham = txtIdSanPham.getText();
-		String tenSanPham = txtTenSanPham.getText();
-		Date namXuatBan = chooserXuatBan.getDate();
-		String ISBN = txtISBN.getText();
-		int soTrang = Integer.parseInt(txtSoTrang.getText());
-		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
-		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
+	private void xoaSP() {
+		int row = table.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
+		} else {
+			try {
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!", "Cảnh báo",
+						JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
+					model.removeRow(row);
+					String idSanPham = txtIdSanPham.getText();
+					daoSach.xoaSach(idSanPham);
+					JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
+					lamMoi();
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this, "Xóa sản phẩm không thành công");
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	private void capNhatSach() {
+		int row = table.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để cập nhật", "Cảnh báo",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		} else {
+			int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
+					JOptionPane.YES_NO_OPTION);
+			if (hoiNhac == JOptionPane.YES_OPTION) {
+				try {
+					SachCon s = layThongTinSach();
+					String idSanPham = txtIdSanPham.getText();
+					daoSach.capNhatSach(s);
+					JOptionPane.showMessageDialog(this, "Cập nhật sách thành công!");
+					loadData();
+				} catch (NumberFormatException e) {
+					JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra định dạng số", "Lỗi",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	private SachCon layThongTinSach() throws NumberFormatException {
+		String idSanPham = txtIdSanPham.getText().trim();
+		String tenSanPham = txtTenSanPham.getText().trim();
 		String tacGia = (String) cbLoaiTacGia.getSelectedItem();
 		String theLoai = (String) cbLoaiTheLoai.getSelectedItem();
-		double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-		String mauSac = txtMauSac.getText();
+		java.util.Date date = chooserXuatBan.getDate();
+		java.sql.Date namXuatBan = new java.sql.Date(date.getYear(), date.getMonth(), date.getDay());
+		String ISBN = txtISBN.getText().trim();
+		int soTrang = Integer.parseInt(txtSoTrang.getText().trim());
+		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
+		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
+		double kichThuoc = Double.parseDouble(txtKichThuoc.getText().trim());
+		String mauSac = txtMauSac.getText().trim();
 		boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
 		TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-		int soLuong = Integer.parseInt(txtSoLuong.getText());
-		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
-		java.util.Date date = chooserXuatBan.getDate();
-		java.sql.Date namXuatBans = new java.sql.Date(date.getYear(), date.getMonth(), date.getDay());
+		int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
+		double giaNhap = Double.parseDouble(txtGiaNhap.getText().trim());
+
 		LoaiSanPham loaiSanPham = null;
 		for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
 			if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
@@ -475,41 +555,57 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			e.printStackTrace();
 		}
 
-		if (loaiSanPham != null && nhaCungCap != null && theLoais != null && tenTacGias != null) {
-			SachCon s = new SachCon();
-			s.setIdSanPham(idSanPham);
-			s.setTenSanPham(tenSanPham);
-			s.setTacGia(tenTacGias);
-			s.setTheLoai(theLoais);
-			s.setNamXuatBan(namXuatBans);
-			s.setISBN(ISBN);
-			s.setSoTrang(soTrang);
-			s.setIdLoaiSanPham(loaiSanPham);
-			s.setIdNhaCungCap(nhaCungCap);
-			s.setKichThuoc(kichThuoc);
-			s.setMauSac(mauSac);
-			s.setTrangThai(trangThai);
-			s.setSoLuong(soLuong);
-			s.setGiaNhap(giaNhap);
+		SachCon sach = new SachCon();
+		sach.setIdSanPham(idSanPham);
+		sach.setTenSanPham(tenSanPham);
+		sach.setTacGia(tenTacGias);
+		sach.setTheLoai(theLoais);
+		sach.setNamXuatBan(namXuatBan);
+		sach.setISBN(ISBN);
+		sach.setSoTrang(soTrang);
+		sach.setIdLoaiSanPham(loaiSanPham);
+		sach.setIdNhaCungCap(nhaCungCap);
+		sach.setKichThuoc(kichThuoc);
+		sach.setMauSac(mauSac);
+		sach.setTrangThai(trangThai);
+		sach.setSoLuong(soLuong);
+		sach.setGiaNhap(giaNhap);
 
-			boolean kiemTra;
-			try {
-				kiemTra = daoSach.themSach(s);
+		return sach;
+	}
+
+	private void themSach() {
+		String idSanPham = txtIdSanPham.getText();
+		try {
+			if (daoSach.checkIdSach(idSanPham)) {
+				JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
+				return;
+			} else {
+				SachCon sach = layThongTinSach();
+				boolean kiemTra = daoSach.themSach(sach);
 				if (kiemTra) {
-					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGias, theLoais, namXuatBans, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, s.thue(), soLuong, giaNhap,
-							s.giaBan() });
-					JOptionPane.showMessageDialog(this, "Thêm thông tin thành công");
+
+					model.addRow(new Object[] { sach.getIdSanPham(), sach.getTenSanPham(),
+							sach.getTacGia().getTenTacGia(), sach.getTheLoai().getTenTheLoai(),
+							dfNgaySinh.format(sach.getNamXuatBan()), sach.getISBN(), sach.getSoTrang(),
+							sach.getIdLoaiSanPham().getTenLoaiSanPham(), sach.getIdNhaCungCap().getTenNhaCungCap(),
+							sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
+							sach.getGiaNhap(), sach.giaBan() });
+					JOptionPane.showMessageDialog(this, "Thêm sách thành công");
+					 daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
+					 daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
 					loadData();
 					lamMoi();
 				} else {
-					JOptionPane.showMessageDialog(this, "Lỗi khi thêm thông tin");
+					JOptionPane.showMessageDialog(this, "Lỗi khi thêm sách");
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra định dạng số", "Lỗi", JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Lỗi khi thêm sách", "Lỗi", JOptionPane.ERROR_MESSAGE);
 		}
-
 	}
 
 	private void lamMoi() {
@@ -528,7 +624,9 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		txtSoLuong.setText("");
 		txtGiaNhap.setText("");
 		txtGiaBan.setText("");
+		table.clearSelection();
 		txtTenSanPham.requestFocus();
+
 	}
 
 	@Override
@@ -545,13 +643,65 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if (o.equals(txtGiaNhap)) {
+				calculateSellingPrice(txtGiaNhap, txtGiaBan);
+			} else if (o.equals(txtTuKhoa)) {
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				table.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTuKhoa.getText().trim(), 1, 4, 5));
+			}
+		});
+
+	}
+
+	private void calculateSellingPrice(JTextField txtGiaNhap2, JTextField txtGiaBan2) {
+		try {
+			double giaNhap = Double.parseDouble(txtGiaNhap2.getText());
+			double thue = giaNhap * 0.05;
+			double sellingPrice = giaNhap + (giaNhap * 0.55) + thue;
+			txtGiaBan2.setText(df.format(sellingPrice));
+		} catch (NumberFormatException ex) {
+			txtGiaBan2.setText("Vui lòng nhập số hợp lệ.");
+		}
 
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		int row = table.getSelectedRow();
+		if (row >= 0) {
+			txtIdSanPham.setText(model.getValueAt(row, 0).toString());
+			txtTenSanPham.setText(model.getValueAt(row, 1).toString());
+			cbLoaiTacGia.setSelectedItem(model.getValueAt(row, 2).toString());
+			cbLoaiTheLoai.setSelectedItem(model.getValueAt(row, 3).toString());
+			String namXuatBanString = model.getValueAt(row, 4).toString();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			java.util.Date namXuatBan = null;
+			try {
+				namXuatBan = dateFormat.parse(namXuatBanString);
+			} catch (ParseException ex) {
+				ex.printStackTrace();
+			}
+			chooserXuatBan.setDate(namXuatBan);
+			txtISBN.setText(model.getValueAt(row, 5).toString());
+			txtSoTrang.setText(model.getValueAt(row, 6).toString());
+			cbLoaiSanPham.setSelectedItem(model.getValueAt(row, 7).toString());
+			cbNhaCungCap.setSelectedItem(model.getValueAt(row, 8).toString());
+			txtKichThuoc.setText(model.getValueAt(row, 9).toString());
+			txtMauSac.setText(model.getValueAt(row, 10).toString());
+
+			String trangThaiValue = model.getValueAt(row, 11).toString();
+			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
+
+			chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
+
+			txtSoLuong.setText(model.getValueAt(row, 13).toString());
+			txtGiaNhap.setText(model.getValueAt(row, 14).toString());
+			txtGiaBan.setText(model.getValueAt(row, 15).toString());
+		}
 
 	}
 
@@ -577,6 +727,253 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		Object o = e.getSource();
+		if (o == cbLoaiSanPhamSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedLoaiSanPham = (String) cbLoaiSanPhamSearch.getSelectedItem();
+				if (selectedLoaiSanPham.equals("Tất cả")) {
+					loadData();
+				} else {
+					ArrayList<SachCon> sachByLoaiSP;
+					try {
+						sachByLoaiSP = daoSach.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
+						if (sachByLoaiSP.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho loại sản phẩm này.",
+									"Thông báo", JOptionPane.WARNING_MESSAGE);
+							loadData();
+							cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+						} else {
+							loadtableByLoaiSanPham(selectedLoaiSanPham);
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu theo loại sản phẩm.", "Lỗi",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		} else if (o == cbNhaCungCapSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedNhaCungCap = (String) cbNhaCungCapSearch.getSelectedItem();
+				if (selectedNhaCungCap.equals("Tất cả")) {
+					loadData();
+				} else {
+					ArrayList<SachCon> sachByLoaiNCC;
+					try {
+						sachByLoaiNCC = daoSach.loadComboBoxByNhaCungCap(selectedNhaCungCap);
+						if (sachByLoaiNCC.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+									"Thông báo", JOptionPane.WARNING_MESSAGE);
+							loadData();
+							cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+						} else {
+							loadtableByNhaCungCap(selectedNhaCungCap);
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu theo loại sản phẩm.", "Lỗi",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		} else if (o == cbTacGiaSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedTacGia = (String) cbTacGiaSearch.getSelectedItem();
+				if (selectedTacGia.equals("Tất cả")) {
+					loadData();
+				} else {
+					ArrayList<SachCon> sachByLoaiTG;
+					try {
+						sachByLoaiTG = daoSach.loadComboBoxByTacGia(selectedTacGia);
+						if (sachByLoaiTG.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho tác giả này.", "Thông báo",
+									JOptionPane.WARNING_MESSAGE);
+							loadData();
+							cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+						} else {
+							loadtableByTacGia(selectedTacGia);
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu theo tác giả.", "Lỗi",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		} else if (o == cbTheLoaiSearch) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				String selectedTheLoai = (String) cbTheLoaiSearch.getSelectedItem();
+				if (selectedTheLoai.equals("Tất cả")) {
+					loadData();
+				} else {
+					ArrayList<SachCon> sachByTheLoai;
+					try {
+						sachByTheLoai = daoSach.loadComboBoxByTheLoai(selectedTheLoai);
+						if (sachByTheLoai.isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho thể loại này.",
+									"Thông báo", JOptionPane.WARNING_MESSAGE);
+							loadData();
+							cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+						} else {
+							loadtableByTheLoai(selectedTheLoai);
+						}
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu theo thể loại.", "Lỗi",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		}
+
+	}
+
+	private void loadtableByTheLoai(String selectedTheLoai) {
+		model.setRowCount(0);
+		try {
+			ArrayList<SachCon> dsSach = daoSach.loadComboBoxByTheLoai(selectedTheLoai);
+			if (dsSach.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho thể loại này.", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+				loadData();
+				cbTacGiaSearch.setSelectedItem("Tất cả");
+			} else {
+				for (SachCon s : dsSach) {
+					String idSanPham = s.getIdSanPham();
+					String tenSanPham = s.getTenSanPham();
+					String tenTacGia = s.getTacGia().getIdTacGia();
+					String tenTheLoai = s.getTheLoai().getIdTheLoai();
+					Date namXuatBan = s.getNamXuatBan();
+					String ISBN = s.getISBN();
+					int soTrang = s.getSoTrang();
+					String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
+					String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
+					double kichThuoc = s.getKichThuoc();
+					String mauSac = s.getMauSac();
+					String trangThai = s.getTrangThai().getDescription();
+					double thue = s.thue();
+					int soLuong = s.getSoLuong();
+					double giaNhap = s.getGiaNhap();
+					double giaBan = s.giaBan();
+					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadtableByTacGia(String selectedTacGia) {
+		model.setRowCount(0);
+		try {
+			ArrayList<SachCon> dsSach = daoSach.loadComboBoxByTacGia(selectedTacGia);
+			if (dsSach.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho tác giả này.", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+				loadData();
+				cbTacGiaSearch.setSelectedItem("Tất cả");
+			} else {
+				for (SachCon s : dsSach) {
+					String idSanPham = s.getIdSanPham();
+					String tenSanPham = s.getTenSanPham();
+					String tenTacGia = s.getTacGia().getIdTacGia();
+					String tenTheLoai = s.getTheLoai().getIdTheLoai();
+					Date namXuatBan = s.getNamXuatBan();
+					String ISBN = s.getISBN();
+					int soTrang = s.getSoTrang();
+					String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
+					String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
+					double kichThuoc = s.getKichThuoc();
+					String mauSac = s.getMauSac();
+					String trangThai = s.getTrangThai().getDescription();
+					double thue = s.thue();
+					int soLuong = s.getSoLuong();
+					double giaNhap = s.getGiaNhap();
+					double giaBan = s.giaBan();
+					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadtableByNhaCungCap(String selectedNhaCungCap) {
+		model.setRowCount(0);
+		try {
+			ArrayList<SachCon> dsSach = daoSach.loadComboBoxByNhaCungCap(selectedNhaCungCap);
+			if (dsSach.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho loại sản phẩm này.", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+				loadData();
+				cbNhaCungCapSearch.setSelectedItem("Tất cả");
+			} else {
+				for (SachCon s : dsSach) {
+					String idSanPham = s.getIdSanPham();
+					String tenSanPham = s.getTenSanPham();
+					String tenTacGia = s.getTacGia().getIdTacGia();
+					String tenTheLoai = s.getTheLoai().getIdTheLoai();
+					Date namXuatBan = s.getNamXuatBan();
+					String ISBN = s.getISBN();
+					int soTrang = s.getSoTrang();
+					String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
+					String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
+					double kichThuoc = s.getKichThuoc();
+					String mauSac = s.getMauSac();
+					String trangThai = s.getTrangThai().getDescription();
+					double thue = s.thue();
+					int soLuong = s.getSoLuong();
+					double giaNhap = s.getGiaNhap();
+					double giaBan = s.giaBan();
+					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadtableByLoaiSanPham(String selectedLoaiSanPham) {
+		model.setRowCount(0);
+		try {
+			ArrayList<SachCon> dsSach = daoSach.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
+			if (dsSach.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho loại sản phẩm này.", "Thông báo",
+						JOptionPane.WARNING_MESSAGE);
+				loadData();
+				cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
+			} else {
+				for (SachCon s : dsSach) {
+					String idSanPham = s.getIdSanPham();
+					String tenSanPham = s.getTenSanPham();
+					String tenTacGia = s.getTacGia().getIdTacGia();
+					String tenTheLoai = s.getTheLoai().getIdTheLoai();
+					Date namXuatBan = s.getNamXuatBan();
+					String ISBN = s.getISBN();
+					int soTrang = s.getSoTrang();
+					String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
+					String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
+					double kichThuoc = s.getKichThuoc();
+					String mauSac = s.getMauSac();
+					String trangThai = s.getTrangThai().getDescription();
+					double thue = s.thue();
+					int soLuong = s.getSoLuong();
+					double giaNhap = s.getGiaNhap();
+					double giaBan = s.giaBan();
+					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

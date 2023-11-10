@@ -64,7 +64,7 @@ public class DAOSach implements Serializable {
 				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham "
 				+ "JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap "
 				+ "JOIN TacGia tg ON tg.idTacGia = s.tacGia " + "JOIN TheLoai tl ON tl.idTheLoai = s.theLoai "
-				+ "WHERE lsp.idLoaiSanPham = ?";
+				+ "WHERE lsp.tenLoaiSanPham = ?";
 
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setString(1, idLoaiSanPham);
@@ -73,13 +73,13 @@ public class DAOSach implements Serializable {
 				SachCon s = new SachCon();
 				s.setIdSanPham(rs.getString("idSanPham"));
 				s.setTenSanPham(rs.getString("tenSanPham"));
-				s.setTacGia(new TacGia(rs.getString("idTacGia")));
-				s.setTheLoai(new TheLoai(rs.getString("idTheLoai")));
+				s.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				s.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
 				s.setNamXuatBan(rs.getDate("namXuatBan"));
 				s.setISBN(rs.getString("ISBN"));
 				s.setSoTrang(rs.getInt("soTrang"));
-				s.setIdLoaiSanPham(new LoaiSanPham(rs.getString("idLoaiSanPham")));
-				s.setIdNhaCungCap(new NhaCungCap(rs.getString("idNhaCungCap")));
+				s.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				s.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
 				s.setKichThuoc(rs.getDouble("kichThuoc"));
 				s.setMauSac(rs.getString("mauSac"));
 				int trangThai = rs.getInt("trangThai");
@@ -97,6 +97,129 @@ public class DAOSach implements Serializable {
 
 		return dsSach;
 	}
+	
+	
+	public ArrayList<SachCon> loadComboBoxByNhaCungCap(String idNhaCungCap) throws SQLException {
+		ArrayList<SachCon> dsSach = new ArrayList<SachCon>();
+		String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan "
+				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham "
+				+ "JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap "
+				+ "JOIN TacGia tg ON tg.idTacGia = s.tacGia " + "JOIN TheLoai tl ON tl.idTheLoai = s.theLoai "
+				+ "WHERE ncc.tenNhaCungCap = ?";
+
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, idNhaCungCap);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				SachCon s = new SachCon();
+				s.setIdSanPham(rs.getString("idSanPham"));
+				s.setTenSanPham(rs.getString("tenSanPham"));
+				s.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				s.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				s.setNamXuatBan(rs.getDate("namXuatBan"));
+				s.setISBN(rs.getString("ISBN"));
+				s.setSoTrang(rs.getInt("soTrang"));
+				s.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				s.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				s.setKichThuoc(rs.getDouble("kichThuoc"));
+				s.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				s.setTrangThai(trangThaiEnum);
+				s.thue();
+				s.setSoLuong(rs.getInt("soLuong"));
+				s.setGiaNhap(rs.getDouble("giaNhap"));
+				s.giaKM();
+				dsSach.add(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dsSach;
+	}
+	
+	
+	public ArrayList<SachCon> loadComboBoxByTacGia(String idTacGia) throws SQLException {
+		ArrayList<SachCon> dsSach = new ArrayList<SachCon>();
+		String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan "
+				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham "
+				+ "JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap "
+				+ "JOIN TacGia tg ON tg.idTacGia = s.tacGia " + "JOIN TheLoai tl ON tl.idTheLoai = s.theLoai "
+				+ "WHERE tg.tenTacGia = ?";
+
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, idTacGia);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				SachCon s = new SachCon();
+				s.setIdSanPham(rs.getString("idSanPham"));
+				s.setTenSanPham(rs.getString("tenSanPham"));
+				s.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				s.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				s.setNamXuatBan(rs.getDate("namXuatBan"));
+				s.setISBN(rs.getString("ISBN"));
+				s.setSoTrang(rs.getInt("soTrang"));
+				s.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				s.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				s.setKichThuoc(rs.getDouble("kichThuoc"));
+				s.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				s.setTrangThai(trangThaiEnum);
+				s.thue();
+				s.setSoLuong(rs.getInt("soLuong"));
+				s.setGiaNhap(rs.getDouble("giaNhap"));
+				s.giaKM();
+				dsSach.add(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dsSach;
+	}
+	
+	public ArrayList<SachCon> loadComboBoxByTheLoai(String idTheLoai) throws SQLException {
+		ArrayList<SachCon> dsSach = new ArrayList<SachCon>();
+		String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan "
+				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham "
+				+ "JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap "
+				+ "JOIN TacGia tg ON tg.idTacGia = s.tacGia " + "JOIN TheLoai tl ON tl.idTheLoai = s.theLoai "
+				+ "WHERE tl.tenTheLoai= ?";
+
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, idTheLoai);
+			ResultSet rs = pst.executeQuery();
+			while (rs.next()) {
+				SachCon s = new SachCon();
+				s.setIdSanPham(rs.getString("idSanPham"));
+				s.setTenSanPham(rs.getString("tenSanPham"));
+				s.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				s.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				s.setNamXuatBan(rs.getDate("namXuatBan"));
+				s.setISBN(rs.getString("ISBN"));
+				s.setSoTrang(rs.getInt("soTrang"));
+				s.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				s.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				s.setKichThuoc(rs.getDouble("kichThuoc"));
+				s.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				s.setTrangThai(trangThaiEnum);
+				s.thue();
+				s.setSoLuong(rs.getInt("soLuong"));
+				s.setGiaNhap(rs.getDouble("giaNhap"));
+				s.giaKM();
+				dsSach.add(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dsSach;
+	}
+	
 
 	public String getLatestProductID() {
 		String productID = null;
@@ -138,4 +261,65 @@ public class DAOSach implements Serializable {
 			return false;
 		}
 	}
+
+	public boolean capNhatSach(SachCon s)throws SQLException {
+		String sql = "UPDATE Sach "
+				+ "SET tenSanPham = ?, tacGia = ?, theLoai = ?, namXuatBan = ?, ISBN = ?, soTrang = ?, loaiSanPham = ?, "
+				+ "nhaCungCap = ?, kichThuoc = ?, mauSac = ?, trangThai = ? ,thue = ?, soLuong = ?, giaNhap = ?, giaBan = ?, giaKhuyenMai = ? WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, s.getTenSanPham());
+			pst.setString(2, s.getTacGia().getIdTacGia());
+			pst.setString(3, s.getTheLoai().getIdTheLoai());
+			pst.setDate(4, s.getNamXuatBan());
+			pst.setString(5, s.getISBN());
+			pst.setInt(6, s.getSoTrang());
+			pst.setString(7, s.getIdLoaiSanPham().getIdLoaiSanPham());
+			pst.setString(8, s.getIdNhaCungCap().getIdNhaCungCap());
+			pst.setDouble(9, s.getKichThuoc());
+			pst.setString(10, s.getMauSac());
+			pst.setInt(11, s.getTrangThai().getValue());
+			pst.setDouble(12, s.thue());
+			pst.setInt(13, s.getSoLuong());
+			pst.setDouble(14, s.getGiaNhap());
+			pst.setDouble(15, s.giaBan());
+			pst.setDouble(16, s.giaKM());
+			pst.setString(17, s.getIdSanPham());
+			int n = pst.executeUpdate();
+			return n > 0;
+		} catch (SQLException e) {
+			System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
+			System.out.println("Error Code                       : " + e.getErrorCode());
+			System.out.println("Error Message                    : " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public void xoaSach(String idSach) throws SQLException{
+		String sql = "DELETE FROM Sach WHERE idSanPham =?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, idSach);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
+			System.out.println("Error Code                       : " + e.getErrorCode());
+			System.out.println("Error Message                    : " + e.getMessage());
+		}
+	}
+	public boolean checkIdSach(String idSanPham) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM Sach WHERE idSanPham = ?";
+	    try (PreparedStatement pst = connection.prepareStatement(sql)) {
+	        pst.setString(1, idSanPham);
+	        try (ResultSet rs = pst.executeQuery()) {
+	            if (rs.next()) {
+	                int count = rs.getInt(1);
+	                return count > 0;
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false; 
+	}
+
+	    
 }

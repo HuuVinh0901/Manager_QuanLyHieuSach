@@ -15,6 +15,16 @@ public class DAOTheLoai {
 	public DAOTheLoai() {
 		connection = ConnectDB.getinstance().getConnection();
 	}
+	
+	public void tangSoLuongTheLoai(String idTheLoai) throws SQLException {
+        String sql = "UPDATE TheLoai SET soLuongSach = soLuongSach + 1 WHERE idTheLoai = ?";
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, idTheLoai);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 	public ArrayList<TheLoai> getAllTheLoai() throws SQLException {
 		ArrayList<TheLoai> dsTheLoai = new ArrayList<TheLoai>();

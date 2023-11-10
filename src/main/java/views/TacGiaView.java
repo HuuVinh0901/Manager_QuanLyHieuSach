@@ -326,12 +326,10 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 						JOptionPane.showMessageDialog(this, "Lỗi khi thêm thông tin");
 					}
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		} catch (HeadlessException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
