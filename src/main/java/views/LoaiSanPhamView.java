@@ -85,7 +85,6 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 		lblIdLoaiSanPham.setPreferredSize(labelSize);
 		lblTenLoaiSanPham.setPreferredSize(labelSize);
 
-		// Sử dụng FlowLayout cho từng dòng để giữ các thành phần gần nhau
 		JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		idPanel.add(lblIdLoaiSanPham);
 		idPanel.add(txtIdLoaiSanPham);

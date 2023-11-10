@@ -8,14 +8,23 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import connection.ConnectDB;
+import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
+import views.QuanLySanPhamView;
 
 public class DAOQuanLySanPham implements Serializable {
+	private Connection connection;
+
+	public DAOQuanLySanPham() {
+		connection = ConnectDB.getinstance().getConnection();
+	}
 
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
@@ -27,34 +36,72 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 	}
 
+	public ArrayList<SanPhamCon> getSanPhamTimKiem(String cond) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
+					+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'";
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SanPhamCon lsp = new SanPhamCon();
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
+				lsp.giaBan();
+				dsSanPham.add(lsp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dsSanPham;
+	}
+	
 	public ArrayList<SanPhamCon> loadComboBoxByLoaiSanPham(String id) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong,sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE lsp.tenLoaiSanPham = ?";
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " +"WHERE lsp.tenLoaiSanPham = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, id);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				SanPhamCon lsp = new SanPhamCon();
-				lsp.setHinhAnhSanPham(rs.getString(1));
-				lsp.setIdSanPham(rs.getString(2));
-				lsp.setTenSanPham(rs.getString(3));
-				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
-				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
-				lsp.setKichThuoc(rs.getDouble(6));
-				lsp.setMauSac(rs.getString(7));
-				int trangThai = rs.getInt(8);
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
 				lsp.setTrangThai(trangThaiEnum);
 				lsp.thue();
-				lsp.setGiaNhap(rs.getDouble(10));
-				lsp.setSoLuong(rs.getInt(11));
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
 				lsp.giaBan();
+				
+				lsp.giaKM();
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -70,27 +117,26 @@ public class DAOQuanLySanPham implements Serializable {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong,sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE ncc.tenNhaCungCap= ?";
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE ncc.tenNhaCungCap = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, id);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				SanPhamCon lsp = new SanPhamCon();
-				lsp.setHinhAnhSanPham(rs.getString(1));
-				lsp.setIdSanPham(rs.getString(2));
-				lsp.setTenSanPham(rs.getString(3));
-				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
-				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
-				lsp.setKichThuoc(rs.getDouble(6));
-				lsp.setMauSac(rs.getString(7));
-				int trangThai = rs.getInt(8);
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
 				lsp.setTrangThai(trangThaiEnum);
 				lsp.thue();
-				lsp.setGiaNhap(rs.getDouble(10));
-				lsp.setSoLuong(rs.getInt(11));
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
 				lsp.giaBan();
 				dsSanPham.add(lsp);
 			}
@@ -102,36 +148,29 @@ public class DAOQuanLySanPham implements Serializable {
 	}
 
 	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
-		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
-
-		try {
-			ConnectDB.getinstance();
-			Connection con = ConnectDB.getConnection();
-			String sql = "SELECT sp.hinhAnhSanPham, sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
-			Statement statement = con.createStatement();
-			ResultSet rs = statement.executeQuery(sql);
-			while (rs.next()) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+			while(rs.next()) {
 				SanPhamCon lsp = new SanPhamCon();
-				lsp.setHinhAnhSanPham(rs.getString(1));
-				lsp.setIdSanPham(rs.getString(2));
-				lsp.setTenSanPham(rs.getString(3));
-				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
-				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
-				lsp.setKichThuoc(rs.getDouble(6));
-				lsp.setMauSac(rs.getString(7));
-				int trangThai = rs.getInt(8);
+				lsp.setIdSanPham(rs.getString("idSanPham"));
+				lsp.setTenSanPham(rs.getString("tenSanPham"));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				lsp.setKichThuoc(rs.getDouble("kichThuoc"));
+				lsp.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
 				lsp.setTrangThai(trangThaiEnum);
 				lsp.thue();
-				lsp.setGiaNhap(rs.getDouble(10));
-				lsp.setSoLuong(rs.getInt(11));
+				lsp.setGiaNhap(rs.getDouble("giaNhap"));
+				lsp.setSoLuong(rs.getInt("soLuong"));
 				lsp.giaBan();
 				dsSanPham.add(lsp);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return dsSanPham;
 	}
 
@@ -145,14 +184,13 @@ public class DAOQuanLySanPham implements Serializable {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				SanPhamCha lsp = new SanPhamCon();
-				lsp.setHinhAnhSanPham(rs.getString(1));
-				lsp.setIdSanPham(rs.getString(2));
-				lsp.setTenSanPham(rs.getString(3));
-				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(4)));
-				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(5)));
-				lsp.setKichThuoc(rs.getDouble(6));
-				lsp.setMauSac(rs.getString(7));
-				String trangThai = rs.getString(8);
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				String trangThai = rs.getString(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
 				lsp.setTrangThai(trangThaiEnum);
 				dsSanPham.add(lsp);
@@ -162,86 +200,74 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return dsSanPham;
 	}
-
-	public boolean themSanPham(SanPhamCon sp) throws SQLException {
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
+	
+	public boolean themSanPham(SanPhamCon sp) {
 		String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			if (con != null && !con.isClosed()) {
-				ps = con.prepareStatement(sql);
-				ps.setString(1, sp.getHinhAnhSanPham());
-				ps.setString(2, sp.getIdSanPham());
-				ps.setString(3, sp.getTenSanPham());
-				ps.setString(4, sp.getIdLoaiSanPham().getIdLoaiSanPham());
-				ps.setString(5, sp.getIdNhaCungCap().getIdNhaCungCap());
-				ps.setDouble(6, sp.getKichThuoc());
-				ps.setString(7, sp.getMauSac());
-				ps.setInt(8, sp.getTrangThai().getValue());
-				ps.setDouble(9, sp.thue());
-				ps.setDouble(10, sp.getGiaNhap());
-				ps.setInt(11, sp.getSoLuong());
-				ps.setDouble(12, sp.giaBan());
-				return ps.executeUpdate() > 0;
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, sp.getIdSanPham());
+			pst.setString(2, sp.getTenSanPham());
+			pst.setString(3, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+			pst.setString(4, sp.getIdNhaCungCap().getIdNhaCungCap());
+			pst.setDouble(5, sp.getKichThuoc());
+			pst.setString(6, sp.getMauSac());
+			pst.setInt(7, sp.getTrangThai().getValue());
+			pst.setDouble(8, sp.thue());
+			pst.setDouble(9, sp.getGiaNhap());
+			pst.setInt(10, sp.getSoLuong());
+			pst.setDouble(11, sp.giaBan());
+			
+			pst.setDouble(12,sp.giaKM());
+			int n = pst.executeUpdate();
+			return n >0 ;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public String getLatestProductID() {
+		String productID = null;
+		String sql = "SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC";
+		try (PreparedStatement pst = connection.prepareStatement(sql);
+				ResultSet rs = pst.executeQuery()){
+			if(rs.next()) {
+				productID = rs.getString("idSanPham");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		con.close();
-		return false;
-	}
-
-	public String getLatestProductID() throws SQLException {
-		String productID = null;
-		ConnectDB.getinstance();
-		PreparedStatement pst = null;
-		Connection con = ConnectDB.getConnection();
-		try {
-			String sql = ("SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC");
-			pst = con.prepareStatement(sql);
-			ResultSet rs = pst.executeQuery();
-			if (rs.next()) {
-				productID = rs.getString("idSanPham");
-			}
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-		} finally {
-			close(pst);
-		}
 		return productID;
 	}
-
+	
 	public boolean capNhatSanPham(SanPhamCon sp) {
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
-		PreparedStatement stmt = null;
-		int n = 0;
-		try {
-			stmt = con.prepareStatement("UPDATE SanPham " +
-			        "SET hinhAnhSanPham = ?, tenSanPham = ?, loaiSanPham = ?, nhaCungCap = ?, kichThuoc = ?, mauSac = ?, trangThai = ?, thue = ?, giaNhap = ?, soLuong = ? " +
-			        "WHERE idSanPham = ?");
-			stmt.setString(1, sp.getHinhAnhSanPham());
-			stmt.setString(2, sp.getTenSanPham());
-			stmt.setString(3, sp.getIdLoaiSanPham().getIdLoaiSanPham());
-			stmt.setString(4, sp.getIdLoaiSanPham().getIdLoaiSanPham());
-			stmt.setDouble(5, sp.getKichThuoc());
-			stmt.setString(6, sp.getMauSac());
-			stmt.setInt(7, sp.getTrangThai().getValue());
-			stmt.setDouble(8, sp.thue());
-			stmt.setDouble(9, sp.getGiaNhap());
-			stmt.setInt(10, sp.getSoLuong());
-			stmt.setString(11, sp.getIdSanPham());
-			n = stmt.executeUpdate();
-		} catch (Exception e) {
+		String sql = "UPDATE SanPham "
+				+ "SET  tenSanPham = ?, loaiSanPham = ?, nhaCungCap = ?, kichThuoc = ?, mauSac = ?, trangThai = ?, thue = ?, giaNhap = ?, soLuong = ? "
+				+ "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, sp.getTenSanPham());
+			pst.setString(2, sp.getIdLoaiSanPham().getIdLoaiSanPham());
+			pst.setString(3, sp.getIdNhaCungCap().getIdNhaCungCap());
+			pst.setDouble(4, sp.getKichThuoc());
+			pst.setString(5, sp.getMauSac());
+			pst.setInt(6, sp.getTrangThai().getValue());
+			pst.setDouble(7, sp.thue());
+			pst.setDouble(8, sp.getGiaNhap());
+			pst.setInt(9, sp.getSoLuong());
+			pst.setString(10, sp.getIdSanPham());
+			int n = pst.executeUpdate();
+			return n >0;
+		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				stmt.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
+			return false;
 		}
-		return n > 0;
+	}
+	public void xoaSanPham(String idSanPham) {
+		String sql ="DELETE FROM SanPham WHERE idSanPham =?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setString(1, idSanPham);
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -7,7 +7,6 @@ import javax.swing.JComboBox;
 import utils.TrangThaiSPEnum;
 
 public abstract class SanPhamCha {
-	protected String hinhAnhSanPham;
 	protected String idSanPham;
 	protected String tenSanPham;
 	protected LoaiSanPham idLoaiSanPham;
@@ -17,7 +16,7 @@ public abstract class SanPhamCha {
 	protected TrangThaiSPEnum trangThai;
 	protected int soLuong;
 	protected double giaNhap;
-
+	
 	public SanPhamCha() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -27,16 +26,9 @@ public abstract class SanPhamCha {
 		this.idSanPham = idSanPham;
 	}
 
-	
-	
-
-	
-
-	public SanPhamCha(String hinhAnhSanPham, String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
-			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong,
-			double giaNhap) {
+	public SanPhamCha(String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap,
+			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong, double giaNhap) {
 		super();
-		this.hinhAnhSanPham = hinhAnhSanPham;
 		this.idSanPham = idSanPham;
 		this.tenSanPham = tenSanPham;
 		this.idLoaiSanPham = idLoaiSanPham;
@@ -46,14 +38,6 @@ public abstract class SanPhamCha {
 		this.trangThai = trangThai;
 		this.soLuong = soLuong;
 		this.giaNhap = giaNhap;
-	}
-
-	public String getHinhAnhSanPham() {
-		return hinhAnhSanPham;
-	}
-
-	public void setHinhAnhSanPham(String hinhAnhSanPham) {
-		this.hinhAnhSanPham = hinhAnhSanPham;
 	}
 
 	public String getIdSanPham() {
@@ -127,10 +111,12 @@ public abstract class SanPhamCha {
 	public void setGiaNhap(double giaNhap) {
 		this.giaNhap = giaNhap;
 	}
+	
+	
 
 	@Override
 	public String toString() {
-		return "SanPhamCha [hinhAnhSanPham=" + hinhAnhSanPham + ", idSanPham=" + idSanPham + ", tenSanPham="
+		return "SanPhamCha [idSanPham=" + idSanPham + ", tenSanPham="
 				+ tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham + ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc="
 				+ kichThuoc + ", mauSac=" + mauSac + ", trangThai=" + trangThai + ", soLuong=" + soLuong + ", giaNhap="
 				+ giaNhap + "]";
@@ -152,6 +138,9 @@ public abstract class SanPhamCha {
 		SanPhamCha other = (SanPhamCha) obj;
 		return Objects.equals(idSanPham, other.idSanPham);
 	}
+
 	public abstract double thue();
+
 	public abstract double giaBan();
+	public abstract double giaKM();
 }
