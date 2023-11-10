@@ -35,7 +35,7 @@ CREATE TABLE KhachHang(
 )
 go
 CREATE TABLE HoaDon (
-    idDonHang NVARCHAR(7) NOT NULL PRIMARY KEY, 
+    idDonHang NVARCHAR(14) NOT NULL PRIMARY KEY, 
     ngayLap DATE NOT NULL, 
     khachHang NVARCHAR(7) NOT NULL, 
     nhanVien NVARCHAR(7) NOT NULL, 
@@ -99,7 +99,7 @@ CREATE TABLE ChuongTrinhKhuyenMai (
 go
 CREATE TABLE ChiTietHoaDon (
     soLuong INT CHECK (soLuong > 0), 
-    idDonHang NVARCHAR(7) NOT NULL , 
+    idDonHang NVARCHAR(14) NOT NULL , 
     idSanPham NVARCHAR(14) NOT NULL, 
 	thanhTien FLOAT,
 	PRIMARY KEY (idDonHang, idSanPham),
@@ -183,6 +183,7 @@ JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham
 JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap 
 WHERE lsp.tenLoaiSanPham = 'hhhhhhhh'
 
+<<<<<<< HEAD
 SELECT TOP 1 idNhaCungCap FROM NhaCungCap ORDER BY idNhaCungCap DESC
 
 SELECT COUNT(*) FROM NhaCungCap WHERE idNhaCungCap = 'NCC202311060001'
@@ -201,3 +202,19 @@ JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap
 JOIN TacGia tg ON tg.idTacGia = s.tacGia 
 JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
 WHERE lsp.idLoaiSanPham = ?
+=======
+CREATE TABLE KhuyenMai (
+    idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
+    tenKM NVARCHAR(20) NOT NULL, 
+	loaiKM NVARCHAR(8),
+    ngayBatDau DATE DEFAULT GETDATE(), 
+    trangThai bit
+)
+CREATE TABLE ApDungKhuyenMai (
+    idSP nvarchar(14),
+    idKM nvarchar(14),
+    PRIMARY KEY (idSP, idKM),
+    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
+);
+>>>>>>> main

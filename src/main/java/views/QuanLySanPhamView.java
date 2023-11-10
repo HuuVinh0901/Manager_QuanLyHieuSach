@@ -39,6 +39,7 @@ import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
 import dao.DAONhaCungCap;
 import dao.DAOQuanLySanPham;
+import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SanPhamCha;
@@ -482,6 +483,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
 		int soLuong = Integer.parseInt(txtSoLuong.getText());
 		LoaiSanPham loaiSanPham = null;
+		KhuyenMai khuyenMai=null;
 		for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
 			if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
 				loaiSanPham = item;
@@ -507,6 +509,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			sp.setTrangThai(trangThai);
 			sp.setGiaNhap(giaNhap);
 			sp.setSoLuong(soLuong);
+			
 			daoSanPham.themSanPham(sp);
 			String trangThaiDescription = trangThai.getDescription();
 			modelSP.addRow(new Object[] { generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),

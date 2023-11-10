@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.Connection;
@@ -36,9 +38,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -49,13 +54,17 @@ import dao.DAONhanVien;
 import models.KhachHang;
 import models.NhanVien;
 
-public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseListener{
+
+public class QuanLyNhanVienView extends JPanel implements ActionListener,MouseListener,KeyListener{
+
+
+
 	private JDateChooser chooserNgaySinh;
 	private JTextField txtTenNV;
 	private JTextField txtsdt;
 	private JTextField txtEmail;
 	private JTextField txtDiaChi;
-	private JTextField txtLuong;
+	
 	
 	
 	private JTextField txtTimKiem;
@@ -80,11 +89,13 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 	private JButton btnCapNhatNV;
 	private JButton btnXoaNV;
 	private JButton btnLamMoi;
-	private JButton btnTimKiem;
+	private JButton btnXemTatCa;
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
-	public QuanLyNhanVIenView() {
-//		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+
+	public QuanLyNhanVienView() {
+		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
+
 		daoNhanVien=new DAONhanVien();
 		NhanVien nv=new NhanVien();
 		setLayout(new BorderLayout());
@@ -172,21 +183,20 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
         JPanel pnChucNang = new JPanel(new GridLayout(1,6,10,40));
         
         
-        txtID=new JTextField();
+        
         btnThemNV=new JButton("THÊM NHÂN VIÊN");
-        btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
+        btnCapNhatNV=new JButton("CẬP NHẬT");
         btnXoaNV=new JButton("XÓA NHÂN VIÊN");
         btnLamMoi=new JButton("LÀM MỚI");
-        btnTimKiem=new JButton("TÌM");
+        btnXemTatCa=new JButton("XEM TẤT CẢ");
         
         pnChucNang.add(btnThemNV);
         pnChucNang.add(btnCapNhatNV);
         pnChucNang.add(btnXoaNV);
         pnChucNang.add(btnLamMoi);
-        pnChucNang.add(cbTimKiem);
         pnChucNang.add(lbTimKiem);
         pnChucNang.add(txtTimKiem);
-        pnChucNang.add(btnTimKiem);
+        pnChucNang.add(btnXemTatCa);
         
         //Tạo bảng
         modelNhanVien = new DefaultTableModel();
@@ -217,8 +227,14 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 		btnThemNV.addActionListener(this);
 		btnCapNhatNV.addActionListener(this);
 		btnXoaNV.addActionListener(this);
-		btnTimKiem.addActionListener(this);
+		btnXemTatCa.addActionListener(this);
 		tableNhanVien.addMouseListener(this);
+		txtTimKiem.addKeyListener(this);
+		txtTenNV.addKeyListener(this);
+		txtDiaChi.addKeyListener(this);
+		txtEmail.addKeyListener(this);
+		txtsdt.addKeyListener(this);
+		
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -228,7 +244,7 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 		loadData();
 
 	}
-	private void ThemKH() throws SQLException {
+	private void ThemNV() throws SQLException {
 		String idKhachHang = autoID();
 		String tenKhachHang = txtTenNV.getText();
 		String email= txtEmail.getText();
@@ -249,7 +265,7 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 	private void loadData() {
 		modelNhanVien.setRowCount(0);
 		for (NhanVien nv : daoNhanVien.getAllDanhSachNV() ) {
-			modelNhanVien.addRow(new Object[] { nv.getIdNhanVien(), nv.getTenNhanVien(),nv.getSoDienThoai(),nv.getDiaChi(), nv.getEmail(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
+			modelNhanVien.addRow(new Object[] { nv.getIdNhanVien(), nv.getTenNhanVien(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
 					});
 			
 		}
@@ -290,14 +306,17 @@ public class QuanLyNhanVIenView extends JPanel implements ActionListener,MouseLi
 		nv.setIdNhanVien(id);
 		nv.setTrangThai(trangThai);
 		nv.setChucVu(chucVu);
-		try {
-			daoNhanVien.updateNhanVien(nv);;
-			loadData();
-			JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+		if(valiDate()) {
+			try {
+				daoNhanVien.updateNhanVien(nv);;
+				loadData();
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+			}
 		}
+		
 }
 private String autoID() throws SQLException {
 		
@@ -349,64 +368,80 @@ private void xoaNV() {
 		}
 	}
 }
-private void XoaDuLieuTable() {
-	DefaultTableModel dm = (DefaultTableModel) tableNhanVien.getModel();
-	dm.getDataVector().removeAllElements();
-}
-private void loadDanhSachTimKiem(ArrayList<NhanVien> lstNV) {
-	XoaDuLieuTable();
+
+
+
+
+
+public boolean valiDate() {
 	
-	for (NhanVien nv : lstNV) {
-		
-		modelNhanVien.addRow(new Object[] { nv.getIdNhanVien(), nv.getTenNhanVien(),nv.getSoDienThoai(),nv.getDiaChi(), nv.getEmail(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
-		});
-	}
-}
-private void timTheoID() {
-	String idTim = txtTimKiem.getText().trim();
+	String ten = txtTenNV.getText().trim();
 	
-	ArrayList<NhanVien> lstKH = new ArrayList<NhanVien>() ;
-	lstKH=daoNhanVien.getMa(idTim);
-	if(idTim.equals("")) {
-		JOptionPane.showMessageDialog(this, "Vui lòng nhập ID cần tìm", "Thông báo",
-				JOptionPane.ERROR_MESSAGE);
+	Boolean gioiTinh=null;
+	if(rbNam.isSelected() || rbNu.isSelected()) {
+		gioiTinh=true;
 	}
 	else {
-		if(lstKH.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có mã "+idTim, "Thông báo",
-					JOptionPane.ERROR_MESSAGE);
-			txtTimKiem.requestFocus();
-			txtTimKiem.selectAll();
-		}
-		
-		else {
-			loadDanhSachTimKiem(lstKH);
-			
-		}
+		gioiTinh=false;
 	}
-}
-private void timTheoTen() {
-	String tenTim = txtTimKiem.getText().trim();
+	java.util.Date ngaySinh = chooserNgaySinh.getDate();
+	String diaChi = txtDiaChi.getText().trim();
+	String email = txtEmail.getText().trim();
+	String soDienThoai = txtsdt.getText().trim();
 	
-	ArrayList<NhanVien> lstKH = new ArrayList<NhanVien>() ;
-	lstKH=daoNhanVien.getTen(tenTim);
-	if(tenTim.equals("")) {
-		JOptionPane.showMessageDialog(this, "Vui lòng nhập tên cần tìm", "Thông báo",
-				JOptionPane.ERROR_MESSAGE);
-	}
-	else {
-		if(lstKH.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có tên "+tenTim, "Thông báo",
-					JOptionPane.ERROR_MESSAGE);
-			txtTimKiem.requestFocus();
-			txtTimKiem.selectAll();
-		}
+	
+	if(ten.equals("") || diaChi.equals("")|| email.equals("") || soDienThoai.equals("")) {
+		JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ!", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		txtTenNV.requestFocus();
 		
-		else {
-			loadDanhSachTimKiem(lstKH);
-			
-		}
+		return false;
 	}
+	if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]+( [A-Z][a-z]+)*$"))) {
+		JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		txtTenNV.selectAll();
+		txtTenNV.requestFocus();
+		return false;
+	}
+//
+	if (!(diaChi.length() > 0 && diaChi.matches("^[A-Za-z0-9/,\\s]*[A-Za-z]+[A-Za-z0-9/,\\s]*$"))) {
+		JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		txtDiaChi.requestFocus();
+		txtDiaChi.selectAll();
+		return false;
+	}
+	if (!(email.length() > 0 && email.matches("^[A-Za-z][A-Za-z0-9@.]*$"))) {
+		JOptionPane.showMessageDialog(this, "Email phải bắt đầu bằng chữ và không được chứa kí tự đặc biệt", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		txtEmail.requestFocus();
+		txtEmail.selectAll();
+		return false;
+	}
+	if (!(ngaySinh!=null  && (ngaySinh.before(new java.util.Date())))) {
+		JOptionPane.showMessageDialog(this, "Ngày sinh phải trước ngày hiện tại", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		chooserNgaySinh.requestFocus();
+		
+		return false;
+	}
+	if(!(soDienThoai.length()>0 && soDienThoai.matches("^(0|\\+84)[0-9]{9}$")))
+	{
+		JOptionPane.showMessageDialog(this, "Số điện thoại gồm 10 số và bắt đầu bằng 0 hoặc +84", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		txtsdt.requestFocus();
+		txtsdt.selectAll();
+		return false;
+	}
+	if(gioiTinh=false)
+	{
+		JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính", "Thông báo",
+				JOptionPane.WARNING_MESSAGE);
+		
+		return false;
+	}
+	return true;
 }
 private void lamMoi() {
 		
@@ -419,8 +454,8 @@ private void lamMoi() {
 		rbNu.setSelected(false);
 		cbChucVu.setSelectedItem("Quản lý");
 		cbTrangThai.setSelectedItem("Đang làm việc");
-		txtLuong.setText("");
 		
+		chooserNgaySinh.setDate(new java.util.Date());
 		txtTenNV.requestFocus();
 	}
 	@Override
@@ -428,12 +463,15 @@ private void lamMoi() {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThemNV)) {
-			try {
-				ThemKH();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if(valiDate()) {
+				try {
+					ThemNV();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
+			
 		} 
 		 if(o.equals(btnLamMoi)) {
 			 lamMoi() ;}
@@ -443,16 +481,7 @@ private void lamMoi() {
 		 if(o.equals(btnCapNhatNV)) {
 			 CapNhatNV();
 		 }
-		 if (o.equals(btnTimKiem)) {
-				if(cbTimKiem.getSelectedItem().toString()=="Tìm kiếm theo ID")
-				{
-					timTheoID();
-				}
-				if(cbTimKiem.getSelectedItem().toString()=="Tìm kiếm theo tên")
-				{
-					timTheoTen();
-				}
-				}
+		 
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -461,8 +490,8 @@ private void lamMoi() {
 		txtID.setText(modelNhanVien.getValueAt(row, 0).toString());
 		txtTenNV.setText(modelNhanVien.getValueAt(row, 1).toString());
 		txtsdt.setText(modelNhanVien.getValueAt(row, 2).toString());
-		txtEmail.setText(modelNhanVien.getValueAt(row, 4).toString());
-		txtDiaChi.setText(modelNhanVien.getValueAt(row, 3).toString());
+		txtEmail.setText(modelNhanVien.getValueAt(row, 3).toString());
+		txtDiaChi.setText(modelNhanVien.getValueAt(row, 4).toString());
 		String ngaySinh=modelNhanVien.getValueAt(row, 5).toString();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		java.util.Date valueNgaySinh=null;
@@ -475,8 +504,9 @@ private void lamMoi() {
 		chooserNgaySinh.setDate(valueNgaySinh);
 		rbNam.setSelected(modelNhanVien.getValueAt(row, 6).toString()=="Nam");
 		rbNu.setSelected(modelNhanVien.getValueAt(row,6).toString()=="Nữ");
+		cbChucVu.setSelectedItem(modelNhanVien.getValueAt(row,7).toString());
 		cbTrangThai.setSelectedItem(modelNhanVien.getValueAt(row,8).toString());
-		cbTrangThai.setSelectedItem(modelNhanVien.getValueAt(row,7).toString());
+		
 	}
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -498,7 +528,32 @@ private void lamMoi() {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if (o.equals(txtTimKiem)) {
+				DefaultTableModel model = (DefaultTableModel) tableNhanVien.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tableNhanVien.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
+			} else if (e.getKeyCode() == KeyEvent.VK_F5) {
+				lamMoi();
+				loadData();
+	}
+		});
+	}
 }
 
 
