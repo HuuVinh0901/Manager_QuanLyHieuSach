@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
+import models.NhanVien;
 import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
@@ -70,6 +71,49 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 
 		return dsSanPham;
+	}
+	
+	
+	public SanPhamCha getSanPham(String idSanPham) {
+		SanPhamCha sp = new SanPhamCha() {
+			
+			@Override
+			public double thue() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public double giaBan() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+		};
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM SanPham WHERE idSanPham = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, idSanPham);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				sp.setIdSanPham(rs.getString(1));
+				sp.setTenSanPham(rs.getString(2));
+				sp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				sp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				sp.setKichThuoc(rs.getDouble(5));
+				sp.setMauSac(rs.getString(6));
+				String trangThai = rs.getString(7);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
+				sp.setTrangThai(trangThaiEnum);
+				sp.setGiaNhap(rs.getDouble(6));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return sp;
 	}
 	
 	public ArrayList<SanPhamCon> loadComboBoxByLoaiSanPham(String id) {
@@ -233,6 +277,8 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return productID;
 	}
+	
+	
 	
 	public boolean capNhatSanPham(SanPhamCon sp) {
 		String sql = "UPDATE SanPham "

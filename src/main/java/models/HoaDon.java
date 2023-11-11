@@ -14,6 +14,10 @@ public class HoaDon {
 		super();
 	}
 
+	public HoaDon(String idDonHang) {
+		this.idDonHang = idDonHang;
+	}
+	
 	public HoaDon(String idDonHang, Date ngayLap, KhachHang khachHang, NhanVien nhanVien, Double tienKhachDua,
 			Double tongTien) {
 		super();

@@ -12,6 +12,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler;
 
 import connection.ConnectDB;
 import models.KhachHang;
+import models.NhanVien;
 
 
 
@@ -26,6 +27,32 @@ public class DAOKhachHang {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public KhachHang getKhachHang(String idKH) {
+		KhachHang kh = new KhachHang();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM KhachHang WHERE idKhachHang = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, idKH);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				kh.setIdKhachHang(rs.getString(1));
+				kh.setTenKhachHang(rs.getString(2));
+				kh.setSdt(rs.getString(3));
+				kh.setEmail(rs.getString(4));
+				kh.setDiaChi(rs.getString(5));
+				kh.setNgaySinh(rs.getDate(6));
+				kh.setGioiTinh(rs.getBoolean(7));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return kh;
 	}
 	
 	public String getSDTTheoMa(String maKH) {
