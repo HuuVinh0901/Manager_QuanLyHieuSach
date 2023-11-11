@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
+import models.HoaDon;
 import models.KhachHang;
 import models.NhanVien;
 
@@ -23,6 +24,35 @@ public class DAONhanVien {
 		}
 	}
 
+	
+	public NhanVien getNhanVien(String idNV) {
+		NhanVien nv = new NhanVien();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM NhanVien WHERE idNhanVien = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, idNV);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				nv.setIdNhanVien(rs.getString(1));
+				nv.setTenNhanVien(rs.getString(2));
+				nv.setSoDienThoai(rs.getString(3));
+				nv.setDiaChi(rs.getString(4));
+				nv.setEmail(rs.getString(5));
+				nv.setNgaySinh(rs.getDate(6));
+				nv.setGioiTinh(rs.getBoolean(7));
+				nv.setChucVu(rs.getString(8));
+				nv.setTrangThai(rs.getBoolean(9));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return nv;
+	}
+	
 	public boolean themNhanVien(NhanVien nv) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
