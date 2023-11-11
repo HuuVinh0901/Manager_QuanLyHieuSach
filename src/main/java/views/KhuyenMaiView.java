@@ -591,8 +591,4 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 			}
 		});
 	}
-	
-
-	
-	
 }

@@ -11,18 +11,17 @@ import javax.swing.JPanel;
 import connection.ConnectDB;
 
 public class HomeView extends JPanel {
-    private JLabel lblBackground;
+	private JLabel lblBackground;
 
-    public HomeView() {
-    	try {
+	public HomeView() {
+		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        setLayout(new BorderLayout());
-
-        ImageIcon imageIcon = new ImageIcon(getClass().getResource("/images/homeView.jpg"));
-        lblBackground = new JLabel(imageIcon);
-        add(lblBackground, BorderLayout.CENTER);
-    }
+		setLayout(new BorderLayout());
+		ImageIcon imageIcon = new ImageIcon(getClass().getResource("/images/homeView.jpg"));
+		lblBackground = new JLabel(imageIcon);
+		add(lblBackground, BorderLayout.CENTER);
+	}
 }

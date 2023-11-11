@@ -39,6 +39,7 @@ import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
 import dao.DAONhaCungCap;
 import dao.DAOQuanLySanPham;
+import dao.DAOSach;
 import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
@@ -73,7 +74,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private JComboBox<String> cbNhaCungCapSearch;
 	private JLabel lblLoaiSanPhamSearch;
 	private JLabel lblNhaCungCapSearch;
-
+	private QuanLySachView sachPanel;
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -82,7 +83,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		setLayout(new BorderLayout(8, 6));
 		tabbedPane = new JTabbedPane();
 		// tab sách
-		JPanel sachPanel = new JPanel();
+		sachPanel = new QuanLySachView();
+//		JPanel sachPanel = new JPanel();
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
 		sanPhamPanel.setLayout(new BorderLayout());
@@ -168,7 +170,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnChucNangTimKiem.add(cbNhaCungCapSearch);
 		pnChucNangTimKiem.add(lblTuKhoa);
 		pnChucNangTimKiem.add(txtTuKhoa);
-//		pnChucNangTimKiem.add(btnTimKiem);
 		pnChucNangTimKiem.add(btnXemTatCa);
 
 		pnChucNangCha.add(pnChucNang, BorderLayout.NORTH);
@@ -200,10 +201,11 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		sanPhamPanel.add(pnCenter, BorderLayout.NORTH);
 		sanPhamPanel.add(pnMain, BorderLayout.CENTER);
 
+		
+		
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
 		tabbedPane.add("Sách", sachPanel);
 		add(tabbedPane);
-
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -211,7 +213,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			e.printStackTrace();
 		}
 
-//		loadData();
 		loadDataIntoTable();
 		loadComboxBoxLoaiSanPham();
 		loadComboxBoxNhaCungCap();
@@ -229,6 +230,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtGiaNhap.addKeyListener(this);
 		txtMauSac.addKeyListener(this);
 		txtTenSanPham.addKeyListener(this);
+		tabbedPane.addKeyListener(this);
 
 		this.setFocusable(true);
 		this.requestFocusInWindow();
@@ -550,7 +552,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				} else {
 					ArrayList<SanPhamCon> sanPhamLoai = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
 					if (sanPhamLoai.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho loại sản phẩm này.",
 								"Thông báo", JOptionPane.WARNING_MESSAGE);
 						loadDataIntoTable();
 						cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
@@ -645,7 +647,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				loadDataIntoTable();
 			}
 
-		}
+		}else  if (e.getKeyCode() == KeyEvent.VK_TAB) {
+            // Switch to the "package views" tab
+            tabbedPane.setSelectedIndex(1);
+        }
 	}
 
 	@Override
