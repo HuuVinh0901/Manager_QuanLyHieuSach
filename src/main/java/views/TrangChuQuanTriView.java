@@ -3,6 +3,7 @@ package views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class TrangChuQuanTriView extends JFrame {
 		panelBody.add(paneCu);
 		execute();
 
-		
 	}
 
 	private void execute() {
@@ -65,6 +65,23 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
+
+		MenuItem subQLTacGia = new MenuItem(iconSubMenu, "Tác giả", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new TacGiaView());
+			}
+		});
+
+		MenuItem subQLTheLoai = new MenuItem(iconSubMenu, "Thể loại", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new TheLoaiView());
+			}
+		});
+
 		MenuItem QLSP = new MenuItem(iconStaff, "Hàng Hóa", new ActionListener() {
 
 			@Override
@@ -72,7 +89,7 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLySanPhamView());
 
 			}
-		}, subQLLoaiSanPham, subQLNhaCungCap);
+		}, subQLLoaiSanPham, subQLNhaCungCap, subQLTacGia,subQLTheLoai);
 		MenuItem QLTKNV = new MenuItem(iconStaff, "Quản lý tài khoản", null);
 		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên", new ActionListener() {
 
@@ -88,6 +105,14 @@ public class TrangChuQuanTriView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				switchToPanel(new QuanLyKhachHangView());
+			}
+		});
+		MenuItem KM = new MenuItem(iconStaff, "Chương trình khuyến mãi", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new KhuyenMaiView());
 			}
 		});
 		MenuItem QLHD = new MenuItem(iconStaff, "Quản lý hóa đơn", new ActionListener() {
@@ -114,7 +139,7 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
 				subCaiDatHDSD);
-		addMenu(QLSP, QLNV, QLTKNV, QLKH, QLHD, TKBC, CaiDat);
+		addMenu(QLSP, QLNV, QLTKNV, QLKH,KM, QLHD, TKBC, CaiDat);
 
 	}
 

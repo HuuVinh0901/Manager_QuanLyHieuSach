@@ -60,6 +60,12 @@ public class DAO_QuanLyBanHang {
 						// TODO Auto-generated method stub
 						return 0;
 					}
+
+					@Override
+					public double giaKM() {
+						// TODO Auto-generated method stub
+						return 0;
+					}
 				});
 				cthd.setThanhTien(rs.getDouble(4));
 				dsCTHD.add(cthd);

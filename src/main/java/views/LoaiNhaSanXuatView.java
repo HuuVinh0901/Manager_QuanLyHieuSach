@@ -9,23 +9,33 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import connection.ConnectDB;
 import dao.DAONhaCungCap;
 import models.NhaCungCap;
 
-public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
+public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseListener, KeyListener {
 	private JPanel pnMain;
 	private JPanel pnHeader, pnTitle;
 	private JPanel pnCener;
@@ -49,7 +59,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 	private JLabel lblSoDienThoai;
 	private JTextField txtDiaChi;
 	private JTextField txtSoDienThoai;
-
+	private JButton btnXemTatCa;
 	private DAONhaCungCap daoNhaCungCap;
 
 	public LoaiNhaSanXuatView() {
@@ -72,6 +82,8 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 
 		lblIdLoaiSanPham = new JLabel("Mã nhà cung cấp:");
 		txtIdLoaiSanPham = new JTextField(20);
+		txtIdLoaiSanPham.setText(generateNewNhaCungCapID());
+		txtIdLoaiSanPham.setEditable(false);
 		txtIdLoaiSanPham.setPreferredSize(new Dimension(150, 30));
 
 		lblTenLoaiSanPham = new JLabel("Tên nhà cung cấp:");
@@ -148,10 +160,11 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		pnSouthNorth = new JPanel(new FlowLayout(5));
 		lblTuKhoa = new JLabel("Từ khóa:");
 		txtTimKiem = new JTextField(20);
-		btnTimKiem = new JButton("Tìm kiếm");
+		btnXemTatCa = new JButton("Xem tất cả");
 		pnSouthNorth.add(lblTuKhoa);
 		pnSouthNorth.add(txtTimKiem);
-		pnSouthNorth.add(btnTimKiem);
+		pnSouthNorth.add(btnXemTatCa);
+
 		// phan bottom
 		pnSouthBottom = new JPanel(new BorderLayout());
 		pnSouthBottom = new JPanel(new BorderLayout());
@@ -178,9 +191,16 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		this.add(pnMain);
 
 		btnThem.addActionListener(this);
-		
+		btnLamMoi.addActionListener(this);
+		btnCapNhat.addActionListener(this);
+		btnXoa.addActionListener(this);
+		tableSP.addMouseListener(this);
+		txtTimKiem.addKeyListener(this);
+		btnXemTatCa.addActionListener(this);
 		loadData();
-
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		tableSP.requestFocus();
 	}
 
 	private void loadData() {
@@ -196,7 +216,69 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		Object o = e.getSource();
 		if (o.equals(btnThem)) {
 			themNhaCungCap();
+		} else if (o.equals(btnLamMoi)) {
+			lamMoi();
+		} else if (o.equals(btnCapNhat)) {
+			capNhatNhaCungCap();
+		}else if(o.equals(btnXoa)) {
+			xoaNhaCungCap();
+		}else if(o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadData();
 		}
+
+	}
+
+	private void xoaNhaCungCap() {
+		int row = tableSP.getSelectedRow();
+		if(row ==-1) {
+			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
+		}else {
+			try {
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa không","Cảnh báo",JOptionPane.YES_NO_OPTION);
+				if(hoiNhac==JOptionPane.YES_OPTION) {
+					String idNhaCungCap = txtIdLoaiSanPham.getText();
+					daoNhaCungCap.xoaNhaCungCap(idNhaCungCap);
+					JOptionPane.showMessageDialog(this, "Xóa thông tin thành công");
+					loadData();
+					lamMoi();
+				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(this, "Xóa thông tin không thành công");
+			}
+		}
+	}
+
+	private void capNhatNhaCungCap() {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			int update = JOptionPane.showConfirmDialog(this, "Bạn có chắc sửa thông tin nhà cung cấp", "Cảnh báo",
+					JOptionPane.YES_NO_OPTION);
+			if (update == JOptionPane.YES_OPTION) {
+				String idNhaCungCap = txtIdLoaiSanPham.getText().trim();
+				String tenNhaCungCap = txtTenLoaiSanPham.getText().trim();
+				String diaChi = txtDiaChi.getText().trim();
+				String soDienThoai = txtSoDienThoai.getText().trim();
+				NhaCungCap ncc = new NhaCungCap();
+				ncc.setIdNhaCungCap(idNhaCungCap);
+				ncc.setTenNhaCungCap(tenNhaCungCap);
+				ncc.setDiaChi(diaChi);
+				ncc.setSoDienThoai(soDienThoai);
+				daoNhaCungCap.capNhatNhaCungCap(ncc);
+				JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhà cung cấp thành công");
+				loadData();
+			} else {
+				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+			}
+		}
+	}
+
+	private void lamMoi() {
+		txtIdLoaiSanPham.setText(generateNewNhaCungCapID());
+		txtTenLoaiSanPham.setText("");
+		txtSoDienThoai.setText("");
+		txtTimKiem.setText("");
+		txtDiaChi.setText("");
 
 	}
 
@@ -206,10 +288,110 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener {
 		String diaChi = txtDiaChi.getText();
 		String soDienThoai = txtSoDienThoai.getText();
 
-		NhaCungCap ncc = new NhaCungCap(idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai);
-	
-			daoNhaCungCap.themNhaCungCap(ncc);
+		NhaCungCap ncc = new NhaCungCap();
+		ncc.setIdNhaCungCap(idNhaCungCap);
+		ncc.setTenNhaCungCap(tenNhaCungCap);
+		ncc.setDiaChi(diaChi);
+		ncc.setSoDienThoai(soDienThoai);
+
+		if (daoNhaCungCap.checkIdNhaCungCap(idNhaCungCap)) {
+			JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
+			return;
+		} else {
+
+			try {
+				boolean kiemtra = daoNhaCungCap.themNhaCungCap(ncc);
+				if (kiemtra) {
+					modelSP.addRow(new Object[] { idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai });
+					loadData();
+					JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công");
+				} else {
+					JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	private String generateNewNhaCungCapID() {
+		String idPrefix = "NCC";
+		int newProductIDNumber = 1;
+		String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		try {
+			String previousProductID = daoNhaCungCap.getLatestNhaCungCapID();
+			if (previousProductID != null && !previousProductID.isEmpty()) {
+				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(11));
+				newProductIDNumber = oldProductIDNumber + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+		return newProductID;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			txtIdLoaiSanPham.setText(modelSP.getValueAt(row, 0).toString());
+			txtTenLoaiSanPham.setText(modelSP.getValueAt(row, 1).toString());
+			txtDiaChi.setText(modelSP.getValueAt(row, 2).toString());
+			txtSoDienThoai.setText(modelSP.getValueAt(row, 3).toString());
+		}
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
 		
-		modelSP.addRow(new Object[] { idNhaCungCap, tenNhaCungCap, diaChi, soDienThoai });
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if(o.equals(txtTimKiem)) {
+				DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tableSP.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)"+txtTimKiem.getText().trim(),1,3));
+			}
+		});
 	}
 }

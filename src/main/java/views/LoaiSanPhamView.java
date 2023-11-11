@@ -11,23 +11,34 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.security.Key;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import connection.ConnectDB;
 import dao.DAOLoaiSanPham;
 import models.LoaiSanPham;
 
-public class LoaiSanPhamView extends JPanel implements ActionListener {
+public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListener, MouseListener {
 	private JPanel pnMain;
 	private JPanel pnHeader, pnTitle;
 	private JPanel pnCener;
@@ -47,7 +58,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 	private JPanel pnSouth, pnSouthNorth, pnSouthBottom, pnDanhMuc;
 	private JTable tableSP;
 	private DefaultTableModel modelSP;
-
+	private JButton btnXemTatCa;
 	private DAOLoaiSanPham daoLoaiSanPham;
 
 	public LoaiSanPhamView() {
@@ -72,6 +83,8 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 
 		lblIdLoaiSanPham = new JLabel("Mã loại sản phẩm:");
 		txtIdLoaiSanPham = new JTextField(20);
+		txtIdLoaiSanPham.setEditable(false);
+		txtIdLoaiSanPham.setText(generateNewLoaiSanPhamID());
 		txtIdLoaiSanPham.setPreferredSize(new Dimension(150, 30));
 
 		lblTenLoaiSanPham = new JLabel("Tên loại sản phẩm:");
@@ -125,10 +138,10 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 		pnSouthNorth = new JPanel(new FlowLayout(5));
 		lblTuKhoa = new JLabel("Từ khóa:");
 		txtTimKiem = new JTextField(20);
-		btnTimKiem = new JButton("Tìm kiếm");
+		btnXemTatCa = new JButton("Xem tất cả");
 		pnSouthNorth.add(lblTuKhoa);
 		pnSouthNorth.add(txtTimKiem);
-		pnSouthNorth.add(btnTimKiem);
+		pnSouthNorth.add(btnXemTatCa);
 		// phan bottom
 		pnSouthBottom = new JPanel(new BorderLayout());
 		pnSouthBottom = new JPanel(new BorderLayout());
@@ -153,8 +166,12 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 		this.add(pnMain);
 
 		btnThem.addActionListener(this);
-
-		
+		btnLamMoi.addActionListener(this);
+		btnCapNhat.addActionListener(this);
+		btnXoa.addActionListener(this);
+		btnXemTatCa.addActionListener(this);
+		tableSP.addMouseListener(this);
+		txtTimKiem.addKeyListener(this);
 		loadData();
 
 	}
@@ -171,22 +188,169 @@ public class LoaiSanPhamView extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		if (o.equals(btnThem)) {
+			themLoaiSanPham();
+		} else if (o.equals(btnLamMoi)) {
+			lamMoi();
+		} else if (o.equals(btnCapNhat)) {
+			capNhapLoaSanPham();
+		} else if (o.equals(btnXoa)) {
+			xoaLoaiSanPham();
+		}else if(o.equals(btnXemTatCa)) {
+			lamMoi();
+			loadData();
+		}
+	}
+
+	private void xoaLoaiSanPham() {
+		int row = tableSP.getSelectedRow();
+		if (row == -1) {
+			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
+		} else {
 			try {
-				themLoaiSanPham();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa không", "Cảnh báo",
+						JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
+					String idLoaiSanPham = txtIdLoaiSanPham.getText();
+					daoLoaiSanPham.xoaLoaiSanPham(idLoaiSanPham);
+					JOptionPane.showMessageDialog(this, "Xóa thông tin thành công");
+					loadData();
+					lamMoi();
+				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(this, "Xóa thông tin không thành công");
+			}
+		}
+
+	}
+
+	private void capNhapLoaSanPham() {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			int update = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn sửa thông tin này", "Cảnh báo",
+					JOptionPane.YES_NO_OPTION);
+			if (update == JOptionPane.YES_OPTION) {
+				String idLoaiSanPham = txtIdLoaiSanPham.getText().trim();
+				String tenLoaiSanPham = txtTenLoaiSanPham.getText().trim();
+				LoaiSanPham lsp = new LoaiSanPham();
+				lsp.setIdLoaiSanPham(idLoaiSanPham);
+				lsp.setTenLoaiSanPham(tenLoaiSanPham);
+				daoLoaiSanPham.capNhatLoaiSanPham(lsp);
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+				lamMoi();
+				loadData();
+			} else {
+				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+			}
+		}
+
+	}
+
+	private void lamMoi() {
+		txtIdLoaiSanPham.setText(generateNewLoaiSanPhamID());
+		txtTenLoaiSanPham.setText("");
+		txtTimKiem.setText("");
+	}
+
+	private void themLoaiSanPham() {
+		String idLoaiSanPham = txtIdLoaiSanPham.getText();
+		String tenLoaiSanPham = txtTenLoaiSanPham.getText();
+		LoaiSanPham lsp = new LoaiSanPham(idLoaiSanPham, tenLoaiSanPham);
+
+		if (daoLoaiSanPham.checkIdLoaiSanPham(idLoaiSanPham)) {
+			JOptionPane.showMessageDialog(this, "Trùng ID loại sản phẩm. Vui lòng chọn ID khác.");
+			return;
+		} else {
+			try {
+				boolean kiemtra = daoLoaiSanPham.themLoaiSanPham(lsp);
+				if (kiemtra) {
+					modelSP.addRow(new Object[] { idLoaiSanPham, tenLoaiSanPham });
+					JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công");
+					loadData();
+					lamMoi();
+				} else {
+					JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+				}
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+				e.printStackTrace();
 			}
 		}
 	}
 
-	private void themLoaiSanPham() throws SQLException {
-		String idLoaiSanPham = txtIdLoaiSanPham.getText();
-		String tenLoaiSanPham = txtTenLoaiSanPham.getText();
+	private String generateNewLoaiSanPhamID() {
+		String idPrefix = "LSP";
+		int newProductIDNumber = 1;
+		String currentDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		try {
+			String previousProductID = daoLoaiSanPham.getLatestLoaiSanPhamID();
+			if (previousProductID != null && !previousProductID.isEmpty()) {
+				int oldProductIDNumber = Integer.parseInt(previousProductID.substring(11));
+				newProductIDNumber = oldProductIDNumber + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		LoaiSanPham lsp = new LoaiSanPham(idLoaiSanPham, tenLoaiSanPham);
-		daoLoaiSanPham.themLoaiSanPham(lsp);
-		modelSP.addRow(new Object[] { idLoaiSanPham, tenLoaiSanPham });
+		String newProductID = idPrefix + currentDate + String.format("%04d", newProductIDNumber);
+		return newProductID;
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		SwingUtilities.invokeLater(() -> {
+			Object o = e.getSource();
+			if(o.equals(txtTimKiem)) {
+				DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tableSP.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)"+txtTimKiem.getText().trim(),1));
+			}
+		});
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		int row = tableSP.getSelectedRow();
+		if (row >= 0) {
+			txtIdLoaiSanPham.setText(modelSP.getValueAt(row, 0).toString());
+			txtTenLoaiSanPham.setText(modelSP.getValueAt(row, 1).toString());
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 
 	}
 

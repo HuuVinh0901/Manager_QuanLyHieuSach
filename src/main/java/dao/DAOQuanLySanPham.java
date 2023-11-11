@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import connection.ConnectDB;
+import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.NhanVien;
@@ -73,6 +74,7 @@ public class DAOQuanLySanPham implements Serializable {
 		return dsSanPham;
 	}
 	
+
 	
 	public SanPhamCha getSanPham(String idSanPham) {
 		SanPhamCha sp = new SanPhamCha() {
@@ -85,6 +87,12 @@ public class DAOQuanLySanPham implements Serializable {
 			
 			@Override
 			public double giaBan() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+
+			@Override
+			public double giaKM() {
 				// TODO Auto-generated method stub
 				return 0;
 			}
@@ -124,7 +132,7 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong,sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE lsp.tenLoaiSanPham = ?";
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " +"WHERE lsp.tenLoaiSanPham = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, id);
 			ResultSet rs = statement.executeQuery();
@@ -143,6 +151,8 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.setGiaNhap(rs.getDouble(9));
 				lsp.setSoLuong(rs.getInt(10));
 				lsp.giaBan();
+				
+				lsp.giaKM();
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -243,7 +253,7 @@ public class DAOQuanLySanPham implements Serializable {
 	}
 	
 	public boolean themSanPham(SanPhamCon sp) {
-		String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 		try (PreparedStatement pst = connection.prepareStatement(sql)){
 			pst.setString(1, sp.getIdSanPham());
 			pst.setString(2, sp.getTenSanPham());
@@ -256,6 +266,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
+			pst.setDouble(12,sp.giaKM());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {
