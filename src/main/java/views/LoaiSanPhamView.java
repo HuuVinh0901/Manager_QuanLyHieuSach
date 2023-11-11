@@ -73,7 +73,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 		pnHeader.add(lblTitle = new JLabel("Quản Lý Loại Sản Phẩm"));
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setForeground(new Color(26, 102, 227));
-		pnHeader.setBackground(new Color(208, 225, 253));
+//		pnHeader.setBackground(new Color(208, 225, 253));
 
 		// layout thong tin
 		pnMainThongTin = new JPanel(new BorderLayout());
@@ -114,20 +114,20 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 		btnCapNhat = new JButton("Sửa");
 		btnLamMoi = new JButton("Làm mới");
 		btnXoa = new JButton("Xóa");
-		btnThem.setBackground(new Color(208, 225, 253));
-		btnThem.setForeground(new Color(26, 102, 227));
+//		btnThem.setBackground(new Color(208, 225, 253));
+//		btnThem.setForeground(new Color(26, 102, 227));
 
-		btnCapNhat.setBackground(new Color(208, 225, 253));
-		btnCapNhat.setForeground(new Color(26, 102, 227));
+//		btnCapNhat.setBackground(new Color(208, 225, 253));
+//		btnCapNhat.setForeground(new Color(26, 102, 227));
 
-		btnLamMoi.setBackground(new Color(208, 225, 253));
-		btnLamMoi.setForeground(new Color(26, 102, 227));
+//		btnLamMoi.setBackground(new Color(208, 225, 253));
+//		btnLamMoi.setForeground(new Color(26, 102, 227));
 
-		btnXoa.setBackground(new Color(208, 225, 253));
-		btnXoa.setForeground(new Color(26, 102, 227));
+//		btnXoa.setBackground(new Color(208, 225, 253));
+//		btnXoa.setForeground(new Color(26, 102, 227));
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
-		pnChucNang.add(btnXoa);
+//		pnChucNang.add(btnXoa);
 		pnChucNang.add(btnLamMoi);
 
 		Insets btnInsert = new Insets(50, 60, 0, 0);
@@ -229,18 +229,23 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 			int update = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn sửa thông tin này", "Cảnh báo",
 					JOptionPane.YES_NO_OPTION);
 			if (update == JOptionPane.YES_OPTION) {
-				String idLoaiSanPham = txtIdLoaiSanPham.getText().trim();
-				String tenLoaiSanPham = txtTenLoaiSanPham.getText().trim();
-				LoaiSanPham lsp = new LoaiSanPham();
-				lsp.setIdLoaiSanPham(idLoaiSanPham);
-				lsp.setTenLoaiSanPham(tenLoaiSanPham);
-				daoLoaiSanPham.capNhatLoaiSanPham(lsp);
-				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-				lamMoi();
-				loadData();
+				if(validataFields()) {
+					String idLoaiSanPham = txtIdLoaiSanPham.getText().trim();
+					String tenLoaiSanPham = txtTenLoaiSanPham.getText().trim();
+					LoaiSanPham lsp = new LoaiSanPham();
+					lsp.setIdLoaiSanPham(idLoaiSanPham);
+					lsp.setTenLoaiSanPham(tenLoaiSanPham);
+					daoLoaiSanPham.capNhatLoaiSanPham(lsp);
+					JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+					lamMoi();
+					loadData();					
+				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
 			}
+		}else {
+			showErrorDialog("Bạn chưa chọn dòng xóa");
+			
 		}
 
 	}
@@ -249,31 +254,68 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 		txtIdLoaiSanPham.setText(generateNewLoaiSanPhamID());
 		txtTenLoaiSanPham.setText("");
 		txtTimKiem.setText("");
+		txtTenLoaiSanPham.selectAll();
+		txtTenLoaiSanPham.requestFocus();
 	}
 
+	private boolean validataField(JTextField textField, String regex, String errorMessage) {
+		String fieldValue = textField.getText().trim();
+		if (fieldValue.isEmpty()) {
+			showErrorDialog("Vui lòng nhập giá trị cho " + textField.getName() + "!");
+			textField.requestFocus();
+			return false;
+		}
+
+		if (!fieldValue.matches(regex)) {
+			showErrorDialog(errorMessage);
+			textField.requestFocus();
+			textField.selectAll();
+			return false;
+		}
+		return true;
+	}
+	private void showErrorDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+	}
+
+	private void showSuccessMessage(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+	}
+	private boolean validataFields() {
+		return validataField(txtTenLoaiSanPham, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+				"Tên nhà cung cấp không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.");
+	}
+	
 	private void themLoaiSanPham() {
 		String idLoaiSanPham = txtIdLoaiSanPham.getText();
 		String tenLoaiSanPham = txtTenLoaiSanPham.getText();
 		LoaiSanPham lsp = new LoaiSanPham(idLoaiSanPham, tenLoaiSanPham);
 
-		if (daoLoaiSanPham.checkIdLoaiSanPham(idLoaiSanPham)) {
-			JOptionPane.showMessageDialog(this, "Trùng ID loại sản phẩm. Vui lòng chọn ID khác.");
-			return;
-		} else {
-			try {
-				boolean kiemtra = daoLoaiSanPham.themLoaiSanPham(lsp);
-				if (kiemtra) {
-					modelSP.addRow(new Object[] { idLoaiSanPham, tenLoaiSanPham });
-					JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công");
-					loadData();
-					lamMoi();
-				} else {
+		if(validataFields()) {
+			if (daoLoaiSanPham.checkIdLoaiSanPham(idLoaiSanPham)) {
+				JOptionPane.showMessageDialog(this, "Trùng ID loại sản phẩm. Vui lòng chọn ID khác.");
+				return;
+			} else {
+				try {
+					boolean kiemtra = daoLoaiSanPham.themLoaiSanPham(lsp);
+					if (kiemtra) {
+						modelSP.addRow(new Object[] { idLoaiSanPham, tenLoaiSanPham });
+						JOptionPane.showMessageDialog(this, "Thêm nhà cung cấp thành công");
+						loadData();
+						lamMoi();
+					} else {
+						JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+					}
+				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				JOptionPane.showMessageDialog(this, "Lỗi khi thêm nhà cung cấp");
-				e.printStackTrace();
 			}
+			
 		}
 	}
 

@@ -139,7 +139,7 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		pnThongTinChucNang = new JPanel(new FlowLayout(5));
 		pnThongTinChucNang.add(btnThem);
 		pnThongTinChucNang.add(btnCapNhat);
-		pnThongTinChucNang.add(btnXoa);
+//		pnThongTinChucNang.add(btnXoa);
 		pnThongTinChucNang.add(btnLamMoi);
 		pnThongTinChucNang.setBorder(new EmptyBorder(btnInsert));
 
@@ -178,7 +178,7 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 
 		btnThem.addActionListener(this);
 		btnLamMoi.addActionListener(this);
-		btnXoa.addActionListener(this);
+//		btnXoa.addActionListener(this);
 		btnCapNhat.addActionListener(this);
 		table.addMouseListener(this);
 
@@ -233,13 +233,14 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 	private void capNhatTheLoai() {
 		int row = table.getSelectedRow();
 		if (row < 0) {
-			JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để cập nhật", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-			return ;
-		}else {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để cập nhật", "Cảnh báo",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		} else if (validataFields()) {
 			try {
 				TheLoai tl = getTheLoai();
 				daotheLoai.capNhatTheLoai(tl);
-				JOptionPane.showMessageDialog(this,"Cập nhật thành công");
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
 				loadData();
 				lamMoi();
 			} catch (SQLException e) {
@@ -283,24 +284,66 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		txtTentheLoai.requestFocus();
 	}
 
-	private void themTheLoai() {
-		TheLoai tl = getTheLoai();
+	private boolean validataField(JTextField textField, String regex, String errorMessage) {
+		String fieldValue = textField.getText().trim();
+		if (fieldValue.isEmpty()) {
+			showErrorDialog("Vui lòng nhập giá trị cho " + textField.getName() + "!");
+			textField.requestFocus();
+			return false;
+		}
 
-		try {
-			if (daotheLoai.checkIdTheLoai(getTheLoai().getIdTheLoai())) {
-				JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
-				return;
-			} else {
-				try {
-					daotheLoai.themTheLoai(tl);
-					model.addRow(
-							new Object[] { tl.getIdTheLoai(), tl.getTenTheLoai(), tl.getSoLuongSach(), tl.getMoTa() });
-				} catch (SQLException e) {
-					e.printStackTrace();
+		if (!fieldValue.matches(regex)) {
+			showErrorDialog(errorMessage);
+			textField.requestFocus();
+			textField.selectAll();
+			return false;
+		}
+		return true;
+	}
+
+	private boolean validataFields() {
+		return validataField(txtTentheLoai, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+				"Tên thể loại không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
+				&& validataField(txtMoTa, "^[^,\\p{P} ]+[\\p{L}\\p{M}0-9]*(\\s[^,\\p{P} ]+[\\p{L}\\p{M}0-9]*)*[^,\\p{P} ]$",
+						"Mô tả không được chứa kí tự đặc biệt.");
+		
+
+	}
+
+	private void showErrorDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+	}
+
+	private void showSuccessMessage(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private void themTheLoai() {
+		if (validataFields()) {
+			TheLoai tl = getTheLoai();
+			try {
+				if (daotheLoai.checkIdTheLoai(getTheLoai().getIdTheLoai())) {
+					JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
+					return;
+				} else {
+					try {
+						daotheLoai.themTheLoai(tl);
+						model.addRow(new Object[] { tl.getIdTheLoai(), tl.getTenTheLoai(), tl.getSoLuongSach(),
+								tl.getMoTa() });
+						showSuccessMessage("Thêm thể loại thành công");
+						loadData();
+						lamMoi();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 
 	}

@@ -450,12 +450,15 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
 		} else {
 			try {
+				SachCon s = layThongTinSach();
 				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!", "Cảnh báo",
 						JOptionPane.YES_NO_OPTION);
 				if (hoiNhac == JOptionPane.YES_OPTION) {
 					model.removeRow(row);
 					String idSanPham = txtIdSanPham.getText();
 					daoSach.xoaSach(idSanPham);
+					daoTacGia.giamSoLuongTacPham(s.getTacGia().getIdTacGia());
+					daoTheLoai.giamSoLuongTheLoai(s.getTheLoai().getIdTheLoai());
 					JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
 					lamMoi();
 				}
@@ -592,8 +595,8 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 							sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
 							sach.getGiaNhap(), sach.giaBan() });
 					JOptionPane.showMessageDialog(this, "Thêm sách thành công");
-					 daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
-					 daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
+					daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
+					daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
 					loadData();
 					lamMoi();
 				} else {
