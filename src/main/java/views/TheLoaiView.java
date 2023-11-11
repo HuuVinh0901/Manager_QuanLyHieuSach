@@ -156,8 +156,8 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		table = new JTable();
 		model.addColumn("Mã thể loại");
 		model.addColumn("Tên thể loại");
-		model.addColumn("Mô tả");
 		model.addColumn("Số lượng tác phẩm");
+		model.addColumn("Mô tả");
 		table.setModel(model);
 		JScrollPane scrollPane = new JScrollPane(table);
 		pnSounthSouth.add(scrollPane);

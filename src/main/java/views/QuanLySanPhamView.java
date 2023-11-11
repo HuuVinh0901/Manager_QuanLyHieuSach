@@ -552,7 +552,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				} else {
 					ArrayList<SanPhamCon> sanPhamLoai = daoSanPham.loadComboBoxByLoaiSanPham(selectedLoaiSanPham);
 					if (sanPhamLoai.isEmpty()) {
-						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho nhà cung cấp này.",
+						JOptionPane.showMessageDialog(null, "Không tìm thấy sản phẩm cho loại sản phẩm này.",
 								"Thông báo", JOptionPane.WARNING_MESSAGE);
 						loadDataIntoTable();
 						cbLoaiSanPhamSearch.setSelectedItem("Tất cả");
