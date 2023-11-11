@@ -389,13 +389,13 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
             @Override
             public void insertUpdate(DocumentEvent e) {
             	modelSP.setRowCount(0);
-            	handleTimKiemSP(txtTimKiemSP.getText());
+            	handleTimKiemSP(txtTimKiemSP.getText().trim());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
             	modelSP.setRowCount(0);
-            	handleTimKiemSP(txtTimKiemSP.getText());
+            	handleTimKiemSP(txtTimKiemSP.getText().trim());
             }
 
             @Override
@@ -409,7 +409,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
             @Override
             public void insertUpdate(DocumentEvent e) {
             	modelKH.setRowCount(0);
-            	handleTimKiemKH(txtTimKiemKH.getText());
+            	handleTimKiemKH(txtTimKiemKH.getText().trim());
             	if (!txtTimKiemKH.getText().equals("")) {
             		 windowKhachHang.setLocation(lblTimKiemKH.getLocationOnScreen().x - 50, lblTimKiemKH.getLocationOnScreen().y + lblTimKiemKH.getHeight());
             		 windowKhachHang.pack();
@@ -422,7 +422,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
             @Override
             public void removeUpdate(DocumentEvent e) {
             	modelKH.setRowCount(0);
-            	handleTimKiemKH(txtTimKiemKH.getText());
+            	handleTimKiemKH(txtTimKiemKH.getText().trim());
             	if (!txtTimKiemKH.getText().equals("")) {
             		windowKhachHang.setLocation(lblTimKiemKH.getLocationOnScreen().x - 50, lblTimKiemKH.getLocationOnScreen().y + lblTimKiemKH.getHeight());
            		 	windowKhachHang.pack();
@@ -470,8 +470,9 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 			KhachHang kh = new KhachHang(txtMaKH.getText());
 			NhanVien nv = new NhanVien("NV1");
 			Double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText());
+			Double tongTien = Double.parseDouble(txtTongTien.getText());
 			java.sql.Date ngayNhapSql = new java.sql.Date(ngayNhap.getTime());
-			HoaDon hd = new HoaDon(idHD, ngayNhapSql, kh, nv, tienKhachDua, tienKhachDua);
+			HoaDon hd = new HoaDon(idHD, ngayNhapSql, kh, nv, tienKhachDua, tongTien);
 			try {
 				daoQLBH.themHoaDon(hd);
 			} catch (SQLException e) {
@@ -620,7 +621,9 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	}
 	
 	private void phatSinhMaHD() {
-		String currentDate = new SimpleDateFormat("yyMMddHHmmss").format(new java.util.Date());
+//		String currentDate = new SimpleDateFormat("yyMMddHHmmss").format(new java.util.Date());
+//		txtMaHD.setText("HD" + currentDate);
+		String currentDate = new SimpleDateFormat("mmss").format(new java.util.Date());
 		txtMaHD.setText("HD" + currentDate);
 		
 	}
