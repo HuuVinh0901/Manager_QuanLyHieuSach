@@ -309,6 +309,8 @@ public class QuanLyHoaDonView extends JPanel{
 				String tongTien = String.valueOf(hd.getTongTien());
 				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
 			}
+		} else {
+			loadHoaDon();
 		}
 	}
 	
