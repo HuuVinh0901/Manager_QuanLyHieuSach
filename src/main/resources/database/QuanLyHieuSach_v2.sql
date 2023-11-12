@@ -186,6 +186,7 @@ delete  from NhaCungCap
 delete  from LoaiSanPham
 delete from TheLoai
 delete from TacGia
+delete from Sach
 
 select *from Sach
 select *from LoaiSanPham

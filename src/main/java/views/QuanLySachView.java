@@ -668,6 +668,10 @@ public class QuanLySachView extends JPanel
 			e.printStackTrace();
 		}
 
+		if (tenTacGias == null || theLoais == null || nhaCungCap == null || loaiSanPham == null) {
+	        JOptionPane.showMessageDialog(this, "Vui lòng chọn đầy đủ thông tin về tác giả, thể loại, nhà cung cấp, và loại sản phẩm.");
+	        return null; 
+	    }
 		SachCon sach = new SachCon();
 		sach.setIdSanPham(idSanPham);
 		sach.setTenSanPham(tenSanPham);
@@ -839,22 +843,26 @@ public class QuanLySachView extends JPanel
 				return;
 			} else if (validataFieldsAndShowErrors()) {
 				SachCon sach = layThongTinSach();
-				boolean kiemTra = daoSach.themSach(sach);
-				if (kiemTra) {
-
-					model.addRow(new Object[] { sach.getIdSanPham(), sach.getTenSanPham(),
-							sach.getTacGia().getTenTacGia(), sach.getTheLoai().getTenTheLoai(),
-							dfNgaySinh.format(sach.getNamXuatBan()), sach.getISBN(), sach.getSoTrang(),
-							sach.getIdLoaiSanPham().getTenLoaiSanPham(), sach.getIdNhaCungCap().getTenNhaCungCap(),
-							sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
-							sach.getGiaNhap(), sach.giaBan() });
-					JOptionPane.showMessageDialog(this, "Thêm sách thành công");
-					daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
-					daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
-					loadData();
+				if(sach!=null) {
+					boolean kiemTra = daoSach.themSach(sach);
+					if (kiemTra) {
+						
+						model.addRow(new Object[] { sach.getIdSanPham(), sach.getTenSanPham(),
+								sach.getTacGia().getTenTacGia(), sach.getTheLoai().getTenTheLoai(),
+								dfNgaySinh.format(sach.getNamXuatBan()), sach.getISBN(), sach.getSoTrang(),
+								sach.getIdLoaiSanPham().getTenLoaiSanPham(), sach.getIdNhaCungCap().getTenNhaCungCap(),
+								sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
+								sach.getGiaNhap(), sach.giaBan() });
+						JOptionPane.showMessageDialog(this, "Thêm sách thành công");
+						daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
+						daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
+						loadData();
+						lamMoi();
+					} else {
+						JOptionPane.showMessageDialog(this, "Lỗi khi thêm sách");
+					}
+				}else {
 					lamMoi();
-				} else {
-					JOptionPane.showMessageDialog(this, "Lỗi khi thêm sách");
 				}
 			}
 		} catch (NumberFormatException e) {
