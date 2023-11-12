@@ -38,6 +38,9 @@ public class TrangChuQuanTriView extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
+		setLocationRelativeTo(null);
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		paneCu = new HomeView(); // Bắt đầu với HomeView
 		panelBody.add(paneCu);

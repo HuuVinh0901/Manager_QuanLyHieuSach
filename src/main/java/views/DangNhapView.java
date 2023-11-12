@@ -17,6 +17,7 @@ import java.awt.event.KeyListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -61,13 +62,16 @@ public class DangNhapView extends JFrame implements ActionListener{
 	private JLabel lblTieuDe;
 	private JCheckBox rememberPassword;
 	public DangNhapView() {
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
-		setTitle("Đăng Nhập Quản Lý Hiệu Sách");
-		setSize(500,300);
-		setLocationRelativeTo(null);
-		init();
+	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+	    setResizable(false);
+	    setTitle("Đăng Nhập Quản Lý Hiệu Sách");
+	    setSize(500,300);
+	    setLocationRelativeTo(null);
+	    ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
+	    init();
 	}
+
 	
 	private void init() {
 		FontIcon iconLogo = FontIcon.of(MaterialDesign.MDI_BOOK_OPEN_PAGE_VARIANT);

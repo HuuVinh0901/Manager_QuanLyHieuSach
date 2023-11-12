@@ -42,6 +42,8 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 			e.printStackTrace();
 		}
 		setTitle("Quản lý bán hàng");
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
