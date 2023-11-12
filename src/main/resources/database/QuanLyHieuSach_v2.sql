@@ -126,6 +126,8 @@ CREATE TABLE Sach (
     FOREIGN KEY (theLoai) REFERENCES TheLoai(idTheLoai)
 )
 
+go
+
 CREATE TABLE KhuyenMai (
     idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenKM NVARCHAR(20) NOT NULL, 
@@ -134,12 +136,29 @@ CREATE TABLE KhuyenMai (
 	loaiKM NVARCHAR(8)
 )
 CREATE TABLE ApDungKhuyenMai (
-    idSP nvarchar(14),
+    idSP nvarchar(14) PRIMARY KEY,
     idKM nvarchar(14),
-    PRIMARY KEY (idSP, idKM),
-    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
-    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
-)
+	tenSP nvarchar(30),
+	
+    giaBan float,
+	giaKM float,
+	
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
+	
+);
+CREATE TABLE ApDungKhuyenMaiSach (
+    idS nvarchar(13) PRIMARY KEY,
+    idKM nvarchar(14),
+	tenSP nvarchar(30),
+	
+    giaBan float,
+	giaKM float,
+	
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idS) REFERENCES Sach(idSanPham),
+	
+);
 select *from KhuyenMai
 select *from ApDungKhuyenMai
 go

@@ -16,7 +16,7 @@ public abstract class SanPhamCha {
 	protected TrangThaiSPEnum trangThai;
 	protected int soLuong;
 	protected double giaNhap;
-	
+	protected double giaKM;
 	public SanPhamCha() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -27,7 +27,7 @@ public abstract class SanPhamCha {
 	}
 
 	public SanPhamCha(String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap,
-			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong, double giaNhap) {
+			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong, double giaNhap,double giaKM) {
 		super();
 		this.idSanPham = idSanPham;
 		this.tenSanPham = tenSanPham;
@@ -38,6 +38,15 @@ public abstract class SanPhamCha {
 		this.trangThai = trangThai;
 		this.soLuong = soLuong;
 		this.giaNhap = giaNhap;
+		this.giaKM = giaKM;
+	}
+
+	public double getGiaKM() {
+		return giaKM;
+	}
+
+	public void setGiaKM(double giaKM) {
+		this.giaKM = giaKM;
 	}
 
 	public String getIdSanPham() {
@@ -141,6 +150,5 @@ public abstract class SanPhamCha {
 
 	public abstract double thue();
 
-	public abstract double giaBan();
-	public abstract double giaKM();
+	public abstract double giaBan() ;
 }

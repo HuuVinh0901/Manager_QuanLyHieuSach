@@ -43,7 +43,7 @@ public class DAOQuanLySanPham implements Serializable {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.soLuong, sp.giaBan "
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
 					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
 					+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'";
@@ -91,11 +91,7 @@ public class DAOQuanLySanPham implements Serializable {
 				return 0;
 			}
 
-			@Override
-			public double giaKM() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
+			
 		};
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
@@ -152,7 +148,7 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.setSoLuong(rs.getInt(10));
 				lsp.giaBan();
 				
-				lsp.giaKM();
+				
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -200,7 +196,7 @@ public class DAOQuanLySanPham implements Serializable {
 
 	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
-		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
+		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan ,sp.giaKhuyenMai FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
 		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 			while(rs.next()) {
 				SanPhamCon lsp = new SanPhamCon();
@@ -217,6 +213,7 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.setGiaNhap(rs.getDouble("giaNhap"));
 				lsp.setSoLuong(rs.getInt("soLuong"));
 				lsp.giaBan();
+				lsp.setGiaKM(rs.getDouble("giaKhuyenMai"));
 				dsSanPham.add(lsp);
 			}
 		} catch (SQLException e) {
@@ -266,7 +263,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-			pst.setDouble(12,sp.giaKM());
+			pst.setDouble(12, sp.giaBan());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {

@@ -34,7 +34,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private JPanel panelBody;
 	private JPanel panelHeader;
 	private JPanel panelMenu;
-
+	private JPanel paneCu;
 	public TrangChuQuanLyBanHangView() {
 		try {
 			ConnectDB.getinstance().connect();
@@ -47,33 +47,50 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		paneCu = new HomeView(); // Bắt đầu với HomeView
+		panelBody.add(paneCu);
 		execute();
+		menus.setBackground(new Color(153,225,225));
 	}
 
 	private void execute() {
-		ImageIcon iconStaff = new ImageIcon(getClass().getResource("/icons/user.png"));
-		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/setting.png"));
-		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/subMenu.png"));
-
-		MenuItem QLBH = new MenuItem(iconStaff, "Quản lý bán hàng",new ActionListener() {
+		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/settings.png"));
+		ImageIcon iconKH = new ImageIcon(getClass().getResource("/icons/KH.png"));
+		ImageIcon iconSP = new ImageIcon(getClass().getResource("/icons/SP.png"));
+		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/plus.png"));
+		MenuItem QLBH = new MenuItem(iconSP, "Quản lý bán hàng",new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				panelBody.add(new QuanLyBanHangView());
-				panelBody.repaint();
-				panelBody.revalidate();
+				switchToPanel(new QuanLyBanHangView());
 				
 			}
 		});
 		
 
-		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",null);
+		MenuItem QLKH = new MenuItem(iconKH, "Quản lý khách hàng",new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new QuanLyKhachHangView());
+			}
+		});
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", null);
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subCaiDatTT,subCaiDatDMK,subCaiDatHDSD);
 		addMenu(QLBH,QLKH,CaiDat);
-
+		QLKH.setBackground(new Color(153,225,225));
+		QLBH.setBackground(new Color(153,225,225));
+		CaiDat.setBackground(new Color(153,225,225));
+	}
+	private void switchToPanel(JPanel newPanel) {
+		panelBody.remove(paneCu); // Loại bỏ panel hiện tại
+		paneCu = newPanel; // Cập nhật panel hiện tại
+		panelBody.add(paneCu); // Thêm panel mới vào panelBody
+		panelBody.repaint();
+		panelBody.revalidate();
 	}
 
 	private void addMenu(MenuItem... menu) {

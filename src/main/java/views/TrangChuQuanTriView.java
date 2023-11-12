@@ -1,4 +1,4 @@
-package views;
+ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,13 +43,22 @@ public class TrangChuQuanTriView extends JFrame {
 		panelBody.add(paneCu);
 		execute();
 
+		menus.setBackground(new Color(153,225,225));
+		
+
 	}
 
 	private void execute() {
-		ImageIcon iconStaff = new ImageIcon(getClass().getResource("/icons/user.png"));
-		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/setting.png"));
-		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/subMenu.png"));
 
+		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/settings.png"));
+		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/plus.png"));
+		ImageIcon iconKH = new ImageIcon(getClass().getResource("/icons/KH.png"));
+		ImageIcon iconNV = new ImageIcon(getClass().getResource("/icons/NV.png"));
+		ImageIcon iconSP = new ImageIcon(getClass().getResource("/icons/SP.png"));
+		ImageIcon iconKM = new ImageIcon(getClass().getResource("/icons/KM.png"));
+		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
+		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
+		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
 
 			@Override
@@ -65,7 +74,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-
 		MenuItem subQLTacGia = new MenuItem(iconSubMenu, "Tác giả", new ActionListener() {
 
 			@Override
@@ -81,17 +89,24 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new TheLoaiView());
 			}
 		});
+		MenuItem DangXuat = new MenuItem(iconDX, "Đăng xuất", new ActionListener() {
 
-		MenuItem QLSP = new MenuItem(iconStaff, "Hàng Hóa", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+
+			}
+		});
+		MenuItem QLSP = new MenuItem(iconSP, "Sản phẩm", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				switchToPanel(new QuanLySanPhamView());
 
 			}
-		}, subQLLoaiSanPham, subQLNhaCungCap, subQLTacGia,subQLTheLoai);
-		MenuItem QLTKNV = new MenuItem(iconStaff, "Quản lý tài khoản", null);
-		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên", new ActionListener() {
+		}, subQLLoaiSanPham, subQLNhaCungCap,subQLTacGia,subQLTheLoai);
+		
+		MenuItem QLNV = new MenuItem(iconNV, "Quản lý Nhân viên", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -99,7 +114,7 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLyNhanVienView());
 			}
 		});
-		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng", new ActionListener() {
+		MenuItem QLKH = new MenuItem(iconKH, "Quản lý khách hàng", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -107,7 +122,7 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLyKhachHangView());
 			}
 		});
-		MenuItem KM = new MenuItem(iconStaff, "Chương trình khuyến mãi", new ActionListener() {
+		MenuItem KM = new MenuItem(iconKM, "Chương trình khuyến mãi", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -115,7 +130,7 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new KhuyenMaiView());
 			}
 		});
-		MenuItem QLHD = new MenuItem(iconStaff, "Quản lý hóa đơn", new ActionListener() {
+		MenuItem QLHD = new MenuItem(iconHD, "Quản lý hóa đơn", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -125,7 +140,7 @@ public class TrangChuQuanTriView extends JFrame {
 		});
 		MenuItem subTKCa = new MenuItem(iconSubMenu, "Thống kê theo ca", null);
 		MenuItem subTKCP = new MenuItem(iconSubMenu, "Thống kê chi phí", null);
-		MenuItem TKBC = new MenuItem(iconStaff, "Thống kê báo cáo", null, subTKCa, subTKCP);
+		MenuItem TKBC = new MenuItem(iconTK, "Thống kê báo cáo", null, subTKCa, subTKCP);
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
@@ -139,10 +154,17 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
 				subCaiDatHDSD);
-		addMenu(QLSP, QLNV, QLTKNV, QLKH,KM, QLHD, TKBC, CaiDat);
-
+		addMenu(QLSP, QLNV, QLKH,KM, QLHD, TKBC, CaiDat,DangXuat);
+		QLSP.setBackground(new Color(153,225,225));
+		QLNV.setBackground(new Color(153,225,225));
+		QLKH.setBackground(new Color(153,225,225));
+		KM.setBackground(new Color(153,225,225));
+		QLHD.setBackground(new Color(153,225,225));
+		TKBC.setBackground(new Color(153,225,225));
+		CaiDat.setBackground(new Color(153,225,225));
+		DangXuat.setBackground(new Color(153,225,225));
 	}
-
+	
 	private void switchToPanel(JPanel newPanel) {
 		panelBody.remove(paneCu); // Loại bỏ panel hiện tại
 		paneCu = newPanel; // Cập nhật panel hiện tại
@@ -154,6 +176,7 @@ public class TrangChuQuanTriView extends JFrame {
 	private void addMenu(MenuItem... menu) {
 		for (int i = 0; i < menu.length; i++) {
 			menus.add(menu[i]);
+			
 			ArrayList<MenuItem> subMenu = menu[i].getSubMenu();
 			for (MenuItem m : subMenu) {
 				addMenu(m);
@@ -163,7 +186,7 @@ public class TrangChuQuanTriView extends JFrame {
 	}
 
 	private void initComponents() {
-		panelHeader = new JPanel();
+//		panelHeader = new JPanel();
 		panelMenu = new JPanel();
 		jScrollPane1 = new JScrollPane();
 		menus = new JPanel();
@@ -171,21 +194,21 @@ public class TrangChuQuanTriView extends JFrame {
 
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		panelHeader.setBackground(new Color(120, 120, 120));
-		panelHeader.setPreferredSize(new Dimension(561, 50));
+//		panelHeader.setBackground(new Color(225,223,223));
+//		panelHeader.setPreferredSize(new Dimension(561, 50));
 
-		GroupLayout panelHeaderLayout = new GroupLayout(panelHeader);
-		panelHeader.setLayout(panelHeaderLayout);
-		panelHeaderLayout.setHorizontalGroup(
-				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 855, Short.MAX_VALUE));
-		panelHeaderLayout.setVerticalGroup(
-				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 50, Short.MAX_VALUE));
-
-		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
+//		GroupLayout panelHeaderLayout = new GroupLayout(panelHeader);
+//		panelHeader.setLayout(panelHeaderLayout);
+//		panelHeaderLayout.setHorizontalGroup(
+//				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 855, Short.MAX_VALUE));
+//		panelHeaderLayout.setVerticalGroup(
+//				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 50, Short.MAX_VALUE));
+//
+//		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
 
 		jScrollPane1.setBorder(null);
 
-		menus.setBackground(new Color(255, 255, 255));
+		
 		menus.setLayout(new BoxLayout(menus, BoxLayout.Y_AXIS));
 		jScrollPane1.setViewportView(menus);
 
@@ -198,7 +221,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 		getContentPane().add(panelMenu, BorderLayout.LINE_START);
 
-		panelBody.setBackground(new Color(255, 255, 255));
+		
 		panelBody.setLayout(new BorderLayout());
 		getContentPane().add(panelBody, BorderLayout.CENTER);
 	}
