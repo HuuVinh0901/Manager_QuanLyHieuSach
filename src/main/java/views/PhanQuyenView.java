@@ -19,7 +19,7 @@ import javax.swing.border.LineBorder;
 
 
 public class PhanQuyenView extends JFrame implements ActionListener{
-	private JButton btnLogOut, btnQLBanHang, btnQLHeThong;
+	private JButton btnLogOut, btnQLBanHang, btnQLHeThong,btnAdmin;
 	public PhanQuyenView() {
 		 setTitle("Điều hướng quản lý");
 	        setSize(600, 375);
@@ -47,8 +47,12 @@ public class PhanQuyenView extends JFrame implements ActionListener{
         pnLeft.setPreferredSize(new Dimension(295, 110));
         pnMain.add(pnLeft, BorderLayout.WEST);
 
-        btnQLHeThong = new JButton("QUẢN TRỊ HỆ THỐNG");
-        btnQLHeThong.setPreferredSize(new Dimension(280, 250));
+        btnAdmin = new JButton("ADMIN");
+        btnAdmin.setPreferredSize(new Dimension(280, 100));
+        pnLeft.add(btnAdmin);
+        
+        btnQLHeThong = new JButton("QUẢN LÝ");
+        btnQLHeThong.setPreferredSize(new Dimension(280, 100));
         pnLeft.add(btnQLHeThong);
 
         JPanel pnRight = new JPanel();
@@ -79,7 +83,7 @@ public class PhanQuyenView extends JFrame implements ActionListener{
         btnLogOut.addActionListener(this);
         btnQLBanHang.addActionListener(this);
         btnQLHeThong.addActionListener(this);
-     
+        btnAdmin.addActionListener(this);
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -97,6 +101,11 @@ public class PhanQuyenView extends JFrame implements ActionListener{
 			TrangChuQuanTriView view = new TrangChuQuanTriView();
 			view.setVisible(true);
 		}
+	else if(o.equals(btnAdmin)) {
+		this.dispose();
+		AdminView view = new AdminView();
+		view.setVisible(true);
+	}
 	}
 
 }

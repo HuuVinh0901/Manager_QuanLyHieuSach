@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -61,6 +62,8 @@ public class TrangChuQuanTriView extends JFrame {
 		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
 		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
+
+
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
 
 			@Override
@@ -112,8 +115,11 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
+			switchToPanel(new QuanLyNhanVienView());
+
 				switchToPanel(new QuanLyNhanVienView());
+
 			}
 		});
 		MenuItem QLKH = new MenuItem(iconKH, "Quản lý khách hàng", new ActionListener() {

@@ -90,7 +90,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
 
-	public QuanLyNhanVienView() {
+	public QuanLyNhanVienView()  {
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 
 		daoNhanVien=new DAONhanVien();
@@ -126,6 +126,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	    lbGioiTinh=new JLabel("Giới tính:");
 	    lbNgaySinh=new JLabel("Ngày sinh:");
 	    txtID=new JTextField();
+	    try {
+			txtID.setText(autoID());
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	    txtID.setEditable(false);
 		cbChucVu = new JComboBox<Object>(new Object[] {"Nhân viên" });
 		cbTrangThai = new JComboBox<Object>(new Object[] { "Đang làm việc", "Đã nghỉ việc" });
@@ -182,6 +188,13 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
 	    btnCapNhatNV.setIcon(iconCapNhat);
 	    btnXoaNV=new JButton("XÓA KHÁCH HÀNG");
+
+//		btnThemNV=new JButton("THÊM NHÂN VIÊN");
+//	    btnThemNV.setIcon(iconThem);
+//	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
+//	    btnCapNhatNV.setIcon(iconCapNhat);
+//	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
+
 	    btnXoaNV.setIcon(iconXoa);
 	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnLamMoi.setIcon(iconLamMoi);
@@ -364,6 +377,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	public boolean valiDate() {
 	
 		String ten = txtTenNV.getText().trim();
+
 		
 		Boolean gioiTinh=null;
 		if(rbNam.isSelected() || rbNu.isSelected()) {
@@ -431,9 +445,16 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		}
 		return true;
 	}
+
 	private void lamMoi() {
 		
-		txtID.setText("");
+		try {
+			txtID.setText(autoID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		txtTenNV.setText("");
 		txtDiaChi.setText("");
 		txtsdt.setText("");
@@ -451,14 +472,14 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThemNV)) {
-//			if(valiDate()) {
+			if(valiDate()) {
 				try {
 					ThemNV();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-//			}
+			}
 			
 		} 
 		 if(o.equals(btnLamMoi)) {
