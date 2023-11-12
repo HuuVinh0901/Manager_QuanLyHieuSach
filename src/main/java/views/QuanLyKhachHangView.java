@@ -61,7 +61,7 @@ import models.LoaiSanPham;
 
 
 
-public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseListener,KeyListener{
+public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyListener,ActionListener{
 	private JDateChooser chooserNgaySinh;
 	private JTextField txtTenKH;
 	private JTextField txtsdt;
@@ -106,37 +106,31 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 		KhachHang kh=new KhachHang();
 		setLayout(new BorderLayout());
 ////		Tiêu đề
-		JPanel NhanVienPanel=new JPanel();
-		NhanVienPanel.setLayout(new BorderLayout());
-		NhanVienPanel.setBorder(new EmptyBorder(10,10,10,10));
+		JPanel pnNouth=new JPanel(new BorderLayout());
+		JPanel pnSounth=new JPanel(new BorderLayout());
+		JPanel pnTitle=new JPanel();
+		JPanel pnInfo=new JPanel(new GridLayout(4,1,10,10));
+		JPanel pnChucNang=new JPanel(new GridLayout(1,4,10,10));
+		JPanel pnTimKiem=new JPanel(new GridLayout(1,3,10,10));
+		JPanel pntbKH=new JPanel();
 		
 		JLabel lblTieuDe = new JLabel("QUẢN LÝ KHÁCH HÀNG");
-		lblTieuDe.setFont(new Font("Arial", Font.BOLD, 30));
-		lblTieuDe.setForeground(Color.black);
-		JPanel PanelNouth =new JPanel();
-		
-		add(NhanVienPanel);
-		NhanVienPanel.add(PanelNouth,BorderLayout.NORTH);
-		PanelNouth.add(lblTieuDe);
-		
-		JPanel pnCenter = new JPanel();
-		pnCenter.setLayout(new GridLayout(5,10, 10, 10));
-		pnCenter.setBorder(BorderFactory.createTitledBorder("Nhập thông tin khách hàng"));
-		
-
-        lbTenKH = new JLabel("Tên khách hàng: ");
-        txtTenKH = new JTextField();
-        lbsdt = new JLabel("Số điện thoại: ");
-        txtsdt = new JTextField();
-        lbEmail = new JLabel("Email: ");
-        txtEmail = new JTextField();
+		lblTieuDe.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblTieuDe.setForeground(new Color(26, 102, 227));
+		pnTitle.add(lblTieuDe);
+		pnNouth.add(pnTitle,BorderLayout.NORTH);
+		add(pnNouth,BorderLayout.NORTH);
         
-		lbDiaChi = new JLabel("Địa chỉ: ");
+		lbTenKH = new JLabel("Tên khách hàng: ");
+	    txtTenKH = new JTextField();
+	    lbsdt = new JLabel("Số điện thoại: ");
+	    txtsdt = new JTextField();
+	    lbEmail = new JLabel("Email: ");
+	    txtEmail = new JTextField();
+	    lbDiaChi = new JLabel("Địa chỉ: ");
 	    txtDiaChi = new JTextField();
-	    
 	    lbGioiTinh=new JLabel("Giới tính: ");
 	    lbNgaySinh=new JLabel("Ngày sinh: ");
-	  
 	    rbNam=new JRadioButton("Nam");
 	    rbNu=new JRadioButton("Nữ");
 	    cbTimKiem = new JComboBox<Object>(new Object[] { "Tìm kiếm theo ID", "Tìm kiếm theo tên" });
@@ -149,114 +143,76 @@ public class QuanLyKhachHangView extends JPanel implements ActionListener,MouseL
 		chooserNgaySinh.getCalendarButton().setPreferredSize(new Dimension(20, 24));
 		chooserNgaySinh.getCalendarButton().setBackground(new Color(102, 0, 153));
 		chooserNgaySinh.getCalendarButton().setToolTipText("Chọn ngày sinh");
+		lbid=new JLabel("ID nhân viên:");
+	    txtId=new JTextField();
+	    txtId.setEditable(false);
+	    //Button giới tính
+	    groupGT = new ButtonGroup();
+	    groupGT.add(rbNam);
+	    groupGT.add(rbNu);
+	    rbNam.setActionCommand("Nam");
+	    rbNu.setActionCommand("Nữ");
+	    lbTimKiem=new JLabel("Tìm kiếm khách hàng:");
+	    txtTimKiem=new JTextField();
 	    
-        Box BoxCenter= Box.createVerticalBox();
-        Box b1,b2,b3,b4,b5,b6,b7;
-        b1=Box.createHorizontalBox();
-        b1.add(lbTenKH);
-        b1.add(txtTenKH);
-        b1.add(Box.createHorizontalStrut(20));
-        b1.add(lbsdt);
-        b1.add(txtsdt);
-        b2=Box.createHorizontalBox();
-        b2.add(lbEmail);
-        b2.add(txtEmail);
-        b2.add(Box.createHorizontalStrut(20));
-        b2.add(lbDiaChi);
-        b2.add(txtDiaChi);
-        b3=Box.createHorizontalBox();
-       
-        JTextField txtGT=new JTextField();
-        b6=Box.createHorizontalBox();
-        b6.add(Box.createHorizontalStrut(420));
-        b4=Box.createHorizontalBox();
-
-        
-        b7=Box.createHorizontalBox();
-        lbid=new JLabel("ID nhân viên:");
-        txtId=new JTextField();
-        txtId.setEditable(false);
-        b7.add(lbid);
-        b7.add(txtId);
-        
-        b4.add(lbNgaySinh);
-        b4.add(chooserNgaySinh);
-        b5=Box.createHorizontalBox();
-        b5.add(lbGioiTinh);
-        b5.add(Box.createHorizontalStrut(20));
-        b5.add(rbNam);
-        b5.add(rbNu);
-        b3.add(b4);
-        b3.add(Box.createHorizontalStrut(20));
-        b3.add(b5);
-        b3.add(b6);
-        lbEmail.setPreferredSize(lbTenKH.getPreferredSize());
-		lbDiaChi.setPreferredSize(lbsdt.getPreferredSize());
-		lbGioiTinh.setPreferredSize(lbsdt.getPreferredSize());
-		lbNgaySinh.setPreferredSize(lbTenKH.getPreferredSize());
-		lbid.setPreferredSize(lbTenKH.getPreferredSize());
-	    BoxCenter.add(Box.createVerticalStrut(10));
-        BoxCenter.add(b1);
-        BoxCenter.add(Box.createVerticalStrut(10));
-        BoxCenter.add(b2);
-        BoxCenter.add(Box.createVerticalStrut(10));
-        BoxCenter.add(b3);
-        BoxCenter.add(Box.createVerticalStrut(10));
-        BoxCenter.add(b7);
-        BoxCenter.setBorder(BorderFactory.createTitledBorder("Nhập thông tin khách hàng"));
+	    pnInfo.add(lbid);
+	    pnInfo.add(txtId);
+	    pnInfo.add(lbTenKH);
+	    pnInfo.add(txtTenKH);
+	    pnInfo.add(lbsdt);
+	    pnInfo.add(txtsdt);
+	    pnInfo.add(lbEmail);
+	    pnInfo.add(txtEmail);
+	    pnInfo.add(lbDiaChi);
+	    pnInfo.add(txtDiaChi);
+	    pnInfo.add(lbNgaySinh);
+	    pnInfo.add(chooserNgaySinh);
+	    pnInfo.add(lbGioiTinh);
+	    pnInfo.add(rbNam);
+	    pnInfo.add(rbNu);
+	    pnNouth.add(pnInfo,BorderLayout.CENTER);
+	    pnInfo.setBorder(BorderFactory.createTitledBorder("Thông tin khách hàng"));
 		
-        //Tạo button groud giới tính
-        groupGT = new ButtonGroup();
-        groupGT.add(rbNam);
-        groupGT.add(rbNu);
-        rbNam.setActionCommand("Nam");
-        rbNu.setActionCommand("Nữ");
-        
-        lbTimKiem=new JLabel("Tìm kiếm nhân viên:");
-        txtTimKiem=new JTextField();
-        
-        
-        JPanel pnChucNang = new JPanel(new GridLayout(2,6,10,40));
-        JPanel pnChucNang1 = new JPanel(new GridLayout(1,6,10,40));
-        JPanel pnChucNang2 = new JPanel(new GridLayout(1,6,10,40));
-        btnThemKH=new JButton("THÊM KHÁCH HÀNG");
-        btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
-        btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
-        btnLamMoi=new JButton("LÀM MỚI");
-        btnXemTatCa=new JButton("XEM TẤT CẢ");
-        pnChucNang1.add(btnThemKH);
-        pnChucNang1.add(btnCapNhatKH);
-        pnChucNang1.add(btnXoaKH);
-        pnChucNang1.add(btnLamMoi);
-        
-        pnChucNang2.add(lbTimKiem);
-        pnChucNang2.add(txtTimKiem);
-        pnChucNang2.add(btnXemTatCa);
-        pnChucNang.add(pnChucNang1);
-        pnChucNang.add(pnChucNang2);
-       //Tạo bảng
-        modelKhachHang = new DefaultTableModel();
+	    ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
+	    btnThemKH.setIcon(iconThem);
+	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
+	    btnCapNhatKH.setIcon(iconCapNhat);
+	    btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
+	    btnXoaKH.setIcon(iconXoa);
+	    btnLamMoi=new JButton("LÀM MỚI");
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    pnChucNang.add(btnThemKH);
+	    pnChucNang.add(btnCapNhatKH);
+	    pnChucNang.add(btnXoaKH);
+	    pnChucNang.add(btnLamMoi);
+	    pnNouth.add(pnChucNang,BorderLayout.SOUTH);
+	    pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
+	  
+	    pnTimKiem.add(lbTimKiem);
+	    pnTimKiem.add(txtTimKiem);
+	    pnTimKiem.add(btnXemTatCa);
+	    pnSounth.add(pnTimKiem,BorderLayout.NORTH);
+	    add(pnSounth,BorderLayout.CENTER);
+	    modelKhachHang = new DefaultTableModel();
 		tableKH = new JTable();
-        modelKhachHang.addColumn("ID KhachHang");
+		modelKhachHang.addColumn("ID KhachHang");
 		modelKhachHang.addColumn("Tên khách hàng");
 		modelKhachHang.addColumn("Số điện thoại");
 		modelKhachHang.addColumn("Email");
 		modelKhachHang.addColumn("Địa chỉ");
 		modelKhachHang.addColumn("Ngày sinh");
 		modelKhachHang.addColumn("Giới tính");
-       
-        tableKH.setModel(modelKhachHang);
-        JScrollPane scrollPane = new JScrollPane(tableKH);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khách hàng"));
-       
-        JPanel PanelMain= new JPanel();
-        PanelMain.setLayout(new BorderLayout());
-    	PanelMain.add(BoxCenter,BorderLayout.NORTH);
-        PanelMain.add(pnChucNang,BorderLayout.CENTER);
-        PanelMain.add(scrollPane,BorderLayout.SOUTH);
-        NhanVienPanel.add(PanelMain,BorderLayout.SOUTH);
-    
-        btnLamMoi.addActionListener(this);
+		tableKH.setModel(modelKhachHang);
+		JScrollPane scrollPane = new JScrollPane(tableKH);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khách hàng"));
+
+		pnSounth.add(scrollPane,BorderLayout.CENTER);
+		    btnLamMoi.addActionListener(this);
 		btnThemKH.addActionListener(this);
 		btnCapNhatKH.addActionListener(this);
 		btnXoaKH.addActionListener(this);

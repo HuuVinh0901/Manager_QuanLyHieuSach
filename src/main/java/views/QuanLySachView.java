@@ -859,13 +859,13 @@ public class QuanLySachView extends JPanel
 	private void lamMoi() {
 		txtIdSanPham.setText(generateNewProductID());
 		txtTenSanPham.setText("");
-		cbLoaiTacGia.setSelectedIndex(0);
-		cbLoaiTheLoai.setSelectedIndex(0);
+		cbLoaiTacGia.setSelectedIndex(1);
+		cbLoaiTheLoai.setSelectedIndex(1);
 		chooserXuatBan.setDate(new Date());
 		isbnField.setText("");
 		txtSoTrang.setText("");
-		cbLoaiSanPham.setSelectedIndex(0);
-		cbNhaCungCap.setSelectedIndex(0);
+		cbLoaiSanPham.setSelectedIndex(1);
+		cbNhaCungCap.setSelectedIndex(1);
 		txtKichThuoc.setText("");
 		txtMauSac.setText("");
 		chkTinhTrangKinhDoanh.setSelected(trangThai.DANG_KINH_DOANH == trangThai.DANG_KINH_DOANH);

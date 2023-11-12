@@ -4,8 +4,9 @@ go
 -- Sử dụng cơ sở dữ liệu QLHieuSach
 USE QLHieuSach
 go
+
 CREATE TABLE NhanVien (
-    idNhanVien NVARCHAR(7) NOT NULL PRIMARY KEY,
+    idNhanVien NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenNhanVien NVARCHAR(50) NOT NULL,
     soDienThoai NVARCHAR(10),
     diaChi NVARCHAR(50),
@@ -14,18 +15,18 @@ CREATE TABLE NhanVien (
     gioiTinh BIT,
     chucVu NVARCHAR(50),
     trangThai BIT DEFAULT 1, -- '1' cho 'Đang làm việc', '0' cho 'Đã nghỉ việc'
-    luong FLOAT CHECK (luong > 2000000)
+    
 )
 go
 CREATE TABLE TaiKhoan (
-    idTaiKhoan NVARCHAR(7) NOT NULL PRIMARY KEY,
+    idTaiKhoan NVARCHAR(14) NOT NULL PRIMARY KEY,
     matKhau NVARCHAR(20) NOT NULL, 
     ngayLap DATE DEFAULT GETDATE(), 
     FOREIGN KEY (idTaiKhoan) REFERENCES NhanVien(idNhanVien) 
 )
 go
 CREATE TABLE KhachHang(
-	idKhachHang NVARCHAR(7) not null PRIMARY KEY,
+	idKhachHang NVARCHAR(14) not null PRIMARY KEY,
 	tenKhachHang NVARCHAR(50) not null,
 	soDienThoai NVARCHAR(10),
 	email NVARCHAR(50),
@@ -37,15 +38,14 @@ go
 CREATE TABLE HoaDon (
     idDonHang NVARCHAR(14) NOT NULL PRIMARY KEY, 
     ngayLap DATE NOT NULL, 
-    khachHang NVARCHAR(7) NOT NULL, 
-    nhanVien NVARCHAR(7) NOT NULL, 
+    khachHang NVARCHAR(14) NOT NULL, 
     tienKhachDua FLOAT CHECK (tienKhachDua >= 0), 
 	tongTien FLOAT,
     FOREIGN KEY (khachHang) REFERENCES KhachHang(idKhachHang), 
-    FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
+    --FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
 )
 go
-go
+
 CREATE TABLE NhaCungCap(
 	idNhaCungCap NVARCHAR(15) NOT NULL PRIMARY KEY,
 	tenNhaCungCap NVARCHAR(50) NOT NULL,
@@ -126,6 +126,8 @@ CREATE TABLE Sach (
     FOREIGN KEY (theLoai) REFERENCES TheLoai(idTheLoai)
 )
 
+go
+
 CREATE TABLE KhuyenMai (
     idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenKM NVARCHAR(20) NOT NULL, 
@@ -134,28 +136,49 @@ CREATE TABLE KhuyenMai (
 	loaiKM NVARCHAR(8)
 )
 CREATE TABLE ApDungKhuyenMai (
-    idSP nvarchar(14),
+    idSP nvarchar(14) PRIMARY KEY,
     idKM nvarchar(14),
-    PRIMARY KEY (idSP, idKM),
-    FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
-    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM)
-)
+	tenSP nvarchar(30),
+	
+    giaBan float,
+	giaKM float,
+	
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
+	
+);
+CREATE TABLE ApDungKhuyenMaiSach (
+    idS nvarchar(13) PRIMARY KEY,
+    idKM nvarchar(14),
+	tenSP nvarchar(30),
+	
+    giaBan float,
+	giaKM float,
+	
+    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idS) REFERENCES Sach(idSanPham),
+	
+);
 select *from KhuyenMai
 select *from ApDungKhuyenMai
+select *from NhanVien
+select *from TaiKhoan
+select *from KhachHang
 go
 
 use master
 drop database QLHieuSach
 
-use QLHieuSach
+
 select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
 select *from TacGia
 select *from TheLoai
 select *from Sach
-
-
+select *from NhanVien
+select *from TaiKhoan
+select *from KhachHang
 
 delete  from SanPham 
 delete   from SanPham 

@@ -9,13 +9,15 @@ public class SanPhamCon extends SanPhamCha {
 
 	}
 
-	public SanPhamCon( String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham,
-			NhaCungCap idNhaCungCap, double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong,
-			double giaNhap) {
-		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong,
-				giaNhap);
+	
+
+	public SanPhamCon(String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap,
+			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong, double giaNhap, double giaKM) {
+		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap, giaKM);
 		// TODO Auto-generated constructor stub
 	}
+
+
 
 	public SanPhamCon(String idSanPham) {
 		super(idSanPham);
@@ -29,7 +31,7 @@ public class SanPhamCon extends SanPhamCha {
 		return "SanPhamCon [idSanPham=" + idSanPham + ", tenSanPham=" + tenSanPham + ", idLoaiSanPham=" + idLoaiSanPham
 				+ ", idNhaCungCap=" + idNhaCungCap + ", kichThuoc=" + kichThuoc + ", mauSac=" + mauSac + ", trangThai="
 				+ trangThai + ", soLuong=" + soLuong + ", giaNhap=" + giaNhap + ", thue()=" + thue() + ", giaBan()="
-				+ giaBan() + ", giaKM()=" + giaKM() + "]";
+				+ giaBan() + ", ]";
 	}
 
 	@Override
@@ -41,8 +43,5 @@ public class SanPhamCon extends SanPhamCha {
 	public double giaBan() {
 		return super.giaNhap+(super.giaNhap*0.55)+thue();
 	}
-	@Override
-	public double giaKM() {
-		return super.giaNhap+(super.giaNhap*0.55)+thue();
-	}
+	
 }

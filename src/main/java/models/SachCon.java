@@ -17,8 +17,8 @@ public class SachCon extends SanPhamCha {
 
 	public SachCon(String idSanPham, String tenSanPham, TacGia tacGia, TheLoai theLoai, Date namXuatBan, String iSBN,
 			int soTrang, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap, double kichThuoc, String mauSac,
-			TrangThaiSPEnum trangThai, int soLuong, double giaNhap) {
-		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap);
+			TrangThaiSPEnum trangThai, int soLuong, double giaNhap,double giaKM) {
+		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap,giaKM);
 		this.tacGia = tacGia;
 		this.theLoai = theLoai;
 		this.namXuatBan = namXuatBan;
@@ -91,9 +91,5 @@ public class SachCon extends SanPhamCha {
 		return super.giaNhap + (super.giaNhap * 0.55) + thue();
 	}
 
-	@Override
-	public double giaKM() {
-		return super.giaNhap+(super.giaNhap*0.55)+thue();
-	}
-
+	
 }
