@@ -46,7 +46,7 @@ import com.toedter.calendar.JDateChooser;
 import dao.DAOTacGia;
 import models.TacGia;
 
-public class TacGiaView extends JPanel implements ActionListener, MouseListener , KeyListener{
+public class TacGiaView extends JPanel implements ActionListener, MouseListener, KeyListener {
 	private JPanel pnMain;
 	private JPanel pnHeading;
 	private JPanel pnThongTinMain;
@@ -156,7 +156,7 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
-		pnChucNang.add(btnXoa);
+//		pnChucNang.add(btnXoa);
 		pnChucNang.add(btnLamMoi);
 		Insets btnInsert = new Insets(0, 70, 0, 0);
 		pnChucNang.setBorder(new EmptyBorder(btnInsert));
@@ -198,10 +198,11 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 		btnCapNhat.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
-		btnXoa.addActionListener(this);
+//		btnXoa.addActionListener(this);
 		table.addMouseListener(this);
 		txtTuKhoa.addKeyListener(this);
 		loadData();
+		lamMoi();
 	}
 
 	private void loadData() {
@@ -228,9 +229,9 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 			lamMoi();
 		} else if (o.equals(btnCapNhat)) {
 			capNhatTacGia();
-		}else if(o.equals(btnXoa)) {
+		} else if (o.equals(btnXoa)) {
 			xoaTacGia();
-		}else if(o.equals(btnXemTatCa)) {
+		} else if (o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadData();
 		}
@@ -239,12 +240,13 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 
 	private void xoaTacGia() {
 		int row = table.getSelectedRow();
-		if(row ==-1) {
+		if (row == -1) {
 			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
-		}else {
+		} else {
 			try {
-				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa không","Cảnh báo",JOptionPane.YES_NO_OPTION);
-				if(hoiNhac==JOptionPane.YES_OPTION) {
+				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa không", "Cảnh báo",
+						JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
 					String idTacGia = txtIdTacGia.getText();
 					daoTacGia.xoaTacGia(idTacGia);
 					JOptionPane.showMessageDialog(this, "Xóa thông tin thành công");
@@ -255,82 +257,136 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 				JOptionPane.showMessageDialog(this, "Xóa thông tin không thành công");
 			}
 		}
-		
+
 	}
 
 	private void capNhatTacGia() {
-	    int row = table.getSelectedRow();
-	    if (row < 0) {
-	        JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để cập nhật", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-	        return;
-	    }
+		int row = table.getSelectedRow();
+		if (row < 0) {
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để cập nhật", "Cảnh báo",
+					JOptionPane.WARNING_MESSAGE);
+			return;
+		} else if (validataFields()) {
 
-	    String idTacGia = txtIdTacGia.getText().trim();
-	    String tenTacGia = txtTenTacGia.getText().trim();
-	    java.util.Date utilDate = chooserNgaySinh.getDate();
-	    java.sql.Date ngaySinh = new java.sql.Date(utilDate.getTime());
-	    int soLuongTacPham =0;
-	   
-	    java.util.Date currentDate = new java.util.Date();
-	    if (ngaySinh.after(currentDate)) {
-	        JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
+			String idTacGia = txtIdTacGia.getText().trim();
+			String tenTacGia = txtTenTacGia.getText().trim();
+			java.util.Date utilDate = chooserNgaySinh.getDate();
+			java.sql.Date ngaySinh = new java.sql.Date(utilDate.getTime());
+			int soLuongTacPham = 0;
+			
+			java.util.Date currentDate = new java.util.Date();
+			if (ngaySinh.after(currentDate)) {
+				JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
+			try {
+				boolean success = daoTacGia.capNhatTacGia(tg);
+				if (success) {
+					JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công");
+					loadData();
+				} else {
+					JOptionPane.showMessageDialog(this, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (SQLException e) {
+				String errorMessage = "Cập nhật thất bại: " + e.getMessage();
+				JOptionPane.showMessageDialog(this, errorMessage, "Lỗi", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 
-	    TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
-	    try {
-	        boolean success = daoTacGia.capNhatTacGia(tg);
-	        if (success) {
-	            JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công");
-	            loadData();
-	        } else {
-	            JOptionPane.showMessageDialog(this, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
-	        }
-	    } catch (SQLException e) {
-	        String errorMessage = "Cập nhật thất bại: " + e.getMessage();
-	        JOptionPane.showMessageDialog(this, errorMessage, "Lỗi", JOptionPane.ERROR_MESSAGE);
-	    }
 	}
 
 	private void lamMoi() {
 		txtIdTacGia.setText(generateNewTacGiaID());
 		txtTenTacGia.setText("");
 		txtSoLuongTacPham.setText("");
-		chooserNgaySinh.setDate(null);
+		chooserNgaySinh.setDate(new Date());
 		txtTuKhoa.setText("");
 
+	}
+
+	private boolean validateDateChooser(JDateChooser dateChooser) {
+		Date selectedDate = dateChooser.getDate();
+		if (selectedDate == null) {
+			showErrorDialog("Vui lòng chọn ngày sinh!");
+			return false;
+		}
+		Date currentDate = new Date();
+		if (selectedDate.after(currentDate)) {
+			showErrorDialog("Ngày sinh không được lớn hơn ngày hiện tại!");
+			return false;
+		}
+
+		java.sql.Date ngaySinh = new java.sql.Date(selectedDate.getTime());
+		return true;
+	}
+
+	private boolean validataFields() {
+		return validataField(txtTenTacGia, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+				"Tên tác giả không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
+				&& validateDateChooser(chooserNgaySinh);
+	}
+
+	private boolean validataField(JTextField textField, String regex, String errorMessage) {
+		String fieldValue = textField.getText().trim();
+		if (fieldValue.isEmpty()) {
+			showErrorDialog("Vui lòng nhập giá trị cho " + textField.getName() + "!");
+			textField.requestFocus();
+			return false;
+		}
+
+		if (!fieldValue.matches(regex)) {
+			showErrorDialog(errorMessage);
+			textField.requestFocus();
+			textField.selectAll();
+			return false;
+		}
+		return true;
+	}
+
+	private void showErrorDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+	}
+
+	private void showSuccessMessage(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
 	}
 
 	private void themTacGia() {
 		String idTacGia = txtIdTacGia.getText();
 		String tenTacGia = txtTenTacGia.getText();
 		java.util.Date date = chooserNgaySinh.getDate();
-		java.sql.Date ngaySinh = new java.sql.Date(date.getYear(), date.getMonth(), date.getDay());
-//		int soLuongTacPham = Integer.parseInt(txtSoLuongTacPham.getText());
+		java.sql.Date ngaySinh = new java.sql.Date(date.getTime());
 		int soLuongTacPham = 0;
-		TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
-
-		try {
-			if (daoTacGia.checkIdTacGia(idTacGia)) {
-				JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
-				return;
-			} else {
-				try {
-					boolean kiemTra = daoTacGia.themTacGia(tg);
-					if (kiemTra) {
-						model.addRow(new Object[] { idTacGia, tenTacGia, ngaySinh, soLuongTacPham });
-						loadData();
-						JOptionPane.showMessageDialog(this, "Thêm thông tin thành công");
-						lamMoi();
-					} else {
-						JOptionPane.showMessageDialog(this, "Lỗi khi thêm thông tin");
+		if (validataFields()) {
+			try {
+				TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
+				if (daoTacGia.checkIdTacGia(idTacGia)) {
+					JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
+					return;
+				} else {
+					try {
+						boolean kiemTra = daoTacGia.themTacGia(tg);
+						if (kiemTra) {
+							model.addRow(new Object[] { idTacGia, tenTacGia, ngaySinh, soLuongTacPham });
+							loadData();
+							JOptionPane.showMessageDialog(this, "Thêm thông tin thành công");
+							lamMoi();
+						} else {
+							JOptionPane.showMessageDialog(this, "Lỗi khi thêm thông tin");
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
 					}
-				} catch (SQLException e) {
-					e.printStackTrace();
 				}
+			} catch (HeadlessException | SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (HeadlessException | SQLException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -401,24 +457,24 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		SwingUtilities.invokeLater(() -> {
 			Object o = e.getSource();
-			if(o.equals(txtTuKhoa)) {
+			if (o.equals(txtTuKhoa)) {
 				DefaultTableModel model = (DefaultTableModel) table.getModel();
 				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 				table.setRowSorter(tr);
-				tr.setRowFilter(RowFilter.regexFilter("(?i)"+txtTuKhoa.getText().trim(),0,1,2,3));
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTuKhoa.getText().trim(), 0, 1, 2, 3));
 			}
 		});
 	}

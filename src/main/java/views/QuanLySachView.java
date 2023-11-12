@@ -2,10 +2,13 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -27,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -34,12 +38,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.MaskFormatter;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -58,7 +69,8 @@ import models.TacGia;
 import models.TheLoai;
 import utils.TrangThaiSPEnum;
 
-public class QuanLySachView extends JPanel implements ActionListener, MouseListener, KeyListener, ItemListener {
+public class QuanLySachView extends JPanel
+		implements ActionListener, MouseListener, KeyListener, ItemListener, DocumentListener, ListSelectionListener {
 	private JTabbedPane tabbedPane;
 
 	private JLabel lblTieuDe, lblIDSanPham, lblTinhTrangKinhDoanh;
@@ -103,7 +115,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	private JTextField txtTenSanPham;
 	private JTextField txtIdSanPham;
-	private JTextField txtISBN;
+//	private JTextField txtISBN;
 	private JTextField txtSoTrang;
 	private JTextField txtKichThuoc;
 	private JTextField txtMauSac;
@@ -125,6 +137,9 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 	private SimpleDateFormat dfNgaySinh;
 	private NumberFormat currencyVN;
 	private JDateChooser chooserXuatBan;
+
+	private MaskFormatter formatter;
+	JFormattedTextField isbnField;
 
 	private TrangThaiSPEnum trangThai;
 	private DAOLoaiSanPham daoLoaiSanPham;
@@ -229,6 +244,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	private void init() {
 		setLayout(new BorderLayout());
+
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 		df = new DecimalFormat("#,###.##");
 		daoSach = new DAOSach();
@@ -267,8 +283,19 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		chooserXuatBan.getCalendarButton().setPreferredSize(new Dimension(30, 24));
 		chooserXuatBan.getCalendarButton().setBackground(new Color(102, 0, 153));
 		chooserXuatBan.getCalendarButton().setToolTipText("Chọn ngày xuất bản");
+
+		try {
+			formatter = new MaskFormatter("###-###-###-###-#");
+			formatter.setPlaceholderCharacter('X');
+			isbnField = new JFormattedTextField(formatter);
+			isbnField.setColumns(17);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		lblISBN = new JLabel("ISBN:");
-		txtISBN = new JTextField();
+//		txtISBN = new JTextField();
+
 		lblSoTrang = new JLabel("Số Trang:");
 		txtSoTrang = new JTextField();
 		lblLoaiSanPham = new JLabel("Loại Sản Phẩm:");
@@ -302,7 +329,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		pnCenter.add(cbLoaiTacGia);
 
 		pnCenter.add(lblISBN);
-		pnCenter.add(txtISBN);
+		pnCenter.add(isbnField);
 
 		pnCenter.add(lblSoTrang);
 		pnCenter.add(txtSoTrang);
@@ -413,17 +440,87 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		btnXemTatCa.addActionListener(this);
 		btnXoaSP.addActionListener(this);
 		table.addMouseListener(this);
+		table.getSelectionModel();
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
 		txtGiaNhap.addKeyListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
 		cbTacGiaSearch.addItemListener(this);
 		cbTheLoaiSearch.addItemListener(this);
 		txtTuKhoa.addKeyListener(this);
+
+//		txtISBN.getDocument().addDocumentListener(this);
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		table.requestFocus();
 		loadData();
 		loadComboBoxByLoaiSanPham();
 		loadComboxBoxByNhaCungCap();
 		loadComboBoxByTheLoai();
 		loadComBoBoxByTacGia();
+		lamMoi();
+
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					int row = table.getSelectedRow();
+					if (row != -1) {
+						txtIdSanPham.setText(model.getValueAt(row, 0).toString());
+						txtTenSanPham.setText(model.getValueAt(row, 1).toString());
+						cbLoaiTacGia.setSelectedItem(model.getValueAt(row, 2).toString());
+						cbLoaiTheLoai.setSelectedItem(model.getValueAt(row, 3).toString());
+						String namXuatBanString = model.getValueAt(row, 4).toString();
+						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+						java.util.Date namXuatBan = null;
+						try {
+							namXuatBan = dateFormat.parse(namXuatBanString);
+						} catch (ParseException ex) {
+							ex.printStackTrace();
+						}
+						chooserXuatBan.setDate(namXuatBan);
+						isbnField.setText(model.getValueAt(row, 5).toString());
+						txtSoTrang.setText(model.getValueAt(row, 6).toString());
+						cbLoaiSanPham.setSelectedItem(model.getValueAt(row, 7).toString());
+						cbNhaCungCap.setSelectedItem(model.getValueAt(row, 8).toString());
+						txtKichThuoc.setText(model.getValueAt(row, 9).toString());
+						txtMauSac.setText(model.getValueAt(row, 10).toString());
+
+						String trangThaiValue = model.getValueAt(row, 11).toString();
+						TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
+
+						chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
+
+						txtSoLuong.setText(model.getValueAt(row, 13).toString());
+						txtGiaNhap.setText(model.getValueAt(row, 14).toString());
+						txtGiaBan.setText(model.getValueAt(row, 15).toString());
+					}
+				}
+			}
+		});
+
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					if (e.getKeyCode() == KeyEvent.VK_F5) {
+						lamMoi();
+						loadData();
+					}
+				} else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
+					xoaSP();
+				} else if (e.getKeyCode() == KeyEvent.VK_F2) {
+					capNhatSach();
+				} else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
+					txtTuKhoa.requestFocusInWindow();
+				}
+				return false;
+			}
+		});
+
 	}
 
 	@Override
@@ -441,7 +538,6 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			lamMoi();
 			loadData();
 		}
-
 	}
 
 	private void xoaSP() {
@@ -450,12 +546,15 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			JOptionPane.showMessageDialog(this, "Bạn cần phải chọn dòng xóa");
 		} else {
 			try {
+				SachCon s = layThongTinSach();
 				int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc xóa không!", "Cảnh báo",
 						JOptionPane.YES_NO_OPTION);
 				if (hoiNhac == JOptionPane.YES_OPTION) {
 					model.removeRow(row);
 					String idSanPham = txtIdSanPham.getText();
 					daoSach.xoaSach(idSanPham);
+					daoTacGia.giamSoLuongTacPham(s.getTacGia().getIdTacGia());
+					daoTheLoai.giamSoLuongTheLoai(s.getTheLoai().getIdTheLoai());
 					JOptionPane.showMessageDialog(this, "Xóa sản phẩm thành công");
 					lamMoi();
 				}
@@ -477,18 +576,21 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 			int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
 					JOptionPane.YES_NO_OPTION);
 			if (hoiNhac == JOptionPane.YES_OPTION) {
-				try {
-					SachCon s = layThongTinSach();
-					String idSanPham = txtIdSanPham.getText();
-					daoSach.capNhatSach(s);
-					JOptionPane.showMessageDialog(this, "Cập nhật sách thành công!");
-					loadData();
-				} catch (NumberFormatException e) {
-					JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra định dạng số", "Lỗi",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (validataFieldsAndShowErrors()) {
+					try {
+						SachCon s = layThongTinSach();
+						String idSanPham = txtIdSanPham.getText();
+						daoSach.capNhatSach(s);
+						JOptionPane.showMessageDialog(this, "Cập nhật sách thành công!");
+						loadData();
+					} catch (NumberFormatException e) {
+						JOptionPane.showMessageDialog(this, "Vui lòng kiểm tra định dạng số", "Lỗi",
+								JOptionPane.ERROR_MESSAGE);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 			}
 		}
@@ -502,7 +604,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		String theLoai = (String) cbLoaiTheLoai.getSelectedItem();
 		java.util.Date date = chooserXuatBan.getDate();
 		java.sql.Date namXuatBan = new java.sql.Date(date.getYear(), date.getMonth(), date.getDay());
-		String ISBN = txtISBN.getText().trim();
+		String ISBN = isbnField.getText().trim();
 		int soTrang = Integer.parseInt(txtSoTrang.getText().trim());
 		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
 		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
@@ -574,13 +676,157 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		return sach;
 	}
 
+	private boolean validataFieldsAndShowErrors() {
+		String tenSanPham = txtTenSanPham.getText().trim();
+		String ISBN = isbnField.getText().trim();
+		String soTrang = txtSoTrang.getText().trim();
+		String kichThuoc = txtKichThuoc.getText().trim();
+		String mauSac = txtMauSac.getText().trim();
+		String giaNhap = txtGiaNhap.getText().trim();
+		String soLuong = txtSoLuong.getText().trim();
+
+		if (tenSanPham.isEmpty() && ISBN.isEmpty() && soTrang.isEmpty() && kichThuoc.isEmpty() && mauSac.isEmpty()
+				&& giaNhap.isEmpty() && soLuong.isEmpty()) {
+			showErrorAndFocus(this, "Vui lòng điền thông tin trước", getFirstEmptyTextField());
+			return false;
+		}
+		if (!isValidISBN(ISBN)) {
+			showErrorAndFocus(this, "ISBN không hợp lệ.", isbnField);
+			return false;
+		}
+
+		if (!isValidName(tenSanPham)) {
+			showErrorAndFocus(this, "Tên sản phẩm không hợp lệ. Chỉ chấp nhận chữ và số và không có kí tự đặc biệt",
+					txtTenSanPham);
+			return false;
+		}
+
+		if (!isValidInt(soTrang)) {
+			showErrorAndFocus(this, "Số trang không hợp lệ. Nhập số nguyên.", txtSoTrang);
+			return false;
+		}
+
+		if (!isValidMauSac(mauSac)) {
+			showErrorAndFocus(this, "Màu sắc không hợp lệ. Chỉ chấp nhận chữ", txtMauSac);
+			return false;
+		}
+		if (!isValidDouble(kichThuoc)) {
+			showErrorAndFocus(this, "Kích thước không hợp lệ. Nhập số thực.", txtKichThuoc);
+			return false;
+		}
+
+		if (!isValidDouble(giaNhap)) {
+			showErrorAndFocus(this, "Giá nhập không hợp lệ. Nhập số thực.", txtGiaNhap);
+			return false;
+		}
+
+		if (!isValidInt(soLuong)) {
+			showErrorAndFocus(this, "Số lượng không hợp lệ. Nhập số nguyên.", txtSoLuong);
+			return false;
+		}
+		if (!validateDateChooser(chooserXuatBan)) {
+			JOptionPane.showConfirmDialog(this, "Ngày xuất bản không hợp lệ.", "Lỗi", JOptionPane.WARNING_MESSAGE);
+			chooserXuatBan.requestFocus();
+			return false;
+		}
+
+		return true;
+	}
+
+	private void showErrorAndFocus(Component parentComponent, String message, JTextField textField) {
+		JOptionPane.showMessageDialog(parentComponent, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+		textField.requestFocusInWindow();
+		textField.selectAll();
+	}
+
+	private JTextField getFirstEmptyTextField() {
+		if (txtTenSanPham.getText().trim().isEmpty()) {
+			return txtTenSanPham;
+		} else if (isbnField.getText().trim().isEmpty()) {
+			return isbnField;
+		} else if (txtSoTrang.getText().trim().isEmpty()) {
+			return txtSoTrang;
+		} else if (txtMauSac.getText().trim().isEmpty()) {
+			return txtMauSac;
+		} else if (txtKichThuoc.getText().trim().isEmpty()) {
+			return txtKichThuoc;
+		} else if (txtSoLuong.getText().trim().isEmpty()) {
+			return txtSoLuong;
+		} else if (txtGiaNhap.getText().trim().isEmpty()) {
+			return txtGiaNhap;
+		}
+		return null;
+	}
+
+	private boolean validateDateChooser(JDateChooser dateChooser) {
+		Date selectedDate = dateChooser.getDate();
+		if (selectedDate == null) {
+			showErrorDialog("Vui lòng chọn Năm xuất bản");
+			return false;
+		}
+		Date currentDate = new Date();
+		if (selectedDate.after(currentDate)) {
+			showErrorDialog("Năm xuất bản không được lớn hơn ngày hiện tại!");
+			return false;
+		}
+
+		java.sql.Date ngaySinh = new java.sql.Date(selectedDate.getTime());
+		return true;
+	}
+
+	private boolean isValidName(String input) {
+		return input.matches("^[\\p{L}0-9\\s]+$");
+	}
+
+	private boolean isValidMauSac(String input) {
+		return input.matches("^[\\p{L}\\s]+$");
+	}
+
+	private boolean isValidISBN(String isbn) {
+		return isbn.matches("^\\d{3}-\\d{3}-\\d{3}-\\d{3}-\\d{1}$");
+	}
+
+	private boolean isValidDouble(String input) {
+		if (input == null || input.trim().isEmpty()) {
+			showErrorDialog("Giá trị không được để trống.");
+			return false;
+		}
+
+		try {
+			Double.parseDouble(input);
+			return true;
+		} catch (NumberFormatException e) {
+//			showErrorDialog("Giá trị không hợp lệ. Vui lòng nhập số thực.");
+			return false;
+		}
+	}
+
+	private boolean isValidInt(String input) {
+		if (input == null || input.trim().isEmpty()) {
+			showErrorDialog("Giá trị không được để trống.");
+			return false;
+		}
+
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch (NumberFormatException e) {
+//			showErrorDialog("Giá trị không hợp lệ. Vui lòng nhập số nguyên.");
+			return false;
+		}
+	}
+
+	private void showErrorDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+	}
+
 	private void themSach() {
 		String idSanPham = txtIdSanPham.getText();
 		try {
 			if (daoSach.checkIdSach(idSanPham)) {
-				JOptionPane.showMessageDialog(this, "Trùng ID nhà cung cấp. Vui lòng chọn ID khác.");
+				JOptionPane.showMessageDialog(this, "Trùng ID sản phẩm. Vui lòng chọn ID khác.");
 				return;
-			} else {
+			} else if (validataFieldsAndShowErrors()) {
 				SachCon sach = layThongTinSach();
 				boolean kiemTra = daoSach.themSach(sach);
 				if (kiemTra) {
@@ -592,8 +838,8 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 							sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
 							sach.getGiaNhap(), sach.giaBan() });
 					JOptionPane.showMessageDialog(this, "Thêm sách thành công");
-					 daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
-					 daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
+					daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
+					daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
 					loadData();
 					lamMoi();
 				} else {
@@ -611,13 +857,27 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 	private void lamMoi() {
 		txtIdSanPham.setText(generateNewProductID());
 		txtTenSanPham.setText("");
-		cbLoaiTacGia.setSelectedIndex(0);
-		cbLoaiTheLoai.setSelectedIndex(0);
-		chooserXuatBan.setDate(null);
-		txtISBN.setText("");
+
+		if (cbLoaiTacGia.getItemCount() > 1) {
+			cbLoaiTacGia.setSelectedIndex(1);
+		}
+
+		if (cbLoaiTheLoai.getItemCount() > 1) {
+			cbLoaiTheLoai.setSelectedIndex(1);
+		}
+
+		chooserXuatBan.setDate(new Date());
+		isbnField.setText("");
 		txtSoTrang.setText("");
-		cbLoaiSanPham.setSelectedIndex(0);
-		cbNhaCungCap.setSelectedIndex(0);
+
+		if (cbLoaiSanPham.getItemCount() > 1) {
+			cbLoaiSanPham.setSelectedIndex(1);
+		}
+
+		if (cbNhaCungCap.getItemCount() > 1) {
+			cbNhaCungCap.setSelectedIndex(1);
+		}
+
 		txtKichThuoc.setText("");
 		txtMauSac.setText("");
 		chkTinhTrangKinhDoanh.setSelected(trangThai.DANG_KINH_DOANH == trangThai.DANG_KINH_DOANH);
@@ -626,7 +886,9 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		txtGiaBan.setText("");
 		table.clearSelection();
 		txtTenSanPham.requestFocus();
-
+		txtTenSanPham.selectAll();
+		table.requestFocus();
+		// table.changeSelection(0, 0, false, false);
 	}
 
 	@Override
@@ -637,7 +899,12 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			Object o = e.getSource();
+			if (o == txtTenSanPham) {
+				themSach();
+			}
+		}
 
 	}
 
@@ -686,7 +953,7 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 				ex.printStackTrace();
 			}
 			chooserXuatBan.setDate(namXuatBan);
-			txtISBN.setText(model.getValueAt(row, 5).toString());
+			isbnField.setText(model.getValueAt(row, 5).toString());
 			txtSoTrang.setText(model.getValueAt(row, 6).toString());
 			cbLoaiSanPham.setSelectedItem(model.getValueAt(row, 7).toString());
 			cbNhaCungCap.setSelectedItem(model.getValueAt(row, 8).toString());
@@ -976,4 +1243,59 @@ public class QuanLySachView extends JPanel implements ActionListener, MouseListe
 		}
 	}
 
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+//	    updateISBN(e);
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+//	    updateISBN(e);
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// updateISBN(e);
+	}
+
+	private void updateISBN(DocumentEvent e) {
+
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e) {
+		if (!e.getValueIsAdjusting()) {
+			int row = table.getSelectedRow();
+			if (row != -1) {
+				txtIdSanPham.setText(model.getValueAt(row, 0).toString());
+				txtTenSanPham.setText(model.getValueAt(row, 1).toString());
+				cbLoaiTacGia.setSelectedItem(model.getValueAt(row, 2).toString());
+				cbLoaiTheLoai.setSelectedItem(model.getValueAt(row, 3).toString());
+				String namXuatBanString = model.getValueAt(row, 4).toString();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				java.util.Date namXuatBan = null;
+				try {
+					namXuatBan = dateFormat.parse(namXuatBanString);
+				} catch (ParseException ex) {
+					ex.printStackTrace();
+				}
+				chooserXuatBan.setDate(namXuatBan);
+				isbnField.setText(model.getValueAt(row, 5).toString());
+				txtSoTrang.setText(model.getValueAt(row, 6).toString());
+				cbLoaiSanPham.setSelectedItem(model.getValueAt(row, 7).toString());
+				cbNhaCungCap.setSelectedItem(model.getValueAt(row, 8).toString());
+				txtKichThuoc.setText(model.getValueAt(row, 9).toString());
+				txtMauSac.setText(model.getValueAt(row, 10).toString());
+
+				String trangThaiValue = model.getValueAt(row, 11).toString();
+				TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
+
+				chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
+
+				txtSoLuong.setText(model.getValueAt(row, 13).toString());
+				txtGiaNhap.setText(model.getValueAt(row, 14).toString());
+				txtGiaBan.setText(model.getValueAt(row, 15).toString());
+			}
+		}
+	}
 }

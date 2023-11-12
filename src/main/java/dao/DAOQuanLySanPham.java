@@ -37,6 +37,22 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 	}
 
+	public boolean checkIdSanPham(String idSanPham) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, idSanPham);
+			try (ResultSet rs = pst.executeQuery()) {
+				if (rs.next()) {
+					int count = rs.getInt(1);
+					return count > 0;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
 	public ArrayList<SanPhamCon> getSanPhamTimKiem(String cond) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();

@@ -40,6 +40,8 @@ public class TrangChuQuanTriView extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
 		paneCu = new HomeView(); // Bắt đầu với HomeView
 		panelBody.add(paneCu);
 		execute();
@@ -60,6 +62,8 @@ public class TrangChuQuanTriView extends JFrame {
 		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
 		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
+
+
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
 
 			@Override
@@ -111,7 +115,11 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+			switchToPanel(new QuanLyNhanVienView());
+
 				switchToPanel(new QuanLyNhanVienView());
+
 			}
 		});
 		MenuItem QLKH = new MenuItem(iconKH, "Quản lý khách hàng", new ActionListener() {

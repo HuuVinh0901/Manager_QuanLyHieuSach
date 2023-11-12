@@ -26,6 +26,16 @@ public class DAOTacGia {
         }
     }
 	
+	public void giamSoLuongTacPham(String idTacGia) throws SQLException {
+        String sql = "UPDATE TacGia SET soLuongTacPham = soLuongTacPham - 1 WHERE idTacGia = ?";
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, idTacGia);
+            pst.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+	
 	public ArrayList<TacGia> getAllTacGia() throws SQLException {
 		ArrayList<TacGia> dsTacGia = new ArrayList<TacGia>();
 		String sql = "SELECT *from TacGia";

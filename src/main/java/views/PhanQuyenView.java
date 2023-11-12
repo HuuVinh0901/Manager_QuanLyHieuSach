@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,6 +26,8 @@ public class PhanQuyenView extends JFrame implements ActionListener{
 	        setResizable(false);
 	        setLocationRelativeTo(null);
 	        setDefaultCloseOperation(EXIT_ON_CLOSE);
+	        ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+		    setIconImage(icon.getImage());
 	        init();
 	}
 	private void init() {

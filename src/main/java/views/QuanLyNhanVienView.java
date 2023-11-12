@@ -183,11 +183,18 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-		btnThemNV=new JButton("THÊM NHÂN VIÊN");
+		btnThemNV=new JButton("THÊM KHÁCH HÀNG");
 	    btnThemNV.setIcon(iconThem);
-	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
+	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
 	    btnCapNhatNV.setIcon(iconCapNhat);
-	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
+	    btnXoaNV=new JButton("XÓA KHÁCH HÀNG");
+
+//		btnThemNV=new JButton("THÊM NHÂN VIÊN");
+//	    btnThemNV.setIcon(iconThem);
+//	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
+//	    btnCapNhatNV.setIcon(iconCapNhat);
+//	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
+
 	    btnXoaNV.setIcon(iconXoa);
 	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnLamMoi.setIcon(iconLamMoi);
@@ -370,6 +377,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	public boolean valiDate() {
 	
 		String ten = txtTenNV.getText().trim();
+
 		
 		Boolean gioiTinh=null;
 		if(rbNam.isSelected() || rbNu.isSelected()) {
@@ -437,6 +445,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		}
 		return true;
 	}
+
 	private void lamMoi() {
 		
 		try {
@@ -445,6 +454,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		txtTenNV.setText("");
 		txtDiaChi.setText("");
 		txtsdt.setText("");

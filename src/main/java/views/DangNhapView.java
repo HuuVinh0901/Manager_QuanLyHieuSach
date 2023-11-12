@@ -17,6 +17,7 @@ import java.awt.event.KeyListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -32,21 +33,7 @@ import org.kordamp.ikonli.swing.FontIcon;
 import connection.ConnectDB;
 
 
-public class DangNhapView extends JFrame implements ActionListener{
-//	private static final long serialVersionUID = 1L;
-//	private JTextField txtTaiKhoan;
-//	private JButton btnThoat;
-//	private JButton btnDangNhap;
-//	private JTextField txtDangNhap;
-//	private JPasswordField txtMatKhau;
-//	private JLabel lblQuenMatKhau;
-//	private JLabel lblIconLogo;
-//	private JLabel lblIconDangNhap;
-//	private JLabel lblIconMatKhau;
-//	private JPanel pnHeader;
-//	private JPanel pnCenter;
-//	private JPanel pnSouth;
-//	
+public class DangNhapView extends JFrame implements ActionListener{	
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTaiKhoan;
 	private JButton btnThoat;
@@ -61,13 +48,16 @@ public class DangNhapView extends JFrame implements ActionListener{
 	private JLabel lblTieuDe;
 	private JCheckBox rememberPassword;
 	public DangNhapView() {
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setResizable(false);
-		setTitle("Đăng Nhập Quản Lý Hiệu Sách");
-		setSize(500,300);
-		setLocationRelativeTo(null);
-		init();
+	    setDefaultCloseOperation(EXIT_ON_CLOSE);
+	    setResizable(false);
+	    setTitle("Đăng Nhập Quản Lý Hiệu Sách");
+	    setSize(500,300);
+	    setLocationRelativeTo(null);
+	    ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
+	    init();
 	}
+
 	
 	private void init() {
 		FontIcon iconLogo = FontIcon.of(MaterialDesign.MDI_BOOK_OPEN_PAGE_VARIANT);
@@ -75,42 +65,6 @@ public class DangNhapView extends JFrame implements ActionListener{
 		FontIcon iconMatKhau = FontIcon.of(MaterialDesign.MDI_LOCK);
 		FontIcon iconLogin = FontIcon.of(MaterialDesign.MDI_LOGIN_VARIANT);
 		FontIcon iconCancel = FontIcon.of(MaterialDesign.MDI_CLOSE);
-		
-//		txtTaiKhoan = new JTextField(20);
-//		txtMatKhau = new JPasswordField();
-//		btnDangNhap = new JButton("Đăng nhập");
-//		btnThoat = new JButton("Thoát");
-//		lblQuenMatKhau = new JLabel("Quên mật khẩu? Bấm vào đây");
-//		lblIconLogo = new JLabel();
-//		lblIconDangNhap = new JLabel();
-//		lblIconMatKhau = new JLabel();
-//		pnHeader = new JPanel();
-//		pnCenter = new JPanel();
-//		
-//		Box b = Box.createVerticalBox();
-//		Box b1,b2,b3,b4,b5;
-//		b.add(b1 = Box.createHorizontalBox());
-//		b1.add(pnHeader,BorderLayout.NORTH);
-//		pnHeader.add(lblIconLogo);
-//		iconLogo.setIconColor(Color.decode("#0288D1"));
-//		iconLogo.setIconSize(100);
-//		lblIconLogo.setIcon(iconLogo);
-//		
-//		b.add(b2 = Box.createHorizontalBox());
-//		b2.add(pnCenter);
-//		pnCenter.add(lblIconDangNhap);
-//		iconDangNhap.setIconSize(35);
-//		lblIconDangNhap.setIcon(iconDangNhap);
-//		pnCenter.add(txtTaiKhoan);
-//		
-//		
-//		b.add(b3 = Box.createHorizontalBox());
-//		b3.add(pnCenter);
-//		pnCenter.add(lblIconMatKhau);
-//		iconMatKhau.setIconSize(35);
-//		lblIconDangNhap.setIcon(iconMatKhau);
-//		
-//		add(b);
 		
 		Font ft = new Font("SansSerif",Font.BOLD,30);
 		Font ftItalic = new Font("SansSerif",Font.ITALIC,12);
@@ -184,6 +138,5 @@ public class DangNhapView extends JFrame implements ActionListener{
 		PhanQuyenView view = new PhanQuyenView();
 		this.setVisible(false);
 		view.setVisible(true);
-		
 	}
 }

@@ -145,6 +145,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		chooserNgaySinh.getCalendarButton().setToolTipText("Chọn ngày sinh");
 		lbid=new JLabel("ID nhân viên:");
 	    txtId=new JTextField();
+
 	    try {
 			txtId.setText(autoID());
 		} catch (SQLException e1) {

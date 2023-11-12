@@ -4,6 +4,7 @@ go
 -- Sử dụng cơ sở dữ liệu QLHieuSach
 USE QLHieuSach
 go
+
 CREATE TABLE NhanVien (
     idNhanVien NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenNhanVien NVARCHAR(50) NOT NULL,
@@ -41,10 +42,10 @@ CREATE TABLE HoaDon (
     tienKhachDua FLOAT CHECK (tienKhachDua >= 0), 
 	tongTien FLOAT,
     FOREIGN KEY (khachHang) REFERENCES KhachHang(idKhachHang), 
-    FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
+    --FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
 )
 go
-go
+
 CREATE TABLE NhaCungCap(
 	idNhaCungCap NVARCHAR(15) NOT NULL PRIMARY KEY,
 	tenNhaCungCap NVARCHAR(50) NOT NULL,
@@ -160,25 +161,31 @@ CREATE TABLE ApDungKhuyenMaiSach (
 );
 select *from KhuyenMai
 select *from ApDungKhuyenMai
+select *from NhanVien
+select *from TaiKhoan
+select *from KhachHang
 go
 
 use master
 drop database QLHieuSach
 
-use QLHieuSach
+
 select *from SanPham
 select *from NhaCungCap
 select *from LoaiSanPham
 select *from TacGia
 select *from TheLoai
 select *from Sach
-
-
+select *from NhanVien
+select *from TaiKhoan
+select *from KhachHang
 
 delete  from SanPham 
 delete   from SanPham 
 delete  from NhaCungCap
 delete  from LoaiSanPham
+delete from TheLoai
+delete from TacGia
 
 select *from Sach
 select *from LoaiSanPham

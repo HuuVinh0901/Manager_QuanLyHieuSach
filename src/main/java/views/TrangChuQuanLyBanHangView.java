@@ -45,6 +45,8 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
+	    setIconImage(icon.getImage());
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		paneCu = new HomeView(); // Bắt đầu với HomeView
