@@ -5,7 +5,7 @@ go
 USE QLHieuSach
 go
 CREATE TABLE NhanVien (
-    idNhanVien NVARCHAR(7) NOT NULL PRIMARY KEY,
+    idNhanVien NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenNhanVien NVARCHAR(50) NOT NULL,
     soDienThoai NVARCHAR(10),
     diaChi NVARCHAR(50),
@@ -14,18 +14,18 @@ CREATE TABLE NhanVien (
     gioiTinh BIT,
     chucVu NVARCHAR(50),
     trangThai BIT DEFAULT 1, -- '1' cho 'Đang làm việc', '0' cho 'Đã nghỉ việc'
-    luong FLOAT CHECK (luong > 2000000)
+    
 )
 go
 CREATE TABLE TaiKhoan (
-    idTaiKhoan NVARCHAR(7) NOT NULL PRIMARY KEY,
+    idTaiKhoan NVARCHAR(14) NOT NULL PRIMARY KEY,
     matKhau NVARCHAR(20) NOT NULL, 
     ngayLap DATE DEFAULT GETDATE(), 
     FOREIGN KEY (idTaiKhoan) REFERENCES NhanVien(idNhanVien) 
 )
 go
 CREATE TABLE KhachHang(
-	idKhachHang NVARCHAR(7) not null PRIMARY KEY,
+	idKhachHang NVARCHAR(14) not null PRIMARY KEY,
 	tenKhachHang NVARCHAR(50) not null,
 	soDienThoai NVARCHAR(10),
 	email NVARCHAR(50),
@@ -37,8 +37,7 @@ go
 CREATE TABLE HoaDon (
     idDonHang NVARCHAR(14) NOT NULL PRIMARY KEY, 
     ngayLap DATE NOT NULL, 
-    khachHang NVARCHAR(7) NOT NULL, 
-    nhanVien NVARCHAR(7) NOT NULL, 
+    khachHang NVARCHAR(14) NOT NULL, 
     tienKhachDua FLOAT CHECK (tienKhachDua >= 0), 
 	tongTien FLOAT,
     FOREIGN KEY (khachHang) REFERENCES KhachHang(idKhachHang), 
