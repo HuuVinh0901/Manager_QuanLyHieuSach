@@ -513,7 +513,6 @@ public class QuanLySachView extends JPanel
 					}
 				}else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
 					xoaSP();
-					System.out.println("Xoa thanh cong");
 				} else if (e.getKeyCode() == KeyEvent.VK_F2) {
 					capNhatSach();
 				}else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
@@ -890,7 +889,7 @@ public class QuanLySachView extends JPanel
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 			Object o = e.getSource();
-			if(o == txtTenSanPham || o == txtGiaNhap || o == txtKichThuoc || o == txtMauSac || o == txtSoLuong || o == txtSoTrang || o == cbLoaiSanPham || o == cbNhaCungCap || o == cbLoaiTheLoai || o == cbLoaiTacGia) {
+			if(o == txtTenSanPham) {
 				themSach();
 			}
 		}
@@ -1286,7 +1285,5 @@ public class QuanLySachView extends JPanel
 				txtGiaBan.setText(model.getValueAt(row, 15).toString());
 			}
 		}
-		
 	}
-
 }

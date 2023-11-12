@@ -635,7 +635,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
 				double kichThuoc = sanPham.getKichThuoc();
 				String mauSac = sanPham.getMauSac();
-				String trangThai = sanPham.getTrangThai().getDescription();
+				String trangThai = sanPham.getTrangThai()+"";
 				double thue = sanPham.thue();
 				double giaNhap = sanPham.getGiaNhap();
 				int soLuong = sanPham.getSoLuong();
@@ -660,7 +660,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
 				double kichThuoc = sanPham.getKichThuoc();
 				String mauSac = sanPham.getMauSac();
-				String trangThai = sanPham.getTrangThai().getDescription();
+				String trangThai = sanPham.getTrangThai()+"";
 				double thue = sanPham.thue();
 				double giaNhap = sanPham.getGiaNhap();
 				int soLuong = sanPham.getSoLuong();

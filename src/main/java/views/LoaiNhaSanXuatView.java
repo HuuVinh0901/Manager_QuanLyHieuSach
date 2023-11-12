@@ -393,9 +393,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 			txtDiaChi.setText(modelSP.getValueAt(row, 2).toString());
 			txtSoDienThoai.setText(modelSP.getValueAt(row, 3).toString());
 		}
-
 	}
-
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
