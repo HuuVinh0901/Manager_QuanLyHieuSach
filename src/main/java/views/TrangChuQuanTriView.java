@@ -42,12 +42,10 @@ public class TrangChuQuanTriView extends JFrame {
 		paneCu = new HomeView(); // Bắt đầu với HomeView
 		panelBody.add(paneCu);
 		execute();
-<<<<<<< HEAD
+
 		menus.setBackground(new Color(153,225,225));
 		
-=======
 
->>>>>>> main
 	}
 
 	private void execute() {
@@ -76,18 +74,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-<<<<<<< HEAD
-		MenuItem DangXuat = new MenuItem(iconDX, "Đăng xuất", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-
-			}
-		});
-		MenuItem QLSP = new MenuItem(iconSP, "Sản phẩm", new ActionListener() {
-=======
-
 		MenuItem subQLTacGia = new MenuItem(iconSubMenu, "Tác giả", new ActionListener() {
 
 			@Override
@@ -103,24 +89,24 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new TheLoaiView());
 			}
 		});
+		MenuItem DangXuat = new MenuItem(iconDX, "Đăng xuất", new ActionListener() {
 
-		MenuItem QLSP = new MenuItem(iconStaff, "Hàng Hóa", new ActionListener() {
->>>>>>> main
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+
+			}
+		});
+		MenuItem QLSP = new MenuItem(iconSP, "Sản phẩm", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				switchToPanel(new QuanLySanPhamView());
 
 			}
-<<<<<<< HEAD
-		}, subQLLoaiSanPham, subQLNhaCungCap);
+		}, subQLLoaiSanPham, subQLNhaCungCap,subQLTacGia,subQLTheLoai);
 		
 		MenuItem QLNV = new MenuItem(iconNV, "Quản lý Nhân viên", new ActionListener() {
-=======
-		}, subQLLoaiSanPham, subQLNhaCungCap, subQLTacGia,subQLTheLoai);
-		MenuItem QLTKNV = new MenuItem(iconStaff, "Quản lý tài khoản", null);
-		MenuItem QLNV = new MenuItem(iconStaff, "Quản lý Nhân viên", new ActionListener() {
->>>>>>> main
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -178,7 +164,7 @@ public class TrangChuQuanTriView extends JFrame {
 		CaiDat.setBackground(new Color(153,225,225));
 		DangXuat.setBackground(new Color(153,225,225));
 	}
-
+	
 	private void switchToPanel(JPanel newPanel) {
 		panelBody.remove(paneCu); // Loại bỏ panel hiện tại
 		paneCu = newPanel; // Cập nhật panel hiện tại

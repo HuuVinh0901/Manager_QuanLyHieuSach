@@ -91,11 +91,7 @@ public class DAOQuanLySanPham implements Serializable {
 				return 0;
 			}
 
-			@Override
-			public double giaKM() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
+			
 		};
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
@@ -267,12 +263,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-<<<<<<< HEAD
-			
-			pst.setDouble(12,sp.giaBan());
-=======
-			pst.setDouble(12,sp.giaKM());
->>>>>>> main
+			pst.setDouble(12, sp.giaBan());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {

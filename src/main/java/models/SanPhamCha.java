@@ -150,6 +150,5 @@ public abstract class SanPhamCha {
 
 	public abstract double thue();
 
-	public abstract double giaBan();
-	
+	public abstract double giaBan() ;
 }

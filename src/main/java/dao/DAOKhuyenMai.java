@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
@@ -11,6 +12,8 @@ import models.KhachHang;
 import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
+import models.SachKhuyenMai;
+import models.SanPhamCha;
 import models.SanPhamCon;
 import models.SanPhamKhuyenMai;
 import utils.LoaiKMEnum;
@@ -72,6 +75,28 @@ public class DAOKhuyenMai {
 		}
 		return listSPKM;
 	}
+	public ArrayList<SachKhuyenMai> getAllDanhSachSachKM() {
+		ArrayList<SachKhuyenMai> listSKM=new ArrayList<>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		try {
+			PreparedStatement ps = con.prepareStatement("select * from ApDungKhuyenMaiSach");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				SachKhuyenMai skm=new SachKhuyenMai();
+				skm.setIdSanPham(rs.getString(1));
+				skm.setIdKM(rs.getString(2));
+				skm.setTenSP(rs.getString(3));
+				skm.setGiaBan(rs.getDouble(4));
+				skm.setGiaKM(rs.getDouble(5));
+				
+				listSKM.add(skm);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return listSKM;
+	}
 	public boolean ThemKM(KhuyenMai km) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
@@ -129,6 +154,23 @@ public class DAOKhuyenMai {
             e.printStackTrace();
         }
     }
+	public void updateGiaKMSach(String idSP, double giaKM) {
+        try {
+            // Cập nhật giá bán trong cơ sở dữ liệu
+        	ConnectDB.getinstance();
+    		
+    		Connection con = ConnectDB.getConnection();
+    		
+            String updateQuery = "UPDATE Sach SET giaKhuyenMai = ? WHERE idSanPham = ?";
+            try (PreparedStatement preparedStatement = con.prepareStatement(updateQuery)) {
+                preparedStatement.setDouble(1, giaKM);
+                preparedStatement.setString(2, idSP);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 	public boolean ThemSPKM(String idSP, String idKM,String tenSP,double giaBan,double giaKM) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
@@ -149,9 +191,29 @@ public class DAOKhuyenMai {
 		return false;
 		
 	}
+	public boolean ThemSachKM(String idSach, String idKM,String tenSach,double giaBan,double giaKM) throws SQLException {
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		String sql = "INSERT INTO ApDungKhuyenMaiSach (idS, idKM,tenSP, giaBan, giaKM) VALUES (?,?, ?,?,?)";
+		try {
+			PreparedStatement ps= con.prepareStatement(sql);
+			
+			ps.setString(1, idSach);
+			ps.setString(2, idKM );
+			ps.setString(3, tenSach );
+			ps.setDouble(4, giaBan );
+			ps.setDouble(5, giaKM );
+            return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		con.close();
+		return false;
+		
+	}
 	public void XoaSPKM(String idSP) {
 	    try {
-	        String deleteQuery = "DELETE FROM ApDungKhuyenMai WHERE idSanPham = ?";
+	        String deleteQuery = "DELETE FROM ApDungKhuyenMai WHERE idSP = ?";
 	        ConnectDB.getinstance();
     		
     		Connection con = ConnectDB.getConnection();
@@ -163,42 +225,21 @@ public class DAOKhuyenMai {
 	        e.printStackTrace();
 	    }
 	}
-//	public ArrayList<SanPhamCon> getAllSanPhamLoadData() {
-//		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
-//		ConnectDB.getinstance();
-//		
-//		Connection con = ConnectDB.getConnection();
-//		String sql = "select sp.idSanPham,sp.tenSanPham,sp.giaBan,sp.giaKhuyenMai,adkm.idKM from SanPham sp join ApDungKhuyenMai adkm on sp.idSanPham=adkm.idSanPham where sp.idSanPham=?";
-//		try (PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-//			while(rs.next()) {
-//				SanPhamCon lsp = new SanPhamCon();
-//				
-//				lsp.setIdSanPham(rs.getString("idSanPham"));
-//				lsp.setTenSanPham(rs.getString("tenSanPham"));
-//				lsp.giaBan();
-//				lsp.giaKM();
-//				(rs.getString("tenSanPham"));
-//				dsSanPham.add(lsp);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		return dsSanPham;
-//	}
-	private void updatePromotionMapping(String idSP, boolean luaChon) {
-	    // Sử dụng JDBC hoặc ORM framework để thực hiện cập nhật
-	    // Ví dụ sử dụng JDBC:
-		ConnectDB.getinstance();
-		
-		Connection con = ConnectDB.getConnection();
-	    try (
-	         PreparedStatement statement = con.prepareStatement(
-	                 "UPDATE ApDungKhuyenMai SET luaChon = ? WHERE idSanPham = ?")) {
-	        statement.setBoolean(1, luaChon);
-	        statement.setString(2, idSP);
-	        statement.executeUpdate();
+	public void XoaSKM(String idSP) {
+	    try {
+	        String deleteQuery = "DELETE FROM ApDungKhuyenMaiSach WHERE idS = ?";
+	        ConnectDB.getinstance();
+    		
+    		Connection con = ConnectDB.getConnection();
+	        try (PreparedStatement preparedStatement = con.prepareStatement(deleteQuery)) {
+	            preparedStatement.setString(1, idSP);
+	            preparedStatement.executeUpdate();
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	}
+
+
+	
 }

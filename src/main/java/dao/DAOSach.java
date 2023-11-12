@@ -11,6 +11,7 @@ import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SachCon;
+
 import models.TacGia;
 import models.TheLoai;
 import utils.TrangThaiSPEnum;
@@ -24,7 +25,7 @@ public class DAOSach implements Serializable {
 
 	public ArrayList<SachCon> getAllSachLoadData() {
 		ArrayList<SachCon> dsSach = new ArrayList<>();
-		String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan "
+		String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan,s.giaKhuyenMai "
 				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON s.loaiSanPham = lsp.idLoaiSanPham "
 				+ "JOIN NhaCungCap ncc ON s.nhaCungCap = ncc.idNhaCungCap "
 				+ "JOIN TacGia tg ON s.tacGia = tg.idTacGia " + "JOIN TheLoai tl ON s.theLoai= tl.idTheLoai";
@@ -49,6 +50,7 @@ public class DAOSach implements Serializable {
 				sc.setSoLuong(rs.getInt("soLuong"));
 				sc.setGiaNhap(rs.getDouble("giaNhap"));
 				sc.giaBan();
+				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
 				dsSach.add(sc);
 				System.out.println("Load thanh cong");
 			}
@@ -253,7 +255,7 @@ public class DAOSach implements Serializable {
 			pst.setInt(14, s.getSoLuong());
 			pst.setDouble(15, s.getGiaNhap());
 			pst.setDouble(16, s.giaBan());
-			pst.setDouble(17, s.getGiaKM());
+			pst.setDouble(17, s.giaBan());
 			int n = pst.executeUpdate();
 			return n > 0;
 		} catch (SQLException e) {
@@ -282,7 +284,7 @@ public class DAOSach implements Serializable {
 			pst.setInt(13, s.getSoLuong());
 			pst.setDouble(14, s.getGiaNhap());
 			pst.setDouble(15, s.giaBan());
-			pst.setDouble(16, s.getGiaKM());
+			pst.setDouble(16, s.giaBan());
 			pst.setString(17, s.getIdSanPham());
 			int n = pst.executeUpdate();
 			return n > 0;
@@ -320,6 +322,31 @@ public class DAOSach implements Serializable {
 	    }
 	    return false; 
 	}
+	public ArrayList<SachCon> getSachTimKiem(String cond) {
+		ArrayList<SachCon> dsSach = new ArrayList<SachCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT s.idSanPham, s.tenSanPham, s.giaNhap,s.giaBan FROM Sach s WHERE s.idSanPham LIKE '%"+cond+"%'OR s.tenSanPham LIKE '%"+cond+"%'";
+					
+					
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SachCon s = new SachCon();
+				s.setIdSanPham(rs.getString(1));
+				s.setTenSanPham(rs.getString(2));
+				s.setGiaNhap(rs.getDouble(3));
+				s.giaBan();
+				dsSach.add(s);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		return dsSach;
+	}
 	    
 }
