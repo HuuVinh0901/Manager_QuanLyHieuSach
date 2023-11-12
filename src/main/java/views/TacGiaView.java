@@ -268,31 +268,31 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 			return;
 		} else if (validataFields()) {
 
-		}
-		String idTacGia = txtIdTacGia.getText().trim();
-		String tenTacGia = txtTenTacGia.getText().trim();
-		java.util.Date utilDate = chooserNgaySinh.getDate();
-		java.sql.Date ngaySinh = new java.sql.Date(utilDate.getTime());
-		int soLuongTacPham = 0;
-
-		java.util.Date currentDate = new java.util.Date();
-		if (ngaySinh.after(currentDate)) {
-			JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-
-		TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
-		try {
-			boolean success = daoTacGia.capNhatTacGia(tg);
-			if (success) {
-				JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công");
-				loadData();
-			} else {
-				JOptionPane.showMessageDialog(this, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+			String idTacGia = txtIdTacGia.getText().trim();
+			String tenTacGia = txtTenTacGia.getText().trim();
+			java.util.Date utilDate = chooserNgaySinh.getDate();
+			java.sql.Date ngaySinh = new java.sql.Date(utilDate.getTime());
+			int soLuongTacPham = 0;
+			
+			java.util.Date currentDate = new java.util.Date();
+			if (ngaySinh.after(currentDate)) {
+				JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
-		} catch (SQLException e) {
-			String errorMessage = "Cập nhật thất bại: " + e.getMessage();
-			JOptionPane.showMessageDialog(this, errorMessage, "Lỗi", JOptionPane.ERROR_MESSAGE);
+			
+			TacGia tg = new TacGia(idTacGia, tenTacGia, ngaySinh, soLuongTacPham);
+			try {
+				boolean success = daoTacGia.capNhatTacGia(tg);
+				if (success) {
+					JOptionPane.showMessageDialog(this, "Cập nhật thông tin thành công");
+					loadData();
+				} else {
+					JOptionPane.showMessageDialog(this, "Cập nhật thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+				}
+			} catch (SQLException e) {
+				String errorMessage = "Cập nhật thất bại: " + e.getMessage();
+				JOptionPane.showMessageDialog(this, errorMessage, "Lỗi", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 
 	}

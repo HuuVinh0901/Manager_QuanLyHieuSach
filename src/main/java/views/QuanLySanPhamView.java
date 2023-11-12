@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -75,6 +76,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private JLabel lblLoaiSanPhamSearch;
 	private JLabel lblNhaCungCapSearch;
 	private QuanLySachView sachPanel;
+
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -100,6 +102,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtIdSanPham.setEditable(false);
 		lblTenSanPham = new JLabel("Tên Sản Phẩm(*):");
 		txtTenSanPham = new JTextField();
+		txtTenSanPham.requestFocus();
 		lblNhaCungCap = new JLabel("Nhà Cung Cấp(*):");
 		cbNhaCungCap = new JComboBox<>();
 		lblLoaiSanPham = new JLabel("Loại Sản Phẩm(*):");
@@ -118,6 +121,16 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
 		chkTinhTrangKinhDoanh = new JCheckBox();
 
+		txtIdSanPham.setToolTipText("ID + Date + XXXX");
+		txtKichThuoc.setToolTipText("Chỉ nhận số");
+		txtSoLuong.setToolTipText("Chỉ nhận số nguyên");
+		txtMauSac.setToolTipText("Chỉ nhận chữ và không có kí tự đặc biệt");
+		txtTenSanPham.setToolTipText("Chỉ nhận chữ và số và không có kí tự đặc biệt");
+		txtGiaNhap.setToolTipText("Chỉ nhận số");
+		
+		
+		
+		
 		pnCenter.add(lblIDSanPham);
 		pnCenter.add(txtIdSanPham);
 		pnCenter.add(lblTenSanPham);
@@ -201,8 +214,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		sanPhamPanel.add(pnCenter, BorderLayout.NORTH);
 		sanPhamPanel.add(pnMain, BorderLayout.CENTER);
 
-		
-		
 		tabbedPane.addTab("Sản phẩm", sanPhamPanel);
 		tabbedPane.add("Sách", sachPanel);
 		add(tabbedPane);
@@ -267,7 +278,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			String tenNhaCungCap = sanPham.getIdNhaCungCap().getIdNhaCungCap();
 			double kichThuoc = sanPham.getKichThuoc();
 			String mauSac = sanPham.getMauSac();
-			String trangThai = sanPham.getTrangThai().getDescription();
+			String trangThai = sanPham.getTrangThai()+"";
 			double thue = sanPham.thue();
 			double giaNhap = sanPham.getGiaNhap();
 			int soLuong = sanPham.getSoLuong();
@@ -278,6 +289,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	}
 
 	private void loadData() {
+		txtTenSanPham.requestFocus();
 		modelSP.setRowCount(0);
 		for (SanPhamCha sp : daoSanPham.getAllSanPham()) {
 			String tenLoaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
@@ -326,6 +338,191 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		}
 	}
 
+//	private void showErrorDialog(String message) {
+//		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
+//	}
+
+	private void showSuccessMessage(String message) {
+		JOptionPane.showMessageDialog(this, message);
+	}
+
+	private void showErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+	}
+
+	private void themSanPham() {
+		if (validataFieldsAndShowErrors()) {
+			String idSanPham = txtIdSanPham.getText();
+			String tenSanPham = txtTenSanPham.getText();
+			double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
+			String mauSac = txtMauSac.getText();
+			boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
+			TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH
+					: TrangThaiSPEnum.NGUNG_KINH_DOANH;
+			double giaNhap = Double.parseDouble(txtGiaNhap.getText());
+			String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
+			String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
+			int soLuong = Integer.parseInt(txtSoLuong.getText());
+			LoaiSanPham loaiSanPham = null;
+			KhuyenMai khuyenMai = null;
+			for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
+				if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
+					loaiSanPham = item;
+					break;
+				}
+			}
+
+			NhaCungCap nhaCungCap = null;
+			for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
+				if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
+					nhaCungCap = item;
+					break;
+				}
+			}
+
+			if (loaiSanPham != null && nhaCungCap != null) {
+				SanPhamCon sp = new SanPhamCon();
+				sp.setIdSanPham(idSanPham);
+				sp.setTenSanPham(tenSanPham);
+				sp.setIdLoaiSanPham(loaiSanPham);
+				sp.setIdNhaCungCap(nhaCungCap);
+				sp.setKichThuoc(kichThuoc);
+				sp.setMauSac(mauSac);
+				sp.setTrangThai(trangThai);
+				sp.setGiaNhap(giaNhap);
+				sp.setSoLuong(soLuong);
+
+				try {
+					if (daoSanPham.checkIdSanPham(idSanPham)) {
+						JOptionPane.showMessageDialog(this, "Trùng ID sản phẩm. Vui lòng chọn ID khác.");
+						lamMoi();
+						return;
+					} else {
+						daoSanPham.themSanPham(sp);
+						String trangThaiDescription = trangThai.getDescription();
+						modelSP.addRow(new Object[] { idSanPham, tenSanPham, loaiSanPham.getTenLoaiSanPham(),
+								nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, sp.getTrangThai(), sp.thue(), giaNhap,
+								soLuong, sp.giaBan() });
+						loadDataIntoTable();
+						lamMoi();
+						JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
+					}
+				} catch (HeadlessException | SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				JOptionPane.showMessageDialog(QuanLySanPhamView.this,
+						"Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
+
+			}
+		}
+	}
+
+	private boolean validataFieldsAndShowErrors() {
+		String tenSanPham = txtTenSanPham.getText().trim();
+		String mauSac = txtMauSac.getText().trim();
+		String kichThuoc = txtKichThuoc.getText().trim();
+		String soLuong = txtSoLuong.getText().trim();
+		String giaNhap = txtGiaNhap.getText().trim();
+
+		if (tenSanPham.isEmpty() && mauSac.isEmpty() && kichThuoc.isEmpty() && soLuong.isEmpty() && giaNhap.isEmpty()) {
+			showErrorAndFocus(this, "Vui lòng điền thông tin trước khi thêm.", getFirstEmptyTextField());
+
+			return false;
+		}
+
+		if (!isValidName(tenSanPham)) {
+			showErrorAndFocus(this, "Tên sản phẩm không hợp lệ. Chỉ chấp nhận chữ và số và không có kí tự đặc biệt",
+					txtTenSanPham);
+			return false;
+		}
+
+		if (!isValidMauSac(mauSac)) {
+			showErrorAndFocus(this, "Màu sắc không hợp lệ. Chỉ chấp nhận chữ", txtMauSac);
+			return false;
+		}
+		if (!isValidDouble(kichThuoc)) {
+			showErrorAndFocus(this, "Kích thước không hợp lệ. Nhập số thực.", txtKichThuoc);
+			return false;
+		}
+
+		if (!isValidDouble(giaNhap)) {
+			showErrorAndFocus(this, "Giá nhập không hợp lệ. Nhập số thực.", txtGiaNhap);
+			return false;
+		}
+
+		if (!isValidInt(soLuong)) {
+			showErrorAndFocus(this, "Số lượng không hợp lệ. Nhập số nguyên.", txtSoLuong);
+			return false;
+		}
+
+		return true;
+	}
+
+	private void showErrorAndFocus(Component parentComponent, String message, JTextField textField) {
+		JOptionPane.showMessageDialog(parentComponent, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+		textField.requestFocusInWindow();
+		textField.selectAll();
+	}
+
+	private JTextField getFirstEmptyTextField() {
+		if (txtTenSanPham.getText().trim().isEmpty()) {
+			return txtTenSanPham;
+		} else if (txtMauSac.getText().trim().isEmpty()) {
+			return txtMauSac;
+		} else if (txtKichThuoc.getText().trim().isEmpty()) {
+			return txtKichThuoc;
+		} else if (txtSoLuong.getText().trim().isEmpty()) {
+			return txtSoLuong;
+		} else if (txtGiaNhap.getText().trim().isEmpty()) {
+			return txtGiaNhap;
+		}
+		return null;
+	}
+
+	private boolean isValidName(String input) {
+		return input.matches("^[\\p{L}0-9\\s]+$");
+	}
+
+	private boolean isValidMauSac(String input) {
+		return input.matches("^[\\p{L}\\s]+$");
+	}
+
+	private boolean isValidDouble(String input) {
+		if (input == null || input.trim().isEmpty()) {
+			showErrorDialog("Giá trị không được để trống.");
+			return false;
+		}
+
+		try {
+			Double.parseDouble(input);
+			return true;
+		} catch (NumberFormatException e) {
+			showErrorDialog("Giá trị không hợp lệ. Vui lòng nhập số thực.");
+			return false;
+		}
+	}
+
+	private boolean isValidInt(String input) {
+		if (input == null || input.trim().isEmpty()) {
+			showErrorDialog("Giá trị không được để trống.");
+			return false;
+		}
+
+		try {
+			Integer.parseInt(input);
+			return true;
+		} catch (NumberFormatException e) {
+			showErrorDialog("Giá trị không hợp lệ. Vui lòng nhập số nguyên.");
+			return false;
+		}
+	}
+
+	private void showErrorDialog(String message) {
+		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+	}
+
 	private void xoaSanPham() {
 		int row = tableSP.getSelectedRow();
 		if (row == -1) {
@@ -361,6 +558,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		txtGiaBan.setText("");
 		txtGiaNhap.setText("");
 		txtTuKhoa.setText("");
+		txtTenSanPham.requestFocus();
+		txtTenSanPham.selectAll();
 	}
 
 	private void capNhatSanPham() {
@@ -369,13 +568,15 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			int update = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
 					JOptionPane.YES_NO_OPTION);
 			if (update == JOptionPane.YES_OPTION) {
+				if (!validataFieldsAndShowErrors()) {
+					return ;
+				}
 				String idSanPham = txtIdSanPham.getText().trim();
 				String tenSanPham = txtTenSanPham.getText().trim();
 				double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
 				String mauSac = txtMauSac.getText();
 				boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-				TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH
-						: TrangThaiSPEnum.NGUNG_KINH_DOANH;
+				TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
 				double giaNhap = Double.parseDouble(txtGiaNhap.getText());
 				int soLuong = Integer.parseInt(txtSoLuong.getText());
 
@@ -414,10 +615,12 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 					JOptionPane.showMessageDialog(QuanLySanPhamView.this,
 							"Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 				}
+			} else {
+				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
 			}
-		} else {
-			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
+
 		}
+
 	}
 
 	private void loadtableByLoaiSanPham(String selectedLoaiSanPham) {
@@ -469,58 +672,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			e.printStackTrace();
 		}
 
-	}
-
-	private void themSanPham() {
-		String idSanPham = txtIdSanPham.getText();
-		String tenSanPham = txtTenSanPham.getText();
-		double kichThuoc = Double.parseDouble(txtKichThuoc.getText());
-		String mauSac = txtMauSac.getText();
-		boolean trangThaiValue = chkTinhTrangKinhDoanh.isSelected();
-		TrangThaiSPEnum trangThai = trangThaiValue ? TrangThaiSPEnum.DANG_KINH_DOANH : TrangThaiSPEnum.NGUNG_KINH_DOANH;
-		double giaNhap = Double.parseDouble(txtGiaNhap.getText());
-		String tenLoaiSanPham = (String) cbLoaiSanPham.getSelectedItem();
-		String tenNhaCungCap = (String) cbNhaCungCap.getSelectedItem();
-		int soLuong = Integer.parseInt(txtSoLuong.getText());
-		LoaiSanPham loaiSanPham = null;
-		KhuyenMai khuyenMai=null;
-		for (LoaiSanPham item : daoLoaiSanPham.getAllLoaiSanPham()) {
-			if (item.getTenLoaiSanPham().equals(tenLoaiSanPham)) {
-				loaiSanPham = item;
-				break;
-			}
-		}
-
-		NhaCungCap nhaCungCap = null;
-		for (NhaCungCap item : daoNhaCungCap.getAllNhaCungCap()) {
-			if (item.getTenNhaCungCap().equals(tenNhaCungCap)) {
-				nhaCungCap = item;
-				break;
-			}
-		}
-		if (loaiSanPham != null && nhaCungCap != null) {
-			SanPhamCon sp = new SanPhamCon();
-			sp.setIdSanPham(generateNewProductID());
-			sp.setTenSanPham(tenSanPham);
-			sp.setIdLoaiSanPham(loaiSanPham);
-			sp.setIdNhaCungCap(nhaCungCap);
-			sp.setKichThuoc(kichThuoc);
-			sp.setMauSac(mauSac);
-			sp.setTrangThai(trangThai);
-			sp.setGiaNhap(giaNhap);
-			sp.setSoLuong(soLuong);
-			
-			daoSanPham.themSanPham(sp);
-			String trangThaiDescription = trangThai.getDescription();
-			modelSP.addRow(new Object[] { generateNewProductID(), tenSanPham, loaiSanPham.getTenLoaiSanPham(),
-					nhaCungCap.getTenNhaCungCap(), kichThuoc, mauSac, trangThaiDescription, sp.thue(), giaNhap, soLuong,
-					sp.giaBan() });
-			loadDataIntoTable();
-			lamMoi();
-			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Thêm sản phẩm thành công!");
-		} else {
-			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
-		}
 	}
 
 	private String generateNewProductID() {
@@ -591,10 +742,12 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			cbNhaCungCap.setSelectedItem(modelSP.getValueAt(row, 3).toString());
 			txtKichThuoc.setText(modelSP.getValueAt(row, 4).toString());
 			txtMauSac.setText(modelSP.getValueAt(row, 5).toString());
+			
 			String trangThaiValue = modelSP.getValueAt(row, 6).toString();
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiValue);
-			boolean isKinhDoanh = trangThai == TrangThaiSPEnum.DANG_KINH_DOANH;
-			chkTinhTrangKinhDoanh.setSelected(isKinhDoanh);
+
+			chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
+			
 			txtGiaNhap.setText(modelSP.getValueAt(row, 8).toString());
 			txtSoLuong.setText(modelSP.getValueAt(row, 9).toString());
 			txtGiaBan.setText(modelSP.getValueAt(row, 10).toString());
@@ -647,10 +800,9 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				loadDataIntoTable();
 			}
 
-		}else  if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            // Switch to the "package views" tab
-            tabbedPane.setSelectedIndex(1);
-        }
+		} else if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			tabbedPane.setSelectedIndex(1);
+		}
 	}
 
 	@Override
@@ -668,22 +820,22 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			} else if (e.getKeyCode() == KeyEvent.VK_F10) {
 				lamMoi();
 				loadDataIntoTable();
-			}else if(o.equals(txtGiaNhap)) {
-				calculateSellingPrice(txtGiaNhap,txtGiaBan);
+			} else if (o.equals(txtGiaNhap)) {
+				calculateSellingPrice(txtGiaNhap, txtGiaBan);
 			}
 		});
 	}
 
 	private void calculateSellingPrice(JTextField txtGiaNhap2, JTextField txtGiaBan2) {
-		 try {
-	            double giaNhap = Double.parseDouble(txtGiaNhap2.getText());
-	            double thue = giaNhap * 0.05; 
-	            double sellingPrice = giaNhap + (giaNhap * 0.55) + thue; 
-	            txtGiaBan2.setText(String.valueOf(sellingPrice));
-	        } catch (NumberFormatException ex) {
-	        	txtGiaBan2.setText("Vui lòng nhập số hợp lệ.");
-	        }
-		
+		try {
+			double giaNhap = Double.parseDouble(txtGiaNhap2.getText());
+			double thue = giaNhap * 0.05;
+			double sellingPrice = giaNhap + (giaNhap * 0.55) + thue;
+			txtGiaBan2.setText(String.valueOf(sellingPrice));
+		} catch (NumberFormatException ex) {
+			txtGiaBan2.setText("Vui lòng nhập số hợp lệ.");
+		}
+
 	}
 
 }

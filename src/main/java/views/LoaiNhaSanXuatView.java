@@ -342,6 +342,8 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 		}
 		return true;
 	}
+	
+	
 
 	private boolean validataFields() {
 		return validataField(txtTenLoaiSanPham, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
