@@ -442,15 +442,14 @@ public class QuanLySachView extends JPanel
 		table.addMouseListener(this);
 		table.getSelectionModel();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		
+
 		txtGiaNhap.addKeyListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
 		cbTacGiaSearch.addItemListener(this);
 		cbTheLoaiSearch.addItemListener(this);
 		txtTuKhoa.addKeyListener(this);
-	
+
 //		txtISBN.getDocument().addDocumentListener(this);
 		this.setFocusable(true);
 		this.requestFocusInWindow();
@@ -461,12 +460,12 @@ public class QuanLySachView extends JPanel
 		loadComboBoxByTheLoai();
 		loadComBoBoxByTacGia();
 		lamMoi();
-		
+
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			
+
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if(!e.getValueIsAdjusting()){
+				if (!e.getValueIsAdjusting()) {
 					int row = table.getSelectedRow();
 					if (row != -1) {
 						txtIdSanPham.setText(model.getValueAt(row, 0).toString());
@@ -501,27 +500,26 @@ public class QuanLySachView extends JPanel
 				}
 			}
 		});
-		
+
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-			
+
 			@Override
 			public boolean dispatchKeyEvent(KeyEvent e) {
-				if(e.getID()==KeyEvent.KEY_RELEASED) {
-					if(e.getKeyCode()==KeyEvent.VK_F5) {
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					if (e.getKeyCode() == KeyEvent.VK_F5) {
 						lamMoi();
 						loadData();
 					}
-				}else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
+				} else if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_INSERT) {
 					xoaSP();
 				} else if (e.getKeyCode() == KeyEvent.VK_F2) {
 					capNhatSach();
-				}else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
+				} else if ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0 && e.getKeyCode() == KeyEvent.VK_S) {
 					txtTuKhoa.requestFocusInWindow();
 				}
 				return false;
 			}
 		});
-		
 
 	}
 
@@ -578,7 +576,7 @@ public class QuanLySachView extends JPanel
 			int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn muốn sửa thông tin sản phẩm này", "Thông báo",
 					JOptionPane.YES_NO_OPTION);
 			if (hoiNhac == JOptionPane.YES_OPTION) {
-				if(validataFieldsAndShowErrors()) {
+				if (validataFieldsAndShowErrors()) {
 					try {
 						SachCon s = layThongTinSach();
 						String idSanPham = txtIdSanPham.getText();
@@ -592,7 +590,7 @@ public class QuanLySachView extends JPanel
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 				}
 			}
 		}
@@ -686,15 +684,14 @@ public class QuanLySachView extends JPanel
 		String mauSac = txtMauSac.getText().trim();
 		String giaNhap = txtGiaNhap.getText().trim();
 		String soLuong = txtSoLuong.getText().trim();
-		
+
 		if (tenSanPham.isEmpty() && ISBN.isEmpty() && soTrang.isEmpty() && kichThuoc.isEmpty() && mauSac.isEmpty()
 				&& giaNhap.isEmpty() && soLuong.isEmpty()) {
 			showErrorAndFocus(this, "Vui lòng điền thông tin trước", getFirstEmptyTextField());
 			return false;
 		}
-		if(!isValidISBN(ISBN)) {
-			showErrorAndFocus(this, "ISBN không hợp lệ.",
-					isbnField);
+		if (!isValidISBN(ISBN)) {
+			showErrorAndFocus(this, "ISBN không hợp lệ.", isbnField);
 			return false;
 		}
 
@@ -784,8 +781,9 @@ public class QuanLySachView extends JPanel
 	private boolean isValidMauSac(String input) {
 		return input.matches("^[\\p{L}\\s]+$");
 	}
+
 	private boolean isValidISBN(String isbn) {
-	    return isbn.matches("^\\d{3}-\\d{3}-\\d{3}-\\d{3}-\\d{1}$");
+		return isbn.matches("^\\d{3}-\\d{3}-\\d{3}-\\d{3}-\\d{1}$");
 	}
 
 	private boolean isValidDouble(String input) {
@@ -859,13 +857,27 @@ public class QuanLySachView extends JPanel
 	private void lamMoi() {
 		txtIdSanPham.setText(generateNewProductID());
 		txtTenSanPham.setText("");
-		cbLoaiTacGia.setSelectedIndex(1);
-		cbLoaiTheLoai.setSelectedIndex(1);
+
+		if (cbLoaiTacGia.getItemCount() > 1) {
+			cbLoaiTacGia.setSelectedIndex(1);
+		}
+
+		if (cbLoaiTheLoai.getItemCount() > 1) {
+			cbLoaiTheLoai.setSelectedIndex(1);
+		}
+
 		chooserXuatBan.setDate(new Date());
 		isbnField.setText("");
 		txtSoTrang.setText("");
-		cbLoaiSanPham.setSelectedIndex(1);
-		cbNhaCungCap.setSelectedIndex(1);
+
+		if (cbLoaiSanPham.getItemCount() > 1) {
+			cbLoaiSanPham.setSelectedIndex(1);
+		}
+
+		if (cbNhaCungCap.getItemCount() > 1) {
+			cbNhaCungCap.setSelectedIndex(1);
+		}
+
 		txtKichThuoc.setText("");
 		txtMauSac.setText("");
 		chkTinhTrangKinhDoanh.setSelected(trangThai.DANG_KINH_DOANH == trangThai.DANG_KINH_DOANH);
@@ -876,7 +888,7 @@ public class QuanLySachView extends JPanel
 		txtTenSanPham.requestFocus();
 		txtTenSanPham.selectAll();
 		table.requestFocus();
-//		table.changeSelection(0, 0, false, false);
+		// table.changeSelection(0, 0, false, false);
 	}
 
 	@Override
@@ -887,9 +899,9 @@ public class QuanLySachView extends JPanel
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			Object o = e.getSource();
-			if(o == txtTenSanPham) {
+			if (o == txtTenSanPham) {
 				themSach();
 			}
 		}
@@ -1252,7 +1264,7 @@ public class QuanLySachView extends JPanel
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if(!e.getValueIsAdjusting()){
+		if (!e.getValueIsAdjusting()) {
 			int row = table.getSelectedRow();
 			if (row != -1) {
 				txtIdSanPham.setText(model.getValueAt(row, 0).toString());

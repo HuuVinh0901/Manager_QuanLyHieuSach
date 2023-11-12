@@ -184,6 +184,8 @@ delete  from SanPham
 delete   from SanPham 
 delete  from NhaCungCap
 delete  from LoaiSanPham
+delete from TheLoai
+delete from TacGia
 
 select *from Sach
 select *from LoaiSanPham
