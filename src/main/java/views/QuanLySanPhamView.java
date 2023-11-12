@@ -165,7 +165,17 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
+		
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
 
+		btnThemSP.setIcon(iconThem);
+		btnCapNhatSP.setIcon(iconCapNhat);
+		btnLamMoi.setIcon(iconLamMoi);
+		btnXoaSP.setIcon(iconXoa);
+		
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnXoaSP);
@@ -181,6 +191,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnChucNangTimKiem.add(cbLoaiSanPhamSearch);
 		pnChucNangTimKiem.add(lblNhaCungCapSearch);
 		pnChucNangTimKiem.add(cbNhaCungCapSearch);
+		
+		
 		pnChucNangTimKiem.add(lblTuKhoa);
 		pnChucNangTimKiem.add(txtTuKhoa);
 		pnChucNangTimKiem.add(btnXemTatCa);

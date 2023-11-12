@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.EventListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -136,7 +137,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 		pnChucNang = new JPanel(new FlowLayout(5));
 		btnThem = new JButton("Thêm");
-		btnCapNhat = new JButton("Sửa");
+		btnCapNhat = new JButton("Cập nhật");
 		btnLamMoi = new JButton("Làm mới");
 		btnXoa = new JButton("Xóa");
 //		btnThem.setBackground(new Color(208, 225, 253));
@@ -150,6 +151,16 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 //		btnXoa.setBackground(new Color(208, 225, 253));
 //		btnXoa.setForeground(new Color(26, 102, 227));
+		
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		
+		btnThem.setIcon(iconThem);
+		btnCapNhat.setIcon(iconCapNhat);
+		btnLamMoi.setIcon(iconLamMoi);
+		
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
 //		pnChucNang.add(btnXoa);

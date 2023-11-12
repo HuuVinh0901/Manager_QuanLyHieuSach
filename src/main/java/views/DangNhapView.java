@@ -131,7 +131,6 @@ public class DangNhapView extends JFrame implements ActionListener{
 		}else if(o.equals(btnDangNhap)) {
 			dangNhap();
 		}
-		
 	}
 
 	private void dangNhap() {
