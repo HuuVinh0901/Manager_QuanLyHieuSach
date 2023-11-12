@@ -34,6 +34,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private JPanel panelBody;
 	private JPanel panelHeader;
 	private JPanel panelMenu;
+	private JPanel paneCu;
 
 	public TrangChuQuanLyBanHangView() {
 		try {
@@ -43,13 +44,23 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		}
 		setTitle("Quản lý bán hàng");
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
-	    setIconImage(icon.getImage());
+		setIconImage(icon.getImage());
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		paneCu = new HomeView(); // Bắt đầu với HomeView
+		panelBody.add(paneCu);
 		execute();
+	}
+
+	private void switchToPanel(JPanel newPanel) {
+		panelBody.remove(paneCu); // Loại bỏ panel hiện tại
+		paneCu = newPanel; // Cập nhật panel hiện tại
+		panelBody.add(paneCu); // Thêm panel mới vào panelBody
+		panelBody.repaint();
+		panelBody.revalidate();
 	}
 
 	private void execute() {
@@ -57,25 +68,24 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/setting.png"));
 		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/subMenu.png"));
 
-		MenuItem QLBH = new MenuItem(iconStaff, "Quản lý bán hàng",new ActionListener() {
-			
+		MenuItem QLBH = new MenuItem(iconStaff, "Quản lý bán hàng", new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				panelBody.add(new QuanLyBanHangView());
-				panelBody.repaint();
-				panelBody.revalidate();
-				
+				switchToPanel(new QuanLyBanHangView());
+//				panelBody.add(new QuanLyBanHangView());
+//				panelBody.repaint();
+//				panelBody.revalidate();
+
 			}
 		});
-		
 
-		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng",null);
+		MenuItem QLKH = new MenuItem(iconStaff, "Quản lý khách hàng", null);
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", null);
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subCaiDatTT,subCaiDatDMK,subCaiDatHDSD);
-		addMenu(QLBH,QLKH,CaiDat);
-
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subCaiDatDMK, subCaiDatHDSD);
+		addMenu(QLBH, QLKH, CaiDat);
 	}
 
 	private void addMenu(MenuItem... menu) {
