@@ -244,7 +244,7 @@ public class QuanLySachView extends JPanel
 			String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
 			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai,
 					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
-					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", df.format(thuePhanTram) + "%",
+					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", s.thue()+"",
 					s.getSoLuong() + "", s.getGiaNhap() + "", s.giaBan() + "" };
 			model.addRow(row);
 		}
