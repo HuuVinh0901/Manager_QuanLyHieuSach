@@ -341,14 +341,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		} else if (o.equals(btnXoaSP)) {
 			xoaSanPham();
 		}else if(o.equals(btnXuatExCel)) {
-			String filePath = "F:\\TKMT_PreMidTest\\SanPham.xlsx";
+			String filePath = "C:\\Users\\hoang\\Downloads\\tesst\\QuanLyHieuSach\\src\\main\\resources\\fileExcels\\SanPham.xlsx";
 			ghiFileExcel(filePath);
 		}
 	}
-
-//	private void showErrorDialog(String message) {
-//		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-//	}
 
 	private void showSuccessMessage(String message) {
 		JOptionPane.showMessageDialog(this, message);
