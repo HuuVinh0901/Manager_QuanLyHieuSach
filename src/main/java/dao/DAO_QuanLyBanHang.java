@@ -165,7 +165,7 @@ public class DAO_QuanLyBanHang {
 			ps.setString(1, hd.getIdDonHang());
 			ps.setDate(2, hd.getNgayLap());
 			ps.setString(3, hd.getKhachHang().getIdKhachHang());
-			ps.setString(4, hd.getNhanVien().getIdNhanVien());
+			ps.setString(4, hd.getNhanVien().getId());
 			ps.setDouble(5, hd.getTienKhachDua());
 			ps.setDouble(6, hd.getTongTien());
 			

@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -31,6 +32,8 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import connection.ConnectDB;
+import dao.DAOTaiKhoan;
+import models.TaiKhoan;
 
 
 public class DangNhapView extends JFrame implements ActionListener{	
@@ -47,7 +50,9 @@ public class DangNhapView extends JFrame implements ActionListener{
 	private JPanel pnheader;
 	private JLabel lblTieuDe;
 	private JCheckBox rememberPassword;
+	private DAOTaiKhoan daoTaiKhoan;
 	public DangNhapView() {
+		daoTaiKhoan=new DAOTaiKhoan();
 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
 	    setResizable(false);
 	    setTitle("Đăng Nhập Quản Lý Hiệu Sách");
@@ -60,23 +65,24 @@ public class DangNhapView extends JFrame implements ActionListener{
 
 	
 	private void init() {
-		FontIcon iconLogo = FontIcon.of(MaterialDesign.MDI_BOOK_OPEN_PAGE_VARIANT);
-		FontIcon iconDangNhap = FontIcon.of(MaterialDesign.MDI_ACCOUNT);
-		FontIcon iconMatKhau = FontIcon.of(MaterialDesign.MDI_LOCK);
-		FontIcon iconLogin = FontIcon.of(MaterialDesign.MDI_LOGIN_VARIANT);
-		FontIcon iconCancel = FontIcon.of(MaterialDesign.MDI_CLOSE);
+		ImageIcon iconBig = new ImageIcon(getClass().getResource("/icons/open-book.png"));
+		ImageIcon iconDangNhap = new ImageIcon(getClass().getResource("/icons/log-in.png"));
+		ImageIcon iconThoat = new ImageIcon(getClass().getResource("/icons/button.png"));
+		
 		
 		Font ft = new Font("SansSerif",Font.BOLD,30);
 		Font ftItalic = new Font("SansSerif",Font.ITALIC,12);
 		Font ftBtn = new Font("SansSerif",Font.BOLD,15);
-		Font ftTieuDe = new Font("SansSerif",Font.BOLD,20);
+		Font ftTieuDe = new Font("SansSerif",Font.BOLD,30);
 		
 		Box b = Box.createVerticalBox();
 		Box b1,b2,b3,b4,b5,b6,b7,b8;
 		b.add(b1 = Box.createHorizontalBox());
 		b1.add(pnheader = new JPanel());
 		pnheader.add(Box.createVerticalStrut(100));
-		pnheader.add(lblTieuDe = new JLabel("Đăng Nhập Hệ Thống"));
+		
+		pnheader.add(lblTieuDe = new JLabel("  ĐĂNG NHẬP"));
+		lblTieuDe.setIcon(iconBig);
 		lblTieuDe.setFont(ftTieuDe);
 		lblTieuDe.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
@@ -102,14 +108,15 @@ public class DangNhapView extends JFrame implements ActionListener{
 		
 		
 		b.add(b5 = Box.createHorizontalBox());
-		b5.add(btnDangNhap = new JButton("Đăng Nhập"));
+		b5.add(btnDangNhap = new JButton("ĐĂNG NHẬP"));
 		b5.add(Box.createRigidArea(new Dimension(100, 50)));
 		btnDangNhap.setFont(ftBtn);
 		btnDangNhap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnDangNhap.setIcon(iconDangNhap);
 		
 		b5.add(Box.createRigidArea(new Dimension(0, 50)));
-		b5.add(btnThoat = new JButton("Thoát"));
-		
+		b5.add(btnThoat = new JButton("THOÁT"));
+		btnThoat.setIcon(iconThoat);
 		btnThoat.setFont(ftBtn);
 		btnThoat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		add(b,BorderLayout.NORTH);
@@ -129,14 +136,39 @@ public class DangNhapView extends JFrame implements ActionListener{
 		if(o.equals(btnThoat)) {
 			System.exit(0);
 		}else if(o.equals(btnDangNhap)) {
-			dangNhap();
+			Login();
+
 		}
 		
 	}
-
-	private void dangNhap() {
-		PhanQuyenView view = new PhanQuyenView();
-		this.setVisible(false);
-		view.setVisible(true);
+	public void Login() {
+		String maTK=txtTaiKhoan.getText().toString().trim();
+		String mk=txtMatKhau.getText().toString().trim();
+		TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(maTK);
+		if(tk.getIdTaiKhoan()== null) {
+			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+		}else if(!tk.getMatKhau().equalsIgnoreCase(mk)) {
+			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng");
+		}else {
+			String PhanLoaiTK=tk.getIdTaiKhoan().substring(0,2);
+			if(PhanLoaiTK.equals("QL")){
+				TrangChuQuanTriView QTV = new TrangChuQuanTriView();
+				QTV.setVisible(true);
+				this.setVisible(false);
+			}
+			if(PhanLoaiTK.equals("NV")){
+				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView();
+				QLBH.setVisible(true);
+				this.setVisible(false);
+			}
+			if(PhanLoaiTK.equals("AD")){
+				AdminView Admin = new AdminView();
+				Admin.setVisible(true);
+				this.setVisible(false);
+			}
+			}
+			
 	}
+	
 }

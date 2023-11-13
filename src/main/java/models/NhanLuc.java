@@ -4,20 +4,23 @@ import java.sql.Date;
 
 
 	public class NhanLuc {
-		private String id;
-		private String ten;
-		private String soDienThoai;
-		private String diaChi;
-		private String email;
-		private Date ngaySinh;
-		private boolean gioiTinh;
-		private String chucVu;
-		private boolean trangThai;
+		protected String id;
+		protected String ten;
+		protected String soDienThoai;
+		protected String diaChi;
+		protected String email;
+		protected Date ngaySinh;
+		protected boolean gioiTinh;
+		protected String chucVu;
+		protected boolean trangThai;
 		
-		
-		public NhanLuc(String id, String ten, String soDienThoai, String diaChi, String email,
-				 Date ngaySinh,boolean gioiTinh, String chucVu, boolean trangThai) {
-			
+		public NhanLuc() {
+			super();
+			// TODO Auto-generated constructor stub
+		}
+		public NhanLuc(String id, String ten, String soDienThoai, String diaChi, String email, Date ngaySinh,
+				boolean gioiTinh, String chucVu, boolean trangThai) {
+			super();
 			this.id = id;
 			this.ten = ten;
 			this.soDienThoai = soDienThoai;
@@ -29,29 +32,17 @@ import java.sql.Date;
 			this.trangThai = trangThai;
 			
 		}
-		
-		
-		public NhanLuc(String id) {
-			
-			this.id = id;
-		}
-		public NhanLuc() {
-			super();
-			// TODO Auto-generated constructor stub
-		}
-
-
-		public String getIdNhanVien() {
+		public String getId() {
 			return id;
 		}
-		public void setIdNhanVien(String idNhanVien) {
-			this.id = idNhanVien;
+		public void setId(String id) {
+			this.id = id;
 		}
-		public String getTenNhanVien() {
+		public String getTen() {
 			return ten;
 		}
-		public void setTenNhanVien(String tenNhanVien) {
-			this.ten = tenNhanVien;
+		public void setTen(String ten) {
+			this.ten = ten;
 		}
 		public String getSoDienThoai() {
 			return soDienThoai;
@@ -89,14 +80,22 @@ import java.sql.Date;
 		public void setChucVu(String chucVu) {
 			this.chucVu = chucVu;
 		}
-		
 		public boolean isTrangThai() {
 			return trangThai;
 		}
-
-
 		public void setTrangThai(boolean trangThai) {
 			this.trangThai = trangThai;
 		}
+		
+		
+		@Override
+		public String toString() {
+			return "NhanLuc [id=" + id + ", ten=" + ten + ", soDienThoai=" + soDienThoai + ", diaChi=" + diaChi
+					+ ", email=" + email + ", ngaySinh=" + ngaySinh + ", gioiTinh=" + gioiTinh + ", chucVu=" + chucVu
+					+ ", trangThai=" + trangThai + "]";
+		}
+		
+		
+		
 }
 
