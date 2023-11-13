@@ -17,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 import java.sql.SQLException;
@@ -53,6 +55,11 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.MaskFormatter;
 
+import org.apache.logging.log4j.core.tools.picocli.CommandLine.Help.TextTable.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.toedter.calendar.JDateChooser;
 
 import dao.DAOLoaiSanPham;
@@ -377,21 +384,25 @@ public class QuanLySachView extends JPanel
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
 		btnXuatExCel = new JButton("XUẤT EXCEL");
+		btnXuatExCel.setEnabled(false);
 		
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-		
+//		ImageIcon iconExcel = new ImageIcon(getClass().getResource("/icons/Excel.png"));
+
 		btnThemSP.setIcon(iconThem);
 		btnLamMoi.setIcon(iconLamMoi);
 		btnCapNhatSP.setIcon(iconCapNhat);
 		btnXoaSP.setIcon(iconXoa);
-		
+//		btnXuatExCel.setIcon(iconExcel);
+
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnLamMoi);
-		pnChucNang.add(btnXuatExCel); 
+		pnChucNang.add(btnXuatExCel);
+		
 
 		pnChucNangTimKiem = new JPanel(new GridLayout(1, 8, 10, 10));
 		lblLoaiSanPhamSearch = new JLabel("Loại sản phẩm:");
@@ -551,17 +562,150 @@ public class QuanLySachView extends JPanel
 		} else if (o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadData();
-		}else if(o.equals(btnXuatExCel)) {
+		} else if (o.equals(btnXuatExCel)) {
 			String filePath = "F:\\TKMT_PreMidTest\\Sach.xlsx";
 			ghiFileExcel(filePath);
 		}
 	}
 
 	private void ghiFileExcel(String filePath) {
-		
-		
-	}
+		int rowCount = model.getRowCount();
+		ArrayList<SachCon> dsSach = new ArrayList<>();
+		for (int i = 0; i < rowCount; i++) {
+            String idSanPham = (String) model.getValueAt(i, 0);
+            String tenSanPham = (String) model.getValueAt(i, 1);
+            String tacGia = (String) model.getValueAt(i, 2);
+            String theLoai = (String) model.getValueAt(i, 3);
+            String namXuatBanStr = (String) model.getValueAt(i, 4);
+            String ISBN = (String) model.getValueAt(i, 5);
+//            int soTrang = (int) model.getValueAt(i, 6);
+//            String loaiSanPham = (String) model.getValueAt(i, 7);
+//            String nhaCungCap = (String) model.getValueAt(i, 8);
+//            Double kichThuoc = (Double) model.getValueAt(i, 9);
+//            String mauSac = (String) model.getValueAt(i, 10);
+//            String trangThaiStr = (String) model.getValueAt(i, 11);
+//            TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
+//            Double thue = (Double) model.getValueAt(i, 12);
+            int soLuong = (int) model.getValueAt(i, 13);
+//            Double giaNhap = (Double) model.getValueAt(i, 14);
+//            Double giaBan = (Double) model.getValueAt(i, 15);
+//            Double giaKM = (Double) model.getValueAt(i, 16);
 
+            SachCon s = new SachCon();
+            s.setIdSanPham(idSanPham);
+            s.setTenSanPham(tenSanPham);
+
+            if (tacGia != null) {
+                TacGia tg = new TacGia();
+                tg.setTenTacGia(tacGia);
+                s.setTacGia(tg);
+            }
+
+            if (theLoai != null) {
+                TheLoai tl = new TheLoai();
+                tl.setTenTheLoai(theLoai);
+                s.setTheLoai(tl);
+            }
+
+            // Convert the date string to Date
+            Date namXuatBan = convertStringToDate(namXuatBanStr);
+            s.setNamXuatBan(new java.sql.Date(namXuatBan.getTime()));
+            s.setISBN(ISBN);
+//            s.setSoTrang(soTrang);
+//
+//            if (loaiSanPham != null) {
+//                LoaiSanPham loaiSP = new LoaiSanPham();
+//                loaiSP.setTenLoaiSanPham(loaiSanPham);
+//                s.setIdLoaiSanPham(loaiSP);
+//            }
+//
+//            if (nhaCungCap != null) {
+//                NhaCungCap ncc = new NhaCungCap();
+//                ncc.setTenNhaCungCap(nhaCungCap);
+//                s.setIdNhaCungCap(ncc);
+//            }
+//
+//            s.setKichThuoc(kichThuoc);
+//            s.setMauSac(mauSac);
+            s.setSoLuong(soLuong);
+//            s.setGiaNhap(giaNhap);
+//            s.giaBan();
+//            s.setGiaKM(giaKM);
+            dsSach.add(s);
+        }
+		try (Workbook workbook = new XSSFWorkbook()) {
+			Sheet sheet = workbook.createSheet("Danh sách sách");
+			Row headerRow = sheet.createRow(0);
+			String[] columnNames = { "ID Sản phẩm", "Tên sản phẩm", "Tác giả", "Thể loại", "Năm xuất bản", "ISBN",
+					"Số trang", "Loại sản phẩm", "Nhà cung cấp", "Kích thước", "Màu sắc", "Trạng thái", "Thuế",
+					"Số lượng", "Giá nhập", "Giá bán", "Giá khuyến mãi" };
+
+			for (int i = 0; i < columnNames.length; i++) {
+				org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+				cell.setCellValue(columnNames[i]);
+			}
+			int rowNumber = 1;
+			for (SachCon s : dsSach) {
+				Row row = sheet.createRow(rowNumber++);
+				org.apache.poi.ss.usermodel.Cell idSanPhamCell = row.createCell(0);
+				idSanPhamCell.setCellValue(s.getIdSanPham());
+				org.apache.poi.ss.usermodel.Cell tenSanPhamCell = row.createCell(1);
+				tenSanPhamCell.setCellValue(s.getTenSanPham());
+				org.apache.poi.ss.usermodel.Cell tacGia = row.createCell(2);
+				tacGia.setCellValue(s.getTacGia() != null ? s.getTacGia().getTenTacGia() : "");
+				org.apache.poi.ss.usermodel.Cell theLoai = row.createCell(3);
+				theLoai.setCellValue(s.getTheLoai() != null ? s.getTheLoai().getTenTheLoai() : "");
+				org.apache.poi.ss.usermodel.Cell namXuatBan = row.createCell(4);
+				namXuatBan.setCellValue(s.getNamXuatBan());
+				org.apache.poi.ss.usermodel.Cell ISBN = row.createCell(5);
+				ISBN.setCellValue(s.getISBN());
+				org.apache.poi.ss.usermodel.Cell soTrang = row.createCell(6);
+				soTrang.setCellValue(s.getSoTrang());
+				org.apache.poi.ss.usermodel.Cell loaiSanPhamCell = row.createCell(7);
+				loaiSanPhamCell
+						.setCellValue(s.getIdLoaiSanPham() != null ? s.getIdLoaiSanPham().getTenLoaiSanPham() : "");
+				org.apache.poi.ss.usermodel.Cell nhaCungCapCell = row.createCell(8);
+				nhaCungCapCell.setCellValue(s.getIdNhaCungCap() != null ? s.getIdNhaCungCap().getTenNhaCungCap() : "");
+				org.apache.poi.ss.usermodel.Cell kichThuocCell = row.createCell(9);
+				kichThuocCell.setCellValue(s.getKichThuoc());
+				org.apache.poi.ss.usermodel.Cell mauSacCell = row.createCell(10);
+				mauSacCell.setCellValue(s.getMauSac());
+				org.apache.poi.ss.usermodel.Cell trangThaiCell = row.createCell(11);
+				trangThaiCell.setCellValue(s.getTrangThai() != null ? s.getTrangThai().getDescription() : "");
+				org.apache.poi.ss.usermodel.Cell thueCell = row.createCell(12);
+				thueCell.setCellValue(s.thue());
+				org.apache.poi.ss.usermodel.Cell soLuongCell = row.createCell(13);
+				soLuongCell.setCellValue(s.getSoLuong());
+				org.apache.poi.ss.usermodel.Cell giaNhapCell = row.createCell(14);
+				giaNhapCell.setCellValue(s.getGiaNhap());
+				org.apache.poi.ss.usermodel.Cell giaBanCell = row.createCell(15);
+				giaBanCell.setCellValue(s.giaBan());
+				org.apache.poi.ss.usermodel.Cell giaKM = row.createCell(16);
+				giaKM.setCellValue(s.getGiaKM());
+			}
+			for (int i = 0; i < columnNames.length; i++) {
+				sheet.autoSizeColumn(i);
+			}
+			try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+				workbook.write(outputStream);
+			}
+
+			System.out.println("Dữ liệu Sach đã được ghi vào tệp Excel thành công.");
+			JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	private Date convertStringToDate(String dateString) {
+        try {
+        	SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace(); // Handle the exception appropriately
+            return null;
+        }
+    }
 	private void xoaSP() {
 		int row = table.getSelectedRow();
 		if (row == -1) {
@@ -680,9 +824,10 @@ public class QuanLySachView extends JPanel
 		}
 
 		if (tenTacGias == null || theLoais == null || nhaCungCap == null || loaiSanPham == null) {
-	        JOptionPane.showMessageDialog(this, "Vui lòng chọn đầy đủ thông tin về tác giả, thể loại, nhà cung cấp, và loại sản phẩm.");
-	        return null; 
-	    }
+			JOptionPane.showMessageDialog(this,
+					"Vui lòng chọn đầy đủ thông tin về tác giả, thể loại, nhà cung cấp, và loại sản phẩm.");
+			return null;
+		}
 		SachCon sach = new SachCon();
 		sach.setIdSanPham(idSanPham);
 		sach.setTenSanPham(tenSanPham);
@@ -854,16 +999,16 @@ public class QuanLySachView extends JPanel
 				return;
 			} else if (validataFieldsAndShowErrors()) {
 				SachCon sach = layThongTinSach();
-				if(sach!=null) {
+				if (sach != null) {
 					boolean kiemTra = daoSach.themSach(sach);
 					if (kiemTra) {
-						
+
 						model.addRow(new Object[] { sach.getIdSanPham(), sach.getTenSanPham(),
 								sach.getTacGia().getTenTacGia(), sach.getTheLoai().getTenTheLoai(),
 								dfNgaySinh.format(sach.getNamXuatBan()), sach.getISBN(), sach.getSoTrang(),
 								sach.getIdLoaiSanPham().getTenLoaiSanPham(), sach.getIdNhaCungCap().getTenNhaCungCap(),
-								sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(), sach.getSoLuong(),
-								sach.getGiaNhap(), sach.giaBan() });
+								sach.getKichThuoc(), sach.getMauSac(), sach.getTrangThai(), sach.thue(),
+								sach.getSoLuong(), sach.getGiaNhap(), sach.giaBan() });
 						JOptionPane.showMessageDialog(this, "Thêm sách thành công");
 						daoTacGia.tangSoLuongTacPham(sach.getTacGia().getIdTacGia());
 						daoTheLoai.tangSoLuongTheLoai(sach.getTheLoai().getIdTheLoai());
@@ -872,7 +1017,7 @@ public class QuanLySachView extends JPanel
 					} else {
 						JOptionPane.showMessageDialog(this, "Lỗi khi thêm sách");
 					}
-				}else {
+				} else {
 					lamMoi();
 				}
 			}
