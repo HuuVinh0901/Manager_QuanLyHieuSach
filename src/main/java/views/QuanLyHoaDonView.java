@@ -9,11 +9,13 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -47,9 +49,11 @@ public class QuanLyHoaDonView extends JPanel{
 	private DAONhanVien daoNhanVien;
 	private DAOQuanLySanPham daoSanPham;
 	private DAOKhachHang daoKhachHang;
+	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 	
 	public QuanLyHoaDonView() {
 		setLayout(new BorderLayout());
+		currencyFormat.setCurrency(Currency.getInstance("VND"));
 		JPanel pnTitle = new JPanel();
 		JPanel pnTimKiem = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel pnXemTatCa = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -61,7 +65,7 @@ public class QuanLyHoaDonView extends JPanel{
 		JPanel pn1 = new JPanel(new GridLayout(2, 1, 5, 5));
 		JPanel pn2 = new JPanel();
 		JLabel lblTitle = new JLabel("QUẢN LÝ HOÁ ĐƠN");
-		JLabel lblTimKiem = new JLabel("Tìm kiếm theo mã hoá đơn / SĐT");
+		JLabel lblTimKiem = new JLabel("Tìm kiếm theo mã hoá đơn / SĐT / mã khách hàng");
 		txtTimKiem = new JTextField(16);
 		btnXemTatCa = new JButton("Xem tất cả");
 		pnTitle.add(lblTitle);
@@ -79,7 +83,7 @@ public class QuanLyHoaDonView extends JPanel{
 		pnTimKiemXemTatCa.add(pnTimKiem, BorderLayout.CENTER);
 		pnTimKiemXemTatCa.add(pnXemTatCa, BorderLayout.SOUTH);
 		pnLeft.add(pnTimKiemXemTatCa);
-		pnLeft.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		pnLeft.setBorder(BorderFactory.createTitledBorder("Tìm kiếm"));
 		daoBanHang = new DAO_QuanLyBanHang();
 		daoNhanVien = new DAONhanVien();
 		daoSanPham = new DAOQuanLySanPham();
@@ -128,7 +132,8 @@ public class QuanLyHoaDonView extends JPanel{
         modelHoaDon.addColumn("Xem chi tiết");
         tblHoaDon.setModel(modelHoaDon);
 		JScrollPane scrollTblHD = new JScrollPane(tblHoaDon);
-		scrollTblHD.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Thông tin hoá đơn"));
+		pnLeft.setBorder(BorderFactory.createTitledBorder("Chức năng tìm kiếm"));
 		
 		GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -197,7 +202,6 @@ public class QuanLyHoaDonView extends JPanel{
 
         private void showDetail(String idHoaDon, String idNhanVien, String idKhachHang) {
             JDialog dialog = new JDialog();
-//            dialog.setSize(new Dimension(500, 300));
             dialog.setTitle("Chi tiết hoá đơn");
             dialog.setModalityType(dialog.getModalityType().APPLICATION_MODAL); 
             dialog.setLayout(new BorderLayout());     
@@ -218,8 +222,8 @@ public class QuanLyHoaDonView extends JPanel{
             JLabel lblMaKH = new JLabel("Mã khách hàng : " + kh.getIdKhachHang());
             JLabel lblSDT = new JLabel("Số điện thoại : " + kh.getSdt());
             JLabel lblNgayLap = new JLabel("Ngày lập : " + hd.getNgayLap());
-            JLabel lblTongTien = new JLabel("TỔNG TIỀN : " + hd.getTongTien());
-            JLabel lblTienKhachDua = new JLabel("Tiền khách đưa : " + hd.getTienKhachDua());
+            JLabel lblTongTien = new JLabel("TỔNG TIỀN : " + currencyFormat.format(hd.getTongTien()));
+            JLabel lblTienKhachDua = new JLabel("Tiền khách đưa : " + currencyFormat.format(hd.getTienKhachDua()));
             pnInfo.add(lblTenNV);
             pnInfo.add(lblMaNV);
             pnInfo.add(lblTenKH);
@@ -243,7 +247,6 @@ public class QuanLyHoaDonView extends JPanel{
             modelChiTiet.addColumn("Mã sản phẩm");
             modelChiTiet.addColumn("Tên sản phẩm");
             modelChiTiet.addColumn("Số lượng");
-            modelChiTiet.addColumn("Giá bán");
             modelChiTiet.addColumn("Thành tiền");
             tblChiTietHoaDon.setModel(modelChiTiet);
     		JScrollPane scrollTblCTHD = new JScrollPane(tblChiTietHoaDon);
@@ -254,10 +257,9 @@ public class QuanLyHoaDonView extends JPanel{
     			String idSP = cthd.getSanPham().getIdSanPham();
     			SanPhamCha sp = daoSanPham.getSanPham(idSP);
     			String tenSP = sp.getTenSanPham();
-    			String giakm = String.valueOf(sp.getGiaNhap());
     			String soLuong = String.valueOf(cthd.getSoLuong());
-    			String thanhTien = String.valueOf(cthd.getThanhTien());
-    			modelChiTiet.addRow(new String[] {idSP, tenSP, soLuong, giakm, thanhTien});
+    			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			modelChiTiet.addRow(new String[] {idSP, tenSP, soLuong, thanhTien});
     		}
             
     		JPanel pnFooter = new JPanel(new GridLayout(2, 1, 5, 5) );
@@ -290,8 +292,8 @@ public class QuanLyHoaDonView extends JPanel{
 			String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 			String maKH = hd.getKhachHang().getIdKhachHang();
 			String maNV = hd.getNhanVien().getId();
-			String tienKhachDua = String.valueOf(hd.getTienKhachDua());
-			String tongTien = String.valueOf(hd.getTongTien());
+			String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
+			String tongTien = currencyFormat.format(hd.getTongTien());
 			modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
 			
 		}
@@ -305,8 +307,8 @@ public class QuanLyHoaDonView extends JPanel{
 				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();
 				String maNV = hd.getNhanVien().getId();
-				String tienKhachDua = String.valueOf(hd.getTienKhachDua());
-				String tongTien = String.valueOf(hd.getTongTien());
+				String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
+				String tongTien = currencyFormat.format(hd.getTongTien());
 				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
 			}
 		} else {
