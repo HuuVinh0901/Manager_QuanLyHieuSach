@@ -197,7 +197,12 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    pnTimKiem.add(btnXemTatCa);
 	    pnSounth.add(pnTimKiem,BorderLayout.NORTH);
 	    add(pnSounth,BorderLayout.CENTER);
-	    modelKhachHang = new DefaultTableModel();
+	    modelKhachHang =  new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		tableKH = new JTable();
 		modelKhachHang.addColumn("ID KhachHang");
 		modelKhachHang.addColumn("Tên khách hàng");
@@ -211,7 +216,19 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khách hàng"));
 
 		pnSounth.add(scrollPane,BorderLayout.CENTER);
-		    btnLamMoi.addActionListener(this);
+		
+		
+		txtId.setToolTipText("ID + Date + XXXX");
+		txtTenKH.setToolTipText("Chỉ nhận chữ");
+		txtEmail.setToolTipText("Điền mail hợp lệ");
+		txtsdt.setToolTipText("10 số bắt đầu bằng 0 hoặc +84");
+		txtDiaChi.setToolTipText("Nhận số và chữ");
+		rbNam.setToolTipText("Chọn 1 trong 2");
+		rbNu.setToolTipText("Chọn 1 trong 2");
+        chooserNgaySinh.setToolTipText("Trước ngày hiện tại");
+		
+		
+		btnLamMoi.addActionListener(this);
 		btnThemKH.addActionListener(this);
 		btnCapNhatKH.addActionListener(this);
 		btnXoaKH.addActionListener(this);

@@ -61,7 +61,7 @@ public class TrangChuQuanTriView extends JFrame {
 		execute();
 
 
-		menus.setBackground(new Color(153, 225, 225));
+		menus.setBackground(new Color(153, 255, 255));
 		addWindowListener(new WindowAdapter() {
 	        @Override
 	        public void windowClosing(WindowEvent e) {
@@ -208,17 +208,17 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				switchToPanel(new DoiMatKhau());
-			}
-		});
+//		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO Auto-generated method stub
+//				switchToPanel(new SetPassWordView());
+//			}
+//		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
-				subCaiDatHDSD);
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null,subGiaoDien
+				);
 
 		addMenu(QLSP, QLBH,QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
 		QLSP.setBackground(new Color(153,255,255));

@@ -20,7 +20,7 @@ public class DAOTaiKhoan {
 			}
 		}
 	}
-	public boolean createTK(TaiKhoan tk) throws SQLException{
+	public boolean createTK(TaiKhoan tk) {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "insert into TaiKhoan values (?,?,?)";
@@ -33,7 +33,7 @@ public class DAOTaiKhoan {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		con.close();
+		
 		return false;
 	}
 	public void DeleteTK(String maXoa) {

@@ -78,7 +78,7 @@ public class DAONhanVien {
 		return nv;
 	}
 	
-	public boolean themNhanVien(NhanVien nv) throws SQLException {
+	public boolean themNhanVien(NhanVien nv)  {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "insert into NhanVien values (?,?,?,?,?,?,?,?,?)";
@@ -99,7 +99,7 @@ public class DAONhanVien {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		con.close();
+		
 		return false;
 	}
 

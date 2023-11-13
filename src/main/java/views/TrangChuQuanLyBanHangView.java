@@ -114,8 +114,16 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DangNhapView().setVisible(true);
-				setVisible(false);
+
+
+				int hoiNhac = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đăng xuất",
+						"Cảnh báo", JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
+					DangNhapView view = new DangNhapView();
+					view.setVisible(true);
+					dispose();
+				}
+
 			}
 		});
 
@@ -141,8 +149,15 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 			}
 		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
+		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subCaiDatTT,subCaiDatDMK,subCaiDatHDSD);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new HomeView());
+
+			}
+		});
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subGiaoDien);
 		addMenu(QLBH,QLKH,CaiDat,DangXuat);
 		QLKH.setBackground(new Color(153,225,225));
 		QLBH.setBackground(new Color(153,225,225));

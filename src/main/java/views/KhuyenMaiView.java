@@ -347,6 +347,15 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(pnRigth, gbc);
+        
+        txtID.setToolTipText("ID + Date + XXXX");
+		txtTen.setToolTipText("Tên hợp lệ");
+		
+        ngayBatDau.setToolTipText("Trước ngày hiện tại");
+        
+        
+        
+        
         btnHienTatCaKM.addActionListener(this);
         btnHienTatCaSKM.addActionListener(this);
         btnLamMoi.addActionListener(this);
@@ -371,7 +380,12 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         LoadDataSach();
         LoadDataSP();
         loadSKM();
-
+        try {
+			txtID.setText(autoID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void loadData() {
@@ -594,7 +608,12 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	}
 	private void lamMoi() {
 		loadData();
-		txtID.setText("");
+		try {
+			txtID.setText(autoID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		txtTen.setText("");
 		txtTen.requestFocus();
 		ngayBatDau.setDate(new java.util.Date());

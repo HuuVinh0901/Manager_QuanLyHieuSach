@@ -350,14 +350,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		} else if (o.equals(btnXoaSP)) {
 			xoaSanPham();
 		}else if(o.equals(btnXuatExCel)) {
-			String filePath = "F:\\TKMT_PreMidTest\\SanPham.xlsx";
+			String filePath = "D:\\Thư mục chứa file execl\\SanPham.xlsx";
 			ghiFileExcel(filePath);
 		}
 	}
-
-//	private void showErrorDialog(String message) {
-//		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
-//	}
 
 	private void showSuccessMessage(String message) {
 		JOptionPane.showMessageDialog(this, message);
@@ -762,10 +758,11 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 					JOptionPane.showMessageDialog(QuanLySanPhamView.this,
 							"Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 				}
-			} else {
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
-			}
+			} 
 
+		}
+		else {
+			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
 		}
 
 	}

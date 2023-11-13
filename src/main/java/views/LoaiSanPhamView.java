@@ -256,7 +256,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
 			}
 		} else {
-			showErrorDialog("Bạn chưa chọn dòng xóa");
+			showErrorDialog("Bạn chưa chọn dòng");
 
 		}
 
