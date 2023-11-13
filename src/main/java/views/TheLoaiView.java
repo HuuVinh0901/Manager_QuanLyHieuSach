@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -137,6 +138,13 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		pnThongTin.add(pnThongTinCT1);
 		pnThongTin.add(pnThongTinCT2);
 		pnThongTinChucNang = new JPanel(new FlowLayout(5));
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		btnThem.setIcon(iconThem);
+		btnCapNhat.setIcon(iconCapNhat);
+		btnLamMoi.setIcon(iconLamMoi);
 		pnThongTinChucNang.add(btnThem);
 		pnThongTinChucNang.add(btnCapNhat);
 //		pnThongTinChucNang.add(btnXoa);
@@ -302,7 +310,7 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 	}
 
 	private boolean validataFields() {
-		return validataField(txtTentheLoai, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTentheLoai, "^[\\p{L}\\s]+$",
 				"Tên thể loại không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
 				&& validataField(txtMoTa, "^[^,\\p{P}-+ ]+[\\p{L}\\p{M}0-9]*(\\s[^,\\p{P}-+ ]+[\\p{L}\\p{M}0-9]*)*[^,\\p{P}-+ ]$",
 						"Mô tả không được chứa kí tự đặc biệt.");

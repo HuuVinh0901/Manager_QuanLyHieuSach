@@ -1,4 +1,4 @@
- package views;
+package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -13,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
@@ -41,14 +44,23 @@ public class TrangChuQuanTriView extends JFrame {
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
-	    setIconImage(icon.getImage());
+		setIconImage(icon.getImage());
 		paneCu = new HomeView(); // Bắt đầu với HomeView
 		panelBody.add(paneCu);
 		execute();
 
-		menus.setBackground(new Color(153,225,225));
-		
-
+		menus.setBackground(new Color(153, 225, 225));
+		addWindowListener(new WindowAdapter() {
+	        @Override
+	        public void windowClosing(WindowEvent e) {
+	            int result = JOptionPane.showConfirmDialog(TrangChuQuanTriView.this,
+	                    "Bạn có chắc chắn muốn đóng cửa sổ?", "Xác nhận đóng cửa sổ", JOptionPane.YES_NO_OPTION);
+	            
+	            if (result == JOptionPane.YES_OPTION) {
+	                dispose();
+	            }
+	        }
+	    });
 	}
 
 	private void execute() {
@@ -62,7 +74,6 @@ public class TrangChuQuanTriView extends JFrame {
 		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
 		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
-
 
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
 
@@ -98,8 +109,13 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-
+				int hoiNhac = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đăng xuất",
+						"Cảnh báo", JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
+					DangNhapView view = new DangNhapView();
+					view.setVisible(true);
+					dispose();
+				}
 			}
 		});
 		MenuItem QLSP = new MenuItem(iconSP, "Sản phẩm", new ActionListener() {
@@ -109,14 +125,14 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLySanPhamView());
 
 			}
-		}, subQLLoaiSanPham, subQLNhaCungCap,subQLTacGia,subQLTheLoai);
-		
+		}, subQLLoaiSanPham, subQLNhaCungCap, subQLTacGia, subQLTheLoai);
+
 		MenuItem QLNV = new MenuItem(iconNV, "Quản lý Nhân viên", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-			switchToPanel(new QuanLyNhanVienView());
+				switchToPanel(new QuanLyNhanVienView());
 
 				switchToPanel(new QuanLyNhanVienView());
 
@@ -164,7 +180,7 @@ public class TrangChuQuanTriView extends JFrame {
 			}
 		});
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
@@ -174,6 +190,19 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
 				subCaiDatHDSD);
+
+		
+		addMenu(QLSP, QLNV, QLKH, KM, QLHD, TKDT, CaiDat, DangXuat);
+//		addMenu(QLSP, QLNV, QLKH, KM, QLHD, CaiDat, DangXuat);
+		QLSP.setBackground(new Color(153, 225, 225));
+		QLNV.setBackground(new Color(153, 225, 225));
+		QLKH.setBackground(new Color(153, 225, 225));
+		KM.setBackground(new Color(153, 225, 225));
+		QLHD.setBackground(new Color(153, 225, 225));
+		TKDT.setBackground(new Color(153, 225, 225));
+		CaiDat.setBackground(new Color(153, 225, 225));
+		DangXuat.setBackground(new Color(153, 225, 225));
+
 		addMenu(QLSP, QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
 		QLSP.setBackground(new Color(153,225,225));
 		QLNV.setBackground(new Color(153,225,225));
@@ -183,8 +212,9 @@ public class TrangChuQuanTriView extends JFrame {
 		TKDT.setBackground(new Color(153,225,225));
 		CaiDat.setBackground(new Color(153,225,225));
 		DangXuat.setBackground(new Color(153,225,225));
+
 	}
-	
+
 	private void switchToPanel(JPanel newPanel) {
 		panelBody.remove(paneCu); // Loại bỏ panel hiện tại
 		paneCu = newPanel; // Cập nhật panel hiện tại
@@ -196,7 +226,7 @@ public class TrangChuQuanTriView extends JFrame {
 	private void addMenu(MenuItem... menu) {
 		for (int i = 0; i < menu.length; i++) {
 			menus.add(menu[i]);
-			
+
 			ArrayList<MenuItem> subMenu = menu[i].getSubMenu();
 			for (MenuItem m : subMenu) {
 				addMenu(m);
@@ -228,7 +258,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 		jScrollPane1.setBorder(null);
 
-		
 		menus.setLayout(new BoxLayout(menus, BoxLayout.Y_AXIS));
 		jScrollPane1.setViewportView(menus);
 
@@ -241,7 +270,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 		getContentPane().add(panelMenu, BorderLayout.LINE_START);
 
-		
 		panelBody.setLayout(new BorderLayout());
 		getContentPane().add(panelBody, BorderLayout.CENTER);
 	}

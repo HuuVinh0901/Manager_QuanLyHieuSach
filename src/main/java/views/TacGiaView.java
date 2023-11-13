@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -154,6 +155,15 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnXoa = new JButton("Xóa");
 
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		
+		btnThem.setIcon(iconThem);
+		btnLamMoi.setIcon(iconLamMoi);
+		btnCapNhat.setIcon(iconCapNhat);
+		
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
 //		pnChucNang.add(btnXoa);
@@ -323,7 +333,7 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 	}
 
 	private boolean validataFields() {
-		return validataField(txtTenTacGia, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTenTacGia, "^[\\p{L}\\s]+$",
 				"Tên tác giả không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
 				&& validateDateChooser(chooserNgaySinh);
 	}

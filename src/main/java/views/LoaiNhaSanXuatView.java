@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.EventListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -136,7 +137,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 		pnChucNang = new JPanel(new FlowLayout(5));
 		btnThem = new JButton("Thêm");
-		btnCapNhat = new JButton("Sửa");
+		btnCapNhat = new JButton("Cập nhật");
 		btnLamMoi = new JButton("Làm mới");
 		btnXoa = new JButton("Xóa");
 //		btnThem.setBackground(new Color(208, 225, 253));
@@ -150,6 +151,16 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 //		btnXoa.setBackground(new Color(208, 225, 253));
 //		btnXoa.setForeground(new Color(26, 102, 227));
+		
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		
+		btnThem.setIcon(iconThem);
+		btnCapNhat.setIcon(iconCapNhat);
+		btnLamMoi.setIcon(iconLamMoi);
+		
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
 //		pnChucNang.add(btnXoa);
@@ -346,10 +357,10 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 	
 
 	private boolean validataFields() {
-		return validataField(txtTenLoaiSanPham, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTenLoaiSanPham, "^[\\p{L}\\s]+$",
 				"Tên nhà cung cấp không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
-				&& validataField(txtSoDienThoai, "^(03|04|05|06)\\d{8}$",
-						"Số điện thoại không hợp lệ. Phải bắt đầu bằng 03, 04, 05 hoặc 06 và có 10 chữ số.")
+				&& validataField(txtSoDienThoai, "^(03|04|05|06|07|08|09)\\d{8}$",
+						"Số điện thoại không hợp lệ. Phải bắt đầu bằng 03, 04, 05, 06 , 07, 08 hoặc 09 và có 10 chữ số.")
 				&& validataField(txtDiaChi, "^[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*(\\s[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*)*[^,\\p{P} ]$",
 					    "Địa chỉ không được chứa kí tự đặc biệt trừ dấu phẩy và không bắt đầu hoặc kết thúc bằng dấu phẩy, kí tự đặc biệt.");
 	}
