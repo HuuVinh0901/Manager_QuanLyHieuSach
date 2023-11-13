@@ -749,10 +749,11 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 					JOptionPane.showMessageDialog(QuanLySanPhamView.this,
 							"Không tìm thấy loại sản phẩm hoặc nhà cung cấp!");
 				}
-			} else {
-				JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
-			}
+			} 
 
+		}
+		else {
+			JOptionPane.showMessageDialog(QuanLySanPhamView.this, "Vui lòng chọn sản phẩm cần cập nhật!");
 		}
 
 	}
