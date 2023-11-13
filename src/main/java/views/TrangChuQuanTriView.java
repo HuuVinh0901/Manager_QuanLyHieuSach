@@ -146,9 +146,14 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLyHoaDonView());
 			}
 		});
-		MenuItem subTKCa = new MenuItem(iconSubMenu, "Thống kê theo ca", null);
-		MenuItem subTKCP = new MenuItem(iconSubMenu, "Thống kê chi phí", null);
-		MenuItem TKBC = new MenuItem(iconTK, "Thống kê báo cáo", null, subTKCa, subTKCP);
+		MenuItem TKDT = new MenuItem(iconTK, "Thống kê doanh thu", new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new ThongKeDoanhThuView());
+				
+			}
+		});
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
@@ -169,13 +174,13 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
 				subCaiDatHDSD);
-		addMenu(QLSP, QLNV, QLKH,KM, QLHD, TKBC, CaiDat,DangXuat);
+		addMenu(QLSP, QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
 		QLSP.setBackground(new Color(153,225,225));
 		QLNV.setBackground(new Color(153,225,225));
 		QLKH.setBackground(new Color(153,225,225));
 		KM.setBackground(new Color(153,225,225));
 		QLHD.setBackground(new Color(153,225,225));
-		TKBC.setBackground(new Color(153,225,225));
+		TKDT.setBackground(new Color(153,225,225));
 		CaiDat.setBackground(new Color(153,225,225));
 		DangXuat.setBackground(new Color(153,225,225));
 	}

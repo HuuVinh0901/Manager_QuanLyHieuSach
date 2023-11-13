@@ -88,7 +88,6 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	private DanhSachGioHang dsGioHang;
 	private Date ngayNhap;
 	
-	
 	public QuanLyBanHangView() {
 		setLayout(new GridBagLayout());
 		pnLeft = new JPanel(new BorderLayout());

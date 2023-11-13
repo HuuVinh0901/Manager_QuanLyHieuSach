@@ -15,6 +15,7 @@ import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.NhanVien;
+import models.SachCon;
 import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
@@ -59,7 +60,7 @@ public class DAOQuanLySanPham implements Serializable {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan "
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
 					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
 					+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'";
@@ -80,7 +81,7 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.thue();
 				lsp.setGiaNhap(rs.getDouble(9));
 				lsp.setSoLuong(rs.getInt(10));
-				lsp.giaBan();
+				lsp.setGiaKM(rs.getDouble(12));
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -90,7 +91,7 @@ public class DAOQuanLySanPham implements Serializable {
 		return dsSanPham;
 	}
 	
-
+	
 	
 	public SanPhamCha getSanPham(String idSanPham) {
 		SanPhamCha sp = new SanPhamCha() {
