@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -51,8 +52,10 @@ import connection.ConnectDB;
 import controllers.MenuItem;
 import dao.DAOKhachHang;
 import dao.DAONhanVien;
+import dao.DAOTaiKhoan;
 import models.KhachHang;
 import models.NhanVien;
+import models.TaiKhoan;
 
 
 public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListener,ActionListener{
@@ -77,7 +80,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private JLabel lbTimKiem;
 	private JRadioButton rbNam;
 	private JRadioButton rbNu;
-	private JComboBox<Object> cbTrangThai,cbChucVu,cbTimKiem;
+	private JComboBox<Object> cbTrangThai,cbChucVu;
 	private JLabel lbChucVu;
 	private JLabel lbTrangThai;
 	private JTable tableNhanVien;
@@ -89,12 +92,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private JButton btnXemTatCa;
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
-
+	private DAOTaiKhoan daoTK;
 	public QuanLyNhanVienView()  {
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
-
+		daoTK=new DAOTaiKhoan();
 		daoNhanVien=new DAONhanVien();
-		NhanVien nv=new NhanVien();
+		
 		setLayout(new BorderLayout());
 		
 		JPanel pnNouth=new JPanel(new BorderLayout());
@@ -183,17 +186,11 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-		btnThemNV=new JButton("THÊM KHÁCH HÀNG");
+		btnThemNV=new JButton("THÊM NHÂN VIÊN");
 	    btnThemNV.setIcon(iconThem);
-	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
+	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
 	    btnCapNhatNV.setIcon(iconCapNhat);
-	    btnXoaNV=new JButton("XÓA KHÁCH HÀNG");
-
-//		btnThemNV=new JButton("THÊM NHÂN VIÊN");
-//	    btnThemNV.setIcon(iconThem);
-//	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
-//	    btnCapNhatNV.setIcon(iconCapNhat);
-//	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
+	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
 
 	    btnXoaNV.setIcon(iconXoa);
 	    btnLamMoi=new JButton("LÀM MỚI");
@@ -246,8 +243,8 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		loadData();
 	}
 	private void ThemNV() throws SQLException {
-		String idKhachHang = autoID();
-		String tenKhachHang = txtTenNV.getText();
+		String id = autoID();
+		String ten = txtTenNV.getText();
 		String email= txtEmail.getText();
 		String sdt=txtsdt.getText();
 		String diaChi=txtDiaChi.getText();
@@ -257,16 +254,29 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		String TrangThai=(String)cbTrangThai.getSelectedItem().toString();
 		Boolean TrangThaibooleanValue = Boolean.parseBoolean(TrangThai);
 		String chucVu=cbChucVu.getSelectedItem().toString();
+		Date ngayLap = new Date(System.currentTimeMillis());
+		String matkhau="1111";
+		TaiKhoan tk=new TaiKhoan(id,matkhau,ngayLap);
+		NhanVien nv = new NhanVien();
+		nv.setId(id);
+		nv.setTen(ten);
+		nv.setChucVu(chucVu);
+		nv.setGioiTinh(GioiTinh);
+		nv.setNgaySinh(ngaySinh);
+		nv.setDiaChi(diaChi);
+		nv.setEmail(email);
+		nv.setTrangThai(TrangThaibooleanValue);
+		nv.setSoDienThoai(sdt);
 		
-		NhanVien nv=new NhanVien(idKhachHang, tenKhachHang, sdt, diaChi, email, ngaySinh, GioiTinh,chucVu,TrangThaibooleanValue);
+		daoTK.createTK(tk);
 		daoNhanVien.themNhanVien(nv);
-		modelNhanVien.addRow(new Object[] {idKhachHang, tenKhachHang, sdt,  diaChi,email,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
+		modelNhanVien.addRow(new Object[] {id, ten, sdt,  diaChi,email,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
 
 	}
 	private void loadData() {
 		modelNhanVien.setRowCount(0);
 		for (NhanVien nv : daoNhanVien.getAllDanhSachNV() ) {
-			modelNhanVien.addRow(new Object[] { nv.getIdNhanVien(), nv.getTenNhanVien(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
+			modelNhanVien.addRow(new Object[] { nv.getId(), nv.getTen(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
 					});
 			
 		}
@@ -298,13 +308,13 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		}
 		String chucVu =cbChucVu.getSelectedItem().toString();
 		NhanVien nv=new NhanVien();
-		nv.setTenNhanVien(ten);
+		nv.setTen(ten);
 		nv.setSoDienThoai(soDienThoai);
 		nv.setNgaySinh(ngaySinh);
 		nv.setEmail(email);
 		nv.setDiaChi(diaChi);
 		nv.setGioiTinh(gioiTinh);
-		nv.setIdNhanVien(id);
+		nv.setId(id);
 		nv.setTrangThai(trangThai);
 		nv.setChucVu(chucVu);
 		if(valiDate()) {
@@ -360,7 +370,9 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 				if (HopThoai == JOptionPane.YES_OPTION) {
 					modelNhanVien.removeRow(row);
 					String manv = txtID.getText();
+					
 					daoNhanVien.DeleteNV(manv);
+					daoTK.DeleteTK(manv);
 					JOptionPane.showMessageDialog(this, "Xoá nhân viên thành công");
 				}
 			} catch (Exception e2) {
@@ -490,7 +502,9 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		 if(o.equals(btnCapNhatNV)) {
 			 CapNhatNV();
 		 }
-		 
+		 if(o.equals(btnXemTatCa)) {
+			 loadData();
+		 }
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {

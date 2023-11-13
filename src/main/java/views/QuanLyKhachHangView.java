@@ -457,7 +457,9 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		 if (o.equals(btnCapNhatKH)) {
 			CapNhatKH();
 		}
-
+		if(o.equals(btnXemTatCa)) {
+			 loadData();
+		 }
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {

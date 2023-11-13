@@ -37,8 +37,8 @@ public class DAOQuanLy {
 			statement.setString(1, idNV);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
-				nv.setIdNhanVien(rs.getString(1));
-				nv.setTenNhanVien(rs.getString(2));
+				nv.setId(rs.getString(1));
+				nv.setTen(rs.getString(2));
 				nv.setSoDienThoai(rs.getString(3));
 				nv.setDiaChi(rs.getString(4));
 				nv.setEmail(rs.getString(5));
@@ -54,15 +54,15 @@ public class DAOQuanLy {
 		return nv;
 	}
 	
-	public boolean themNhanVien(QuanLy nv) throws SQLException {
+	public boolean themQuanLy(QuanLy nv) throws SQLException {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "insert into QuanLy values (?,?,?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 
-			ps.setString(1, nv.getIdNhanVien());
-			ps.setString(2, nv.getTenNhanVien());
+			ps.setString(1, nv.getId());
+			ps.setString(2, nv.getTen());
 			ps.setString(3, nv.getSoDienThoai());
 			ps.setString(4, nv.getDiaChi());
 			ps.setString(5, nv.getEmail());
@@ -88,8 +88,8 @@ public class DAOQuanLy {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				QuanLy nv = new QuanLy();
-				nv.setIdNhanVien(rs.getString(1));
-				nv.setTenNhanVien(rs.getString(2));
+				nv.setId(rs.getString(1));
+				nv.setTen(rs.getString(2));
 				nv.setSoDienThoai(rs.getString(3));
 				nv.setDiaChi(rs.getString(4));
 				nv.setEmail(rs.getString(5));
@@ -112,7 +112,7 @@ public class DAOQuanLy {
 		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
 		try {
 			pst = con.prepareStatement(sql);
-			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(1, nv.getTen());
 			pst.setString(2, nv.getSoDienThoai());
 			pst.setString(3, nv.getDiaChi());
 			pst.setString(4, nv.getEmail());
@@ -120,7 +120,7 @@ public class DAOQuanLy {
 			pst.setBoolean(6, nv.isGioiTinh());
 			pst.setString(7,nv.getChucVu());
 			pst.setBoolean(6, nv.isTrangThai());
-			pst.setString(7, nv.getIdNhanVien());
+			pst.setString(7, nv.getId());
 			pst.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -152,7 +152,7 @@ public class DAOQuanLy {
 		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ?, ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
 		try {
 			pst = con.prepareStatement(sql);
-			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(1, nv.getTen());
 			pst.setString(2, nv.getSoDienThoai());
 			pst.setString(3, nv.getDiaChi());
 			pst.setString(4, nv.getEmail());
@@ -160,7 +160,7 @@ public class DAOQuanLy {
 			pst.setBoolean(6, nv.isGioiTinh());
 			pst.setString(7,nv.getChucVu());
 			pst.setBoolean(8, nv.isTrangThai());
-			pst.setString(9, nv.getIdNhanVien());
+			pst.setString(9, nv.getId());
 			pst.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -180,8 +180,8 @@ public class DAOQuanLy {
 			ResultSet rsMa = stm.executeQuery(sqlMa);
 			while (rsMa.next()) {
 				QuanLy nv = new QuanLy();
-				nv.setIdNhanVien(rsMa.getString(1));
-				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setId(rsMa.getString(1));
+				nv.setTen(rsMa.getString(2));
 				nv.setSoDienThoai(rsMa.getString(3));
 				nv.setDiaChi(rsMa.getString(4));
 				nv.setEmail(rsMa.getString(5));
@@ -207,8 +207,8 @@ public class DAOQuanLy {
 			ResultSet rsMa = stm.executeQuery(sqlMa);
 			while (rsMa.next()) {
 				QuanLy nv = new QuanLy();
-				nv.setIdNhanVien(rsMa.getString(1));
-				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setId(rsMa.getString(1));
+				nv.setTen(rsMa.getString(2));
 				nv.setSoDienThoai(rsMa.getString(3));
 				nv.setDiaChi(rsMa.getString(4));
 				nv.setEmail(rsMa.getString(5));
