@@ -188,6 +188,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnLamMoi);
+		pnChucNang.add(btnXoaSP);
 		pnChucNang.add(btnXuatExCel);
 
 		pnChucNangTimKiem = new JPanel(new GridLayout(1, 7, 10, 10));

@@ -126,16 +126,16 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 
 //		btnXoa.setBackground(new Color(208, 225, 253));
 //		btnXoa.setForeground(new Color(26, 102, 227));
-		
+
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-		
+
 		btnThem.setIcon(iconThem);
 		btnCapNhat.setIcon(iconCapNhat);
 		btnLamMoi.setIcon(iconLamMoi);
-		
+
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
 //		pnChucNang.add(btnXoa);
@@ -206,7 +206,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 			capNhapLoaSanPham();
 		} else if (o.equals(btnXoa)) {
 			xoaLoaiSanPham();
-		}else if(o.equals(btnXemTatCa)) {
+		} else if (o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadData();
 		}
@@ -240,7 +240,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 			int update = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn sửa thông tin này", "Cảnh báo",
 					JOptionPane.YES_NO_OPTION);
 			if (update == JOptionPane.YES_OPTION) {
-				if(validataFields()) {
+				if (validataFields()) {
 					String idLoaiSanPham = txtIdLoaiSanPham.getText().trim();
 					String tenLoaiSanPham = txtTenLoaiSanPham.getText().trim();
 					LoaiSanPham lsp = new LoaiSanPham();
@@ -249,14 +249,14 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 					daoLoaiSanPham.capNhatLoaiSanPham(lsp);
 					JOptionPane.showMessageDialog(this, "Cập nhật thành công");
 					lamMoi();
-					loadData();					
+					loadData();
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
 			}
-		}else {
+		} else {
 			showErrorDialog("Bạn chưa chọn dòng xóa");
-			
+
 		}
 
 	}
@@ -285,6 +285,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 		}
 		return true;
 	}
+
 	private void showErrorDialog(String message) {
 		JOptionPane.showMessageDialog(this, message, "Cảnh Báo", JOptionPane.WARNING_MESSAGE);
 	}
@@ -296,21 +297,22 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 	private void showErrorMessage(String message) {
 		JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
 	}
+
 	private boolean validataFields() {
-		return validataField(txtTenLoaiSanPham, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
-				"Tên nhà cung cấp không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.");
+		return validataField(txtTenLoaiSanPham, "^[\\p{L}\\s]+$",
+				"Tên Loại Sản Phẩm không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.");
 	}
-	
+
 	private void themLoaiSanPham() {
 		String idLoaiSanPham = txtIdLoaiSanPham.getText();
 		String tenLoaiSanPham = txtTenLoaiSanPham.getText();
 		LoaiSanPham lsp = new LoaiSanPham(idLoaiSanPham, tenLoaiSanPham);
 
-		if(validataFields()) {
-			if (daoLoaiSanPham.checkIdLoaiSanPham(idLoaiSanPham)) {
-				JOptionPane.showMessageDialog(this, "Trùng ID loại sản phẩm. Vui lòng chọn ID khác.");
-				return;
-			} else {
+		if (daoLoaiSanPham.checkIdLoaiSanPham(idLoaiSanPham)) {
+			JOptionPane.showMessageDialog(this, "Trùng ID loại sản phẩm. Vui lòng chọn ID khác.");
+			return;
+		} else {
+			if (validataFields()) {
 				try {
 					boolean kiemtra = daoLoaiSanPham.themLoaiSanPham(lsp);
 					if (kiemtra) {
@@ -326,7 +328,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 					e.printStackTrace();
 				}
 			}
-			
+
 		}
 	}
 
@@ -364,11 +366,11 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 	public void keyReleased(KeyEvent e) {
 		SwingUtilities.invokeLater(() -> {
 			Object o = e.getSource();
-			if(o.equals(txtTimKiem)) {
+			if (o.equals(txtTimKiem)) {
 				DefaultTableModel model = (DefaultTableModel) tableSP.getModel();
 				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 				tableSP.setRowSorter(tr);
-				tr.setRowFilter(RowFilter.regexFilter("(?i)"+txtTimKiem.getText().trim(),1));
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
 			}
 		});
 

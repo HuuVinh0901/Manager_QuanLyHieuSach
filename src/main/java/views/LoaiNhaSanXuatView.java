@@ -357,10 +357,10 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 	
 
 	private boolean validataFields() {
-		return validataField(txtTenLoaiSanPham, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTenLoaiSanPham, "^[\\p{L}\\s]+$",
 				"Tên nhà cung cấp không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
-				&& validataField(txtSoDienThoai, "^(03|04|05|06)\\d{8}$",
-						"Số điện thoại không hợp lệ. Phải bắt đầu bằng 03, 04, 05 hoặc 06 và có 10 chữ số.")
+				&& validataField(txtSoDienThoai, "^(03|04|05|06|07|08|09)\\d{8}$",
+						"Số điện thoại không hợp lệ. Phải bắt đầu bằng 03, 04, 05, 06 , 07, 08 hoặc 09 và có 10 chữ số.")
 				&& validataField(txtDiaChi, "^[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*(\\s[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*)*[^,\\p{P} ]$",
 					    "Địa chỉ không được chứa kí tự đặc biệt trừ dấu phẩy và không bắt đầu hoặc kết thúc bằng dấu phẩy, kí tự đặc biệt.");
 	}

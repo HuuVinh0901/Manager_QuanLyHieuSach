@@ -333,7 +333,7 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 	}
 
 	private boolean validataFields() {
-		return validataField(txtTenTacGia, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTenTacGia, "^[\\p{L}\\s]+$",
 				"Tên tác giả không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
 				&& validateDateChooser(chooserNgaySinh);
 	}

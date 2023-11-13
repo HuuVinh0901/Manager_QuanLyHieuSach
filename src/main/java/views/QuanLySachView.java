@@ -401,6 +401,7 @@ public class QuanLySachView extends JPanel
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnLamMoi);
+		pnChucNang.add(btnXoaSP);
 		pnChucNang.add(btnXuatExCel);
 		
 
