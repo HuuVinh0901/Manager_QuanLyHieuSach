@@ -32,7 +32,11 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import connection.ConnectDB;
+import dao.DAONhanVien;
+import dao.DAOQuanLy;
 import dao.DAOTaiKhoan;
+import models.NhanVien;
+import models.QuanLy;
 import models.TaiKhoan;
 
 
@@ -51,7 +55,11 @@ public class DangNhapView extends JFrame implements ActionListener{
 	private JLabel lblTieuDe;
 	private JCheckBox rememberPassword;
 	private DAOTaiKhoan daoTaiKhoan;
+	private DAOQuanLy daoQL;
+	private DAONhanVien daoNV;
 	public DangNhapView() {
+		daoQL=new DAOQuanLy();
+		daoNV=new DAONhanVien();
 		daoTaiKhoan=new DAOTaiKhoan();
 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
 	    setResizable(false);
@@ -137,7 +145,7 @@ public class DangNhapView extends JFrame implements ActionListener{
 			System.exit(0);
 		}else if(o.equals(btnDangNhap)) {
 			Login();
-
+//			DangNhap();
 		}
 		
 	}
@@ -149,16 +157,19 @@ public class DangNhapView extends JFrame implements ActionListener{
 			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 		}else if(!tk.getMatKhau().equalsIgnoreCase(mk)) {
-			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng");
+			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
 		}else {
 			String PhanLoaiTK=tk.getIdTaiKhoan().substring(0,2);
 			if(PhanLoaiTK.equals("QL")){
-				TrangChuQuanTriView QTV = new TrangChuQuanTriView();
+				QuanLy ql=daoQL.getQuanLy(tk.getIdTaiKhoan());
+				TrangChuQuanTriView QTV = new TrangChuQuanTriView(ql);
 				QTV.setVisible(true);
 				this.setVisible(false);
 			}
 			if(PhanLoaiTK.equals("NV")){
-				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView();
+				NhanVien nv=daoNV.getNhanVien(tk.getIdTaiKhoan());
+				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView(nv);
 				QLBH.setVisible(true);
 				this.setVisible(false);
 			}
@@ -169,6 +180,11 @@ public class DangNhapView extends JFrame implements ActionListener{
 			}
 			}
 			
+	}
+	public void DangNhap() {
+		PhanQuyenView pq = new PhanQuyenView();
+		pq.setVisible(true);
+		this.setVisible(false);
 	}
 	
 }

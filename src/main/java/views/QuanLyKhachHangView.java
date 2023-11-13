@@ -67,11 +67,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JTextField txtsdt;
 	private JTextField txtEmail;
 	private JTextField txtDiaChi;
-	
 	private JTextField txtId;
-	
-	
-	
 	private JTextField txtTimKiem;
 	private JLabel lbTenKH;
 	private JLabel lbsdt;
@@ -80,15 +76,9 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JLabel lbDiaChi;
 	private JLabel lbNgaySinh;
 	private JLabel lbGioiTinh;
-	
-	
 	private JLabel lbTimKiem;
 	private JRadioButton rbNam;
 	private JRadioButton rbNu;
-	
-	
-	
-	
 	private JButton btnThemKH;
 	private JButton btnCapNhatKH;
 	private JButton btnXoaKH;
@@ -105,6 +95,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		daoKhachHang=new DAOKhachHang();
 		KhachHang kh=new KhachHang();
 		setLayout(new BorderLayout());
+		this.setBackground(new Color(102,255,255));
 ////		Tiêu đề
 		JPanel pnNouth=new JPanel(new BorderLayout());
 		JPanel pnSounth=new JPanel(new BorderLayout());
@@ -112,7 +103,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		JPanel pnInfo=new JPanel(new GridLayout(4,1,10,10));
 		JPanel pnChucNang=new JPanel(new GridLayout(1,4,10,10));
 		JPanel pnTimKiem=new JPanel(new GridLayout(1,3,10,10));
-		JPanel pntbKH=new JPanel();
+		
 		
 		JLabel lblTieuDe = new JLabel("QUẢN LÝ KHÁCH HÀNG");
 		lblTieuDe.setFont(new Font("Tahoma", Font.BOLD, 30));
@@ -179,20 +170,20 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    pnInfo.add(rbNu);
 	    pnNouth.add(pnInfo,BorderLayout.CENTER);
 	    pnInfo.setBorder(BorderFactory.createTitledBorder("Thông tin khách hàng"));
-		
+	    btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
+	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
+	    btnLamMoi=new JButton("LÀM MỚI");
+	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
 	    ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
+		btnCapNhatKH.setIcon(iconCapNhat);
 	    btnThemKH.setIcon(iconThem);
-	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
-	    btnCapNhatKH.setIcon(iconCapNhat);
-	    btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
-	    btnXoaKH.setIcon(iconXoa);
-	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnLamMoi.setIcon(iconLamMoi);
-	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    btnXoaKH.setIcon(iconXoa);
+	    
 	    pnChucNang.add(btnThemKH);
 	    pnChucNang.add(btnCapNhatKH);
 	    pnChucNang.add(btnXoaKH);

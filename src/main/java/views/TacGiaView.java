@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -153,6 +154,14 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 		btnThem = new JButton("Thêm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnXoa = new JButton("Xóa");
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		btnCapNhat.setIcon(iconCapNhat);
+	    btnThem.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoa.setIcon(iconXoa);
 
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);

@@ -13,8 +13,8 @@ public class DoiMatKhau extends JPanel{
 		JPanel pnNouth=new JPanel();
 		JPanel pnCenter=new JPanel(new BorderLayout());
 		JLabel lbIcon=new JLabel();
-		ImageIcon iconTieuDe = new ImageIcon(getClass().getResource("/icons/user.png"));
-		lbIcon.setIcon(iconTieuDe);
+//		ImageIcon iconTieuDe = new ImageIcon(getClass().getResource("/icons/user.png"));
+//		lbIcon.setIcon(iconTieuDe);
 		pnNouth.add(lbIcon);
 		add(pnNouth,BorderLayout.NORTH);
 	}

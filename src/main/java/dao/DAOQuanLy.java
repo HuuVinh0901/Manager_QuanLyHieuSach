@@ -26,13 +26,13 @@ public class DAOQuanLy {
 	}
 
 	
-	public QuanLy getNhanVien(String idNV) {
+	public QuanLy getQuanLy(String idNV) {
 		QuanLy nv = new QuanLy();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT * FROM QuanLy WHERE idNhanVien = ?";
+			String sql = "SELECT * FROM QuanLy WHERE idQuanLy = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, idNV);
 			ResultSet rs = statement.executeQuery();

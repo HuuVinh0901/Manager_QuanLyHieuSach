@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.EventListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -139,6 +140,14 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 		btnCapNhat = new JButton("Sửa");
 		btnLamMoi = new JButton("Làm mới");
 		btnXoa = new JButton("Xóa");
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		btnCapNhat.setIcon(iconCapNhat);
+	    btnThem.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoa.setIcon(iconXoa);
 //		btnThem.setBackground(new Color(208, 225, 253));
 //		btnThem.setForeground(new Color(26, 102, 227));
 
