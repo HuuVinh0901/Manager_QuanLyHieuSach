@@ -266,7 +266,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 
 	private void capNhatNhaCungCap() {
 		int row = tableSP.getSelectedRow();
-		if (row > 0) {
+		if (row >= 0) {
 			int update = JOptionPane.showConfirmDialog(this, "Bạn có chắc sửa thông tin nhà cung cấp", "Cảnh báo",
 					JOptionPane.YES_NO_OPTION);
 			if (update == JOptionPane.YES_OPTION) {
@@ -288,7 +288,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
 			}
 		}else {
-			showErrorDialog("Bạn chưa chọn dòng xóa!!");
+			showErrorDialog("Bạn chưa chọn dòng!!");
 		}
 	}
 
@@ -361,7 +361,7 @@ public class LoaiNhaSanXuatView extends JPanel implements ActionListener, MouseL
 				"Tên nhà cung cấp không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
 				&& validataField(txtSoDienThoai, "^(03|04|05|06|07|08|09)\\d{8}$",
 						"Số điện thoại không hợp lệ. Phải bắt đầu bằng 03, 04, 05, 06 , 07, 08 hoặc 09 và có 10 chữ số.")
-				&& validataField(txtDiaChi, "^[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*(\\s[^,\\p{P} ]+[\\p{L}\\p{M}0-9,]*)*[^,\\p{P} ]$",
+				&& validataField(txtDiaChi, "^[^,\\p{P} ]+[\\p{L}\\p{M}0-9,.]*(\\s[^,\\p{P} ]+[\\p{L}\\p{M}0-9,.]*)*[^,\\p{P} ]$",
 					    "Địa chỉ không được chứa kí tự đặc biệt trừ dấu phẩy và không bắt đầu hoặc kết thúc bằng dấu phẩy, kí tự đặc biệt.");
 	}
 
