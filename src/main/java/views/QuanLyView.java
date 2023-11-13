@@ -280,54 +280,125 @@ public class QuanLyView extends JPanel implements KeyListener,MouseListener,Acti
 			
 		}
 	}
-//	private void CapNhatNV() {
-//		String id = txtID.getText();
-//		String ten = txtTenNV.getText();
-//		String diaChi = txtDiaChi.getText();
-//		String soDienThoai = txtsdt.getText();
-//		String email = txtEmail.getText();
-//	
-//	
-//		java.util.Date date = chooserNgaySinh.getDate();
-//		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
-//		Boolean gioiTinh=null;
-//		if(rbNam.isSelected()) {
-//			gioiTinh=true;
-//		}
-//		if(rbNu.isSelected()) {
-//			gioiTinh=false;
-//		}
-//		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
-//		Boolean trangThai=null;
-//		if(trangThaiValue.equals("Đang làm việc")) {
-//			trangThai=true;
-//		}
-//		if(trangThaiValue.equals("Đã nghỉ việc")) {
-//			trangThai=false;
-//		}
-//		String chucVu =cbChucVu.getSelectedItem().toString();
-//		QuanLy nv=new QuanLy();
-//		nv.setTenNhanVien(ten);
-//		nv.setSoDienThoai(soDienThoai);
-//		nv.setNgaySinh(ngaySinh);
-//		nv.setEmail(email);
-//		nv.setDiaChi(diaChi);
-//		nv.setGioiTinh(gioiTinh);
-//		nv.setIdNhanVien(id);
-//		nv.setTrangThai(trangThai);
-//		nv.setChucVu(chucVu);
-//		if(valiDate()) {
-//			try {
-//				daoQuanLy.updateNhanVien(nv);;
-//				loadData();
-//				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
-//			}
-//		}
-//		
-//}
+	private void CapNhatNV() {
+		String id = txtID.getText();
+		String ten = txtTenNV.getText();
+		String diaChi = txtDiaChi.getText();
+		String soDienThoai = txtsdt.getText();
+		String email = txtEmail.getText();
+	
+	
+		java.util.Date date = chooserNgaySinh.getDate();
+		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
+		Boolean gioiTinh=null;
+		if(rbNam.isSelected()) {
+			gioiTinh=true;
+		}
+		if(rbNu.isSelected()) {
+			gioiTinh=false;
+		}
+		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
+		Boolean trangThai=null;
+		if(trangThaiValue.equals("Đang làm việc")) {
+			trangThai=true;
+		}
+		if(trangThaiValue.equals("Đã nghỉ việc")) {
+			trangThai=false;
+		}
+		String chucVu =cbChucVu.getSelectedItem().toString();
+		QuanLy nv=new QuanLy();
+		nv.setTen(ten);
+		nv.setSoDienThoai(soDienThoai);
+		nv.setNgaySinh(ngaySinh);
+		nv.setEmail(email);
+		nv.setDiaChi(diaChi);
+		nv.setGioiTinh(gioiTinh);
+		nv.setId(id);
+		nv.setTrangThai(trangThai);
+		nv.setChucVu(chucVu);
+		if(valiDate()) {
+			try {
+				daoQuanLy.updateNhanVien(nv);;
+				loadData();
+				JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+			}
+		}
+		
+}
+	public boolean valiDate() {
+		
+		String ten = txtTenNV.getText().trim();
+
+		
+		Boolean gioiTinh=null;
+		if(rbNam.isSelected() || rbNu.isSelected()) {
+			gioiTinh=true;
+		}
+		else {
+			gioiTinh=false;
+		}
+		java.util.Date ngaySinh = chooserNgaySinh.getDate();
+		String diaChi = txtDiaChi.getText().trim();
+		String email = txtEmail.getText().trim();
+		String soDienThoai = txtsdt.getText().trim();
+		
+	
+		if(ten.equals("") || diaChi.equals("")|| email.equals("") || soDienThoai.equals("")) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ!", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtTenNV.requestFocus();
+			
+			return false;
+		}
+		if (!(ten.length() > 0 && ten.matches("^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$"))) {
+			JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtTenNV.selectAll();
+			txtTenNV.requestFocus();
+			return false;
+		}
+//
+		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
+			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtDiaChi.requestFocus();
+			txtDiaChi.selectAll();
+			return false;
+		}
+		if (!(email.length() > 0 && email.matches("^[A-Za-z][A-Za-z0-9@.]*$"))) {
+			JOptionPane.showMessageDialog(this, "Email phải bắt đầu bằng chữ và không được chứa kí tự đặc biệt", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtEmail.requestFocus();
+			txtEmail.selectAll();
+			return false;
+		}
+		if (!(ngaySinh!=null  && (ngaySinh.before(new java.util.Date())))) {
+			JOptionPane.showMessageDialog(this, "Ngày sinh phải trước ngày hiện tại", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			chooserNgaySinh.requestFocus();
+			
+			return false;
+		}
+		if(!(soDienThoai.length()>0 && soDienThoai.matches("^(0|\\+84)[0-9]{9}$")))
+		{
+			JOptionPane.showMessageDialog(this, "Số điện thoại gồm 10 số và bắt đầu bằng 0 hoặc +84", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtsdt.requestFocus();
+			txtsdt.selectAll();
+			return false;
+		}
+		if(gioiTinh=false)
+		{
+			JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			
+			return false;
+		}
+		return true;
+	}
 	private String autoID() throws SQLException {
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -383,76 +454,7 @@ public class QuanLyView extends JPanel implements KeyListener,MouseListener,Acti
 
 
 
-	public boolean valiDate() {
 	
-		String ten = txtTenNV.getText().trim();
-		
-		Boolean gioiTinh=null;
-		if(rbNam.isSelected() || rbNu.isSelected()) {
-			gioiTinh=true;
-		}
-		else {
-			gioiTinh=false;
-		}
-		java.util.Date ngaySinh = chooserNgaySinh.getDate();
-		String diaChi = txtDiaChi.getText().trim();
-		String email = txtEmail.getText().trim();
-		String soDienThoai = txtsdt.getText().trim();
-		
-	
-		if(ten.equals("") || diaChi.equals("")|| email.equals("") || soDienThoai.equals("")) {
-			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ!", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			txtTenNV.requestFocus();
-			
-			return false;
-		}
-		if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]+( [A-Z][a-z]+)*$"))) {
-			JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			txtTenNV.selectAll();
-			txtTenNV.requestFocus();
-			return false;
-		}
-	
-		if (!(diaChi.length() > 0 && diaChi.matches("^[A-Za-z0-9/,\\s]*[A-Za-z]+[A-Za-z0-9/,\\s]*$"))) {
-			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			txtDiaChi.requestFocus();
-			txtDiaChi.selectAll();
-			return false;
-		}
-		if (!(email.length() > 0 && email.matches("^[A-Za-z][A-Za-z0-9@.]*$"))) {
-			JOptionPane.showMessageDialog(this, "Email phải bắt đầu bằng chữ và không được chứa kí tự đặc biệt", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			txtEmail.requestFocus();
-			txtEmail.selectAll();
-			return false;
-		}
-		if (!(ngaySinh!=null  && (ngaySinh.before(new java.util.Date())))) {
-			JOptionPane.showMessageDialog(this, "Ngày sinh phải trước ngày hiện tại", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			chooserNgaySinh.requestFocus();
-			
-			return false;
-		}
-		if(!(soDienThoai.length()>0 && soDienThoai.matches("^(0|\\+84)[0-9]{9}$")))
-		{
-			JOptionPane.showMessageDialog(this, "Số điện thoại gồm 10 số và bắt đầu bằng 0 hoặc +84", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			txtsdt.requestFocus();
-			txtsdt.selectAll();
-			return false;
-		}
-		if(gioiTinh=false)
-		{
-			JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-			
-			return false;
-		}
-		return true;
-	}
 	private void lamMoi() {
 		
 		try {

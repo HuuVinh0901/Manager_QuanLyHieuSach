@@ -13,6 +13,7 @@ import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
@@ -53,7 +54,7 @@ public class AdminView extends JFrame {
 
 		
 		ImageIcon iconNV = new ImageIcon(getClass().getResource("/icons/NV.png"));
-		
+		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
 		
 		MenuItem QL = new MenuItem(iconNV, "THÔNG TIN QUẢN LÝ", new ActionListener() {
 
@@ -63,10 +64,25 @@ public class AdminView extends JFrame {
 				switchToPanel(new QuanLyView());
 			}
 		});
-		
-		addMenu(QL);
+		MenuItem DangXuat = new MenuItem(iconDX, "Đăng xuất", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+
+				int hoiNhac = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đăng xuất",
+						"Cảnh báo", JOptionPane.YES_NO_OPTION);
+				if (hoiNhac == JOptionPane.YES_OPTION) {
+					DangNhapView view = new DangNhapView();
+					view.setVisible(true);
+					dispose();
+				}
+
+			}
+		});
+		addMenu(QL,DangXuat);
 		QL.setBackground(new Color(153,225,225));
-		
+		DangXuat.setBackground(new Color(153,225,225));
 	}
 	
 	private void switchToPanel(JPanel newPanel) {

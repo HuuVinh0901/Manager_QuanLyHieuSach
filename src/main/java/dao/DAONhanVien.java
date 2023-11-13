@@ -23,7 +23,33 @@ public class DAONhanVien {
 		}
 	}
 
-	
+	public NhanVien getNhanVienBySoDienThoai(String soDienThoai) {
+		NhanVien nv = new NhanVien();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM NhanVien WHERE soDienThoai = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, soDienThoai);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				nv.setId(rs.getString(1));
+				nv.setTen(rs.getString(2));
+				nv.setSoDienThoai(rs.getString(3));
+				nv.setDiaChi(rs.getString(4));
+				nv.setEmail(rs.getString(5));
+				nv.setNgaySinh(rs.getDate(6));
+				nv.setGioiTinh(rs.getBoolean(7));
+				nv.setChucVu(rs.getString(8));
+				nv.setTrangThai(rs.getBoolean(9));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return nv;
+	}
 	public NhanVien getNhanVien(String idNV) {
 		NhanVien nv = new NhanVien();
 		ConnectDB.getinstance();

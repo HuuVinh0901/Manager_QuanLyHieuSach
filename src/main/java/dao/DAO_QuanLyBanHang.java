@@ -33,6 +33,100 @@ public class DAO_QuanLyBanHang {
 		}
 	}
 	
+	public double getTongTienTheoNgay(String dayStart, String dayEnd) {
+		double tongTien = 0;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT SUM(tongTien) FROM HoaDon WHERE ngayLap BETWEEN ? AND ?";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, dayStart);
+			statement.setString(2, dayEnd);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				tongTien = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tongTien;
+	}
+	
+	public double getTongTienTheoThangNam(String thang, String nam) {
+		double soLuong = 0;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT SUM(tongTien) AS total  FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? GROUP BY MONTH(ngayLap), YEAR(ngayLap)";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, thang);
+			statement.setString(2, nam);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				soLuong = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuong;
+	}
+	
+	public int getSoHoaDonTheoThangNam(String thang, String nam) {
+		int soLuong = 0;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT COUNT(*) AS total  FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? GROUP BY MONTH(ngayLap), YEAR(ngayLap)";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, thang);
+			statement.setString(2, nam);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				soLuong = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuong;
+	}
+	
+	
+	public ArrayList<HoaDon> getHoaDonTheoNgay(String dayStart, String dayEnd) {
+		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM HoaDon WHERE ngayLap BETWEEN ? AND ?";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, dayStart);
+			statement.setString(2, dayEnd);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				HoaDon hd = new HoaDon();
+				hd.setIdDonHang(rs.getString(1));
+				hd.setNgayLap(rs.getDate(2));
+				hd.setKhachHang(new KhachHang(rs.getString(3)));
+				hd.setNhanVien(new NhanVien(rs.getString(4)));
+				hd.setTienKhachDua(rs.getDouble(5));
+				hd.setTongTien(rs.getDouble(6));
+				dsHoaDon.add(hd);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dsHoaDon;
+	}
+	
 	public ArrayList<ChiTietHoaDon> getChiTietHoaDonTheoId(String idHoaDon) {
 		ArrayList<ChiTietHoaDon> dsCTHD = new ArrayList<ChiTietHoaDon>();
 		ConnectDB.getinstance();

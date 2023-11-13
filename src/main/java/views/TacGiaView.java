@@ -163,6 +163,8 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 	    btnLamMoi.setIcon(iconLamMoi);
 	    btnXoa.setIcon(iconXoa);
 
+		
+		
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);
 //		pnChucNang.add(btnXoa);
@@ -332,7 +334,7 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 	}
 
 	private boolean validataFields() {
-		return validataField(txtTenTacGia, "^[a-zA-Z][a-zA-Z\\s]*[a-zA-Z]$",
+		return validataField(txtTenTacGia, "^[\\p{L}\\s]+$",
 				"Tên tác giả không hợp lệ. Phải bắt đầu bằng chữ cái, không chấp nhận ký tự đặc biệt.")
 				&& validateDateChooser(chooserNgaySinh);
 	}
