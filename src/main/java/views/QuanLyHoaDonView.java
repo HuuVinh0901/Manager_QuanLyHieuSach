@@ -212,8 +212,8 @@ public class QuanLyHoaDonView extends JPanel{
             NhanVien nv = daoNhanVien.getNhanVien(idNhanVien);
             KhachHang kh = daoKhachHang.getKhachHang(idKhachHang);
             HoaDon hd = daoBanHang.getHoaDonTheoID(idHoaDon);
-            JLabel lblTenNV = new JLabel("Tên nhân viên : " + nv.getTenNhanVien());
-            JLabel lblMaNV = new JLabel("Mã nhân viên : " + nv.getIdNhanVien());
+            JLabel lblTenNV = new JLabel("Tên nhân viên : " + nv.getTen());
+            JLabel lblMaNV = new JLabel("Mã nhân viên : " + nv.getId());
             JLabel lblTenKH = new JLabel("Tên khách hàng : " + kh.getTenKhachHang());
             JLabel lblMaKH = new JLabel("Mã khách hàng : " + kh.getIdKhachHang());
             JLabel lblSDT = new JLabel("Số điện thoại : " + kh.getSdt());
@@ -289,7 +289,7 @@ public class QuanLyHoaDonView extends JPanel{
 			String maHD = hd.getIdDonHang();
 			String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 			String maKH = hd.getKhachHang().getIdKhachHang();
-			String maNV = hd.getNhanVien().getIdNhanVien();
+			String maNV = hd.getNhanVien().getId();
 			String tienKhachDua = String.valueOf(hd.getTienKhachDua());
 			String tongTien = String.valueOf(hd.getTongTien());
 			modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
@@ -304,7 +304,7 @@ public class QuanLyHoaDonView extends JPanel{
 				String maHD = hd.getIdDonHang();
 				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();
-				String maNV = hd.getNhanVien().getIdNhanVien();
+				String maNV = hd.getNhanVien().getId();
 				String tienKhachDua = String.valueOf(hd.getTienKhachDua());
 				String tongTien = String.valueOf(hd.getTongTien());
 				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});

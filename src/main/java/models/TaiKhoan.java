@@ -1,25 +1,30 @@
 package models;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class TaiKhoan {
-	private NhanVien idTaiKhoan;
+	private String idTaiKhoan;
 	private String matKhau;
 	private Date ngayLap;
 	public TaiKhoan() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public TaiKhoan(NhanVien idTaiKhoan, String matKhau, Date ngayLap) {
+	public TaiKhoan(String id) {
+		super();
+		// TODO Auto-generated constructor stub
+		this.idTaiKhoan=id;
+	}
+	public TaiKhoan(String idTaiKhoan, String matKhau, Date ngayLap) {
 		super();
 		this.idTaiKhoan = idTaiKhoan;
 		this.matKhau = matKhau;
 		this.ngayLap = ngayLap;
 	}
-	public NhanVien getIdTaiKhoan() {
+	public String getIdTaiKhoan() {
 		return idTaiKhoan;
 	}
-	public void setIdTaiKhoan(NhanVien idTaiKhoan) {
+	public void setIdTaiKhoan(String idTaiKhoan) {
 		this.idTaiKhoan = idTaiKhoan;
 	}
 	public String getMatKhau() {
@@ -34,8 +39,5 @@ public class TaiKhoan {
 	public void setNgayLap(Date ngayLap) {
 		this.ngayLap = ngayLap;
 	}
-	@Override
-	public String toString() {
-		return "TaiKhoan [idTaiKhoan=" + idTaiKhoan + ", matKhau=" + matKhau + ", ngayLap=" + ngayLap + "]";
-	}
+	
 }

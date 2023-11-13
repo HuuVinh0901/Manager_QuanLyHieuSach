@@ -14,10 +14,10 @@ public class QuanLy extends NhanLuc{
 		super(id, ten, soDienThoai, diaChi, email, ngaySinh, gioiTinh, chucVu, trangThai);
 		// TODO Auto-generated constructor stub
 	}
-
 	public QuanLy(String id) {
-		super(id);
+		super();
 		// TODO Auto-generated constructor stub
 	}
+	
 	
 }

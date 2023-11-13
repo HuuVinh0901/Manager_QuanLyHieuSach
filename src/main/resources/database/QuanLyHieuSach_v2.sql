@@ -15,14 +15,30 @@ CREATE TABLE NhanVien (
     gioiTinh BIT,
     chucVu NVARCHAR(50),
     trangThai BIT DEFAULT 1, -- '1' cho 'Đang làm việc', '0' cho 'Đã nghỉ việc'
-    
+   
 )
+CREATE TABLE QuanLy (
+    idQuanLy NVARCHAR(14) NOT NULL PRIMARY KEY,
+    tenNhanVien NVARCHAR(50) NOT NULL,
+    soDienThoai NVARCHAR(10),
+    diaChi NVARCHAR(50),
+    email NVARCHAR(50),
+    ngaySinh DATE CHECK (ngaySinh < GETDATE()), 
+    gioiTinh BIT,
+    chucVu NVARCHAR(50),
+    trangThai BIT DEFAULT 1, -- '1' cho 'Đang làm việc', '0' cho 'Đã nghỉ việc'
+   
+)
+ALTER TABLE NhanVien
+ADD FOREIGN KEY (idNhanVien) REFERENCES TaiKhoan(idTaiKhoan);
+ALTER TABLE QuanLy
+ADD FOREIGN KEY (idQuanLy) REFERENCES TaiKhoan(idTaiKhoan);
 go
 CREATE TABLE TaiKhoan (
     idTaiKhoan NVARCHAR(14) NOT NULL PRIMARY KEY,
     matKhau NVARCHAR(20) NOT NULL, 
     ngayLap DATE DEFAULT GETDATE(), 
-    FOREIGN KEY (idTaiKhoan) REFERENCES NhanVien(idNhanVien) 
+    
 )
 go
 CREATE TABLE KhachHang(
@@ -196,5 +212,5 @@ select *from TheLoai
 go
 
 SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaKhuyenMai FROM Sach s JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap JOIN TacGia tg ON tg.idTacGia = s.tacGia JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
-
+insert TaiKhoan values('ADMIN','1111','2023-11-13')
 

@@ -8,8 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
-import models.HoaDon;
-import models.KhachHang;
+
 import models.NhanVien;
 
 public class DAONhanVien {
@@ -36,8 +35,8 @@ public class DAONhanVien {
 			statement.setString(1, idNV);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
-				nv.setIdNhanVien(rs.getString(1));
-				nv.setTenNhanVien(rs.getString(2));
+				nv.setId(rs.getString(1));
+				nv.setTen(rs.getString(2));
 				nv.setSoDienThoai(rs.getString(3));
 				nv.setDiaChi(rs.getString(4));
 				nv.setEmail(rs.getString(5));
@@ -60,8 +59,8 @@ public class DAONhanVien {
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 
-			ps.setString(1, nv.getIdNhanVien());
-			ps.setString(2, nv.getTenNhanVien());
+			ps.setString(1, nv.getId());
+			ps.setString(2, nv.getTen());
 			ps.setString(3, nv.getSoDienThoai());
 			ps.setString(4, nv.getDiaChi());
 			ps.setString(5, nv.getEmail());
@@ -87,8 +86,8 @@ public class DAONhanVien {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				NhanVien nv = new NhanVien();
-				nv.setIdNhanVien(rs.getString(1));
-				nv.setTenNhanVien(rs.getString(2));
+				nv.setId(rs.getString(1));
+				nv.setTen(rs.getString(2));
 				nv.setSoDienThoai(rs.getString(3));
 				nv.setDiaChi(rs.getString(4));
 				nv.setEmail(rs.getString(5));
@@ -111,7 +110,7 @@ public class DAONhanVien {
 		String sql = "update NhanVien set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
 		try {
 			pst = con.prepareStatement(sql);
-			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(1, nv.getTen());
 			pst.setString(2, nv.getSoDienThoai());
 			pst.setString(3, nv.getDiaChi());
 			pst.setString(4, nv.getEmail());
@@ -119,7 +118,7 @@ public class DAONhanVien {
 			pst.setBoolean(6, nv.isGioiTinh());
 			pst.setString(7,nv.getChucVu());
 			pst.setBoolean(6, nv.isTrangThai());
-			pst.setString(7, nv.getIdNhanVien());
+			pst.setString(7, nv.getId());
 			pst.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -151,7 +150,7 @@ public class DAONhanVien {
 		String sql = "update NhanVien set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ?, ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
 		try {
 			pst = con.prepareStatement(sql);
-			pst.setString(1, nv.getTenNhanVien());
+			pst.setString(1, nv.getTen());
 			pst.setString(2, nv.getSoDienThoai());
 			pst.setString(3, nv.getDiaChi());
 			pst.setString(4, nv.getEmail());
@@ -159,7 +158,7 @@ public class DAONhanVien {
 			pst.setBoolean(6, nv.isGioiTinh());
 			pst.setString(7,nv.getChucVu());
 			pst.setBoolean(8, nv.isTrangThai());
-			pst.setString(9, nv.getIdNhanVien());
+			pst.setString(9, nv.getId());
 			pst.executeUpdate();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -179,8 +178,8 @@ public class DAONhanVien {
 			ResultSet rsMa = stm.executeQuery(sqlMa);
 			while (rsMa.next()) {
 				NhanVien nv = new NhanVien();
-				nv.setIdNhanVien(rsMa.getString(1));
-				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setId(rsMa.getString(1));
+				nv.setTen(rsMa.getString(2));
 				nv.setSoDienThoai(rsMa.getString(3));
 				nv.setDiaChi(rsMa.getString(4));
 				nv.setEmail(rsMa.getString(5));
@@ -206,8 +205,8 @@ public class DAONhanVien {
 			ResultSet rsMa = stm.executeQuery(sqlMa);
 			while (rsMa.next()) {
 				NhanVien nv = new NhanVien();
-				nv.setIdNhanVien(rsMa.getString(1));
-				nv.setTenNhanVien(rsMa.getString(2));
+				nv.setId(rsMa.getString(1));
+				nv.setTen(rsMa.getString(2));
 				nv.setSoDienThoai(rsMa.getString(3));
 				nv.setDiaChi(rsMa.getString(4));
 				nv.setEmail(rsMa.getString(5));
