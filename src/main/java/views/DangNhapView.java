@@ -120,7 +120,10 @@ public class DangNhapView extends JFrame implements ActionListener{
 		btnThoat.setFont(ftBtn);
 		btnThoat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		add(b,BorderLayout.NORTH);
-
+		 //
+	    txtTaiKhoan.setText("NV202311130001");
+	    txtMatKhau.setText("1111");
+	    //
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
 		try {
