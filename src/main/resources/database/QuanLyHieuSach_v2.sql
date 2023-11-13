@@ -38,7 +38,6 @@ CREATE TABLE TaiKhoan (
     idTaiKhoan NVARCHAR(14) NOT NULL PRIMARY KEY,
     matKhau NVARCHAR(20) NOT NULL, 
     ngayLap DATE DEFAULT GETDATE(), 
-    
 )
 go
 CREATE TABLE KhachHang(
@@ -175,42 +174,10 @@ CREATE TABLE ApDungKhuyenMaiSach (
 	FOREIGN KEY (idS) REFERENCES Sach(idSanPham),
 	
 );
-select *from KhuyenMai
-select *from ApDungKhuyenMai
-select *from NhanVien
-select *from TaiKhoan
-select *from KhachHang
+
 go
 
 use master
 drop database QLHieuSach
-
-
-select *from SanPham
-select *from NhaCungCap
-select *from LoaiSanPham
-select *from TacGia
-select *from TheLoai
-select *from Sach
-select *from NhanVien
-select *from TaiKhoan
-select *from KhachHang
-
-delete  from SanPham 
-delete   from SanPham 
-delete  from NhaCungCap
-delete  from LoaiSanPham
-delete from TheLoai
-delete from TacGia
-
-select *from Sach
-select *from LoaiSanPham
-select *from NhaCungCap
-select *from TacGia
-select *from TheLoai
-
-go
-
-SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaKhuyenMai FROM Sach s JOIN LoaiSanPham lsp ON lsp.idLoaiSanPham = s.loaiSanPham JOIN NhaCungCap ncc ON ncc.idNhaCungCap = s.nhaCungCap JOIN TacGia tg ON tg.idTacGia = s.tacGia JOIN TheLoai tl ON tl.idTheLoai = s.theLoai
 insert TaiKhoan values('ADMIN','1111','2023-11-13')
 
