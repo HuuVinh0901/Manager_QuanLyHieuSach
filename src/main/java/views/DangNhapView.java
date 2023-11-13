@@ -51,7 +51,7 @@ public class DangNhapView extends JFrame implements ActionListener {
 	private JCheckBox rememberPassword;
 	private DAOTaiKhoan daoTaiKhoan;
 
-	public DangNhapView() {
+	public DangNhapView()  {
 		daoTaiKhoan = new DAOTaiKhoan();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
@@ -91,6 +91,7 @@ public class DangNhapView extends JFrame implements ActionListener {
 		b2.add(txtTaiKhoan = new JTextField());
 		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 		txtTaiKhoan.setToolTipText("Nhập tài khoản");
+		txtTaiKhoan.setText("QL202311130001");
 		b2.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -101,6 +102,7 @@ public class DangNhapView extends JFrame implements ActionListener {
 		b3.add(txtMatKhau = new JPasswordField());
 		txtMatKhau.setPreferredSize(new Dimension(0, 30));
 		txtMatKhau.setToolTipText("Nhập mật khẩu");
+		txtMatKhau.setText("1111");
 		b3.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -147,11 +149,13 @@ public class DangNhapView extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo", JOptionPane.WARNING_MESSAGE);
 		} else if (!tk.getMatKhau().equalsIgnoreCase(mk)) {
 			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng");
-		}else if(tk.getMatKhau().equals("1111")) {
-			SetPassWordView spw = new SetPassWordView(tk);
-			spw.setVisible(true);
-			this.dispose();
-		} else {
+		}
+//		else if(tk.getMatKhau().equals("1111")) {
+//			SetPassWordView spw = new SetPassWordView(tk);
+//			spw.setVisible(true);
+//			this.dispose();
+//		} 
+		else {
 			String PhanLoaiTK = tk.getIdTaiKhoan().substring(0, 2);
 			if (PhanLoaiTK.equals("QL")) {
 				TrangChuQuanTriView QTV = new TrangChuQuanTriView();

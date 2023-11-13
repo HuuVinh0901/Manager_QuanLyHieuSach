@@ -81,6 +81,7 @@ public class QuanLySachView extends JPanel
 	private JLabel lblTuKhoa;
 	private JTextField txtTuKhoa;
 	private JButton btnTimKiem;
+	private JButton btnXuatExCel;
 	private JButton btnXemTatCa;
 	private JPanel pnChucNangCha;
 	private JPanel pnChucNangTimKiem;
@@ -375,7 +376,8 @@ public class QuanLySachView extends JPanel
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
-
+		btnXuatExCel = new JButton("XUẤT EXCEL");
+		
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
@@ -388,8 +390,8 @@ public class QuanLySachView extends JPanel
 		
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
-		pnChucNang.add(btnXoaSP);
 		pnChucNang.add(btnLamMoi);
+		pnChucNang.add(btnXuatExCel); 
 
 		pnChucNangTimKiem = new JPanel(new GridLayout(1, 8, 10, 10));
 		lblLoaiSanPhamSearch = new JLabel("Loại sản phẩm:");
@@ -450,6 +452,7 @@ public class QuanLySachView extends JPanel
 		btnTimKiem.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
 		btnXoaSP.addActionListener(this);
+		btnXuatExCel.addActionListener(this);
 		table.addMouseListener(this);
 		table.getSelectionModel();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -548,7 +551,15 @@ public class QuanLySachView extends JPanel
 		} else if (o.equals(btnXemTatCa)) {
 			lamMoi();
 			loadData();
+		}else if(o.equals(btnXuatExCel)) {
+			String filePath = "F:\\TKMT_PreMidTest\\Sach.xlsx";
+			ghiFileExcel(filePath);
 		}
+	}
+
+	private void ghiFileExcel(String filePath) {
+		
+		
 	}
 
 	private void xoaSP() {
