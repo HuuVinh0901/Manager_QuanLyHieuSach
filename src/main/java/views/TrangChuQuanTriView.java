@@ -233,7 +233,6 @@ public class TrangChuQuanTriView extends JFrame {
 		JPanel pnTen=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel pnID=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
 		panelHeader.setBackground(new Color(225,223,223));
 		panelHeader.setPreferredSize(new Dimension(561, 50));
 		pnID.add(lbID);

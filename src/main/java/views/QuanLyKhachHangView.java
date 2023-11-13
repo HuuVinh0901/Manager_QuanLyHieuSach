@@ -77,6 +77,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JLabel lbNgaySinh;
 	private JLabel lbGioiTinh;
 	private JLabel lbTimKiem;
+	private JTabbedPane tabbedPane;
 	private JRadioButton rbNam;
 	private JRadioButton rbNu;
 	private JButton btnThemKH;
@@ -217,6 +218,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		btnXemTatCa.addActionListener(this);
 		tableKH.addMouseListener(this);
 		txtTimKiem.addKeyListener(this);
+		tableKH.addKeyListener(this);
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -362,7 +364,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			
 			return false;
 		}
-		if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]+( [A-Z][a-z]+)*$"))) {
+		if (!(ten.length() > 0 && ten.matches("^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$"))) {
 			JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtTenKH.selectAll();
@@ -370,7 +372,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			return false;
 		}
 //
-		if (!(diaChi.length() > 0 && diaChi.matches("^[A-Za-z0-9/,\\s]*[A-Za-z]+[A-Za-z0-9/,\\s]*$"))) {
+		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
 			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtDiaChi.requestFocus();
@@ -501,7 +503,26 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			Object o = e.getSource();
+//			if (o == txtTenKH || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
+//				ThemKH();
+//			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			lamMoi();
+		} 
+		else if (tableKH.getSelectedRow() != -1) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) 
+			{
+				lamMoi();
+				loadData();
+			}
+
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			tabbedPane.setSelectedIndex(1);
+		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -513,8 +534,19 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 			tableKH.setRowSorter(tr);
 			tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
-	}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_F5) 
+		{
+			lamMoi();
+			loadData();
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_F10) 
+		{
+			lamMoi();
+			loadData();
+		}
 		});
+		
 	}
 }
 
