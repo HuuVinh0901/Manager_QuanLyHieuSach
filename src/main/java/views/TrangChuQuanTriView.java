@@ -3,6 +3,8 @@ package views;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,13 +17,19 @@ import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+
+import javax.swing.JLabel;
+
 import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import connection.ConnectDB;
 import controllers.MenuItem;
+import models.QuanLy;
 
 public class TrangChuQuanTriView extends JFrame {
 	private JScrollPane jScrollPane1;
@@ -30,8 +38,11 @@ public class TrangChuQuanTriView extends JFrame {
 	private JPanel panelHeader;
 	private JPanel panelMenu;
 	private JPanel paneCu;
-
-	public TrangChuQuanTriView() {
+	private JLabel lbID;
+	private JLabel lbTen;
+	private QuanLy headerQL;
+	public TrangChuQuanTriView(QuanLy ql) {
+		this.headerQL=ql;
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -49,7 +60,8 @@ public class TrangChuQuanTriView extends JFrame {
 		panelBody.add(paneCu);
 		execute();
 
-		menus.setBackground(new Color(153, 225, 225));
+
+		menus.setBackground(new Color(153, 255, 255));
 		addWindowListener(new WindowAdapter() {
 	        @Override
 	        public void windowClosing(WindowEvent e) {
@@ -61,6 +73,7 @@ public class TrangChuQuanTriView extends JFrame {
 	            }
 	        }
 	    });
+
 	}
 
 	private void execute() {
@@ -74,6 +87,9 @@ public class TrangChuQuanTriView extends JFrame {
 		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
 		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
+
+		ImageIcon iconBH = new ImageIcon(getClass().getResource("/icons/banhang.png"));
+
 
 		MenuItem subQLLoaiSanPham = new MenuItem(iconSubMenu, "Loại sản phẩm", new ActionListener() {
 
@@ -109,6 +125,8 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+
 				int hoiNhac = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đăng xuất",
 						"Cảnh báo", JOptionPane.YES_NO_OPTION);
 				if (hoiNhac == JOptionPane.YES_OPTION) {
@@ -116,6 +134,7 @@ public class TrangChuQuanTriView extends JFrame {
 					view.setVisible(true);
 					dispose();
 				}
+
 			}
 		});
 		MenuItem QLSP = new MenuItem(iconSP, "Sản phẩm", new ActionListener() {
@@ -144,6 +163,16 @@ public class TrangChuQuanTriView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				switchToPanel(new QuanLyKhachHangView());
+				
+			}
+		});
+		MenuItem QLBH = new MenuItem(iconBH, "Quản lý bán hàng", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				switchToPanel(new QuanLyBanHangView());
+				
 			}
 		});
 		MenuItem KM = new MenuItem(iconKM, "Chương trình khuyến mãi", new ActionListener() {
@@ -179,39 +208,33 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				switchToPanel(new DoiMatKhau());
-			}
-		});
+//		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				// TODO Auto-generated method stub
+//				switchToPanel(new SetPassWordView());
+//			}
+//		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subCaiDatTT, subGiaoDien, subCaiDatDMK,
-				subCaiDatHDSD);
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null,subGiaoDien
+				);
+
+		addMenu(QLSP, QLBH,QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
+		QLSP.setBackground(new Color(153,255,255));
+		QLNV.setBackground(new Color(153,255,255));
+		QLKH.setBackground(new Color(153,255,255));
+		KM.setBackground(new Color(153,255,255));
+		QLHD.setBackground(new Color(153,255,255));
+		TKDT.setBackground(new Color(153,255,255));
+		CaiDat.setBackground(new Color(153,255,255));
+		DangXuat.setBackground(new Color(153,255,255));
+		QLBH.setBackground(new Color(153,255,255));
+
 
 		
-		addMenu(QLSP, QLNV, QLKH, KM, QLHD, TKDT, CaiDat, DangXuat);
-//		addMenu(QLSP, QLNV, QLKH, KM, QLHD, CaiDat, DangXuat);
-		QLSP.setBackground(new Color(153, 225, 225));
-		QLNV.setBackground(new Color(153, 225, 225));
-		QLKH.setBackground(new Color(153, 225, 225));
-		KM.setBackground(new Color(153, 225, 225));
-		QLHD.setBackground(new Color(153, 225, 225));
-		TKDT.setBackground(new Color(153, 225, 225));
-		CaiDat.setBackground(new Color(153, 225, 225));
-		DangXuat.setBackground(new Color(153, 225, 225));
 
-		addMenu(QLSP, QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
-		QLSP.setBackground(new Color(153,225,225));
-		QLNV.setBackground(new Color(153,225,225));
-		QLKH.setBackground(new Color(153,225,225));
-		KM.setBackground(new Color(153,225,225));
-		QLHD.setBackground(new Color(153,225,225));
-		TKDT.setBackground(new Color(153,225,225));
-		CaiDat.setBackground(new Color(153,225,225));
-		DangXuat.setBackground(new Color(153,225,225));
+
 
 	}
 
@@ -222,6 +245,7 @@ public class TrangChuQuanTriView extends JFrame {
 		panelBody.repaint();
 		panelBody.revalidate();
 	}
+
 
 	private void addMenu(MenuItem... menu) {
 		for (int i = 0; i < menu.length; i++) {
@@ -236,26 +260,31 @@ public class TrangChuQuanTriView extends JFrame {
 	}
 
 	private void initComponents() {
-//		panelHeader = new JPanel();
+		panelHeader = new JPanel(new BorderLayout());
 		panelMenu = new JPanel();
 		jScrollPane1 = new JScrollPane();
 		menus = new JPanel();
 		panelBody = new JPanel();
-
+		lbID=new JLabel(": "+headerQL.getId());
+		lbID.setFont(new Font("Arial", Font.ITALIC, 15));
+		lbTen=new JLabel(": "+headerQL.getTen());
+		lbTen.setFont(new Font("Arial", Font.ITALIC, 15));
+		JPanel pnTen=new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel pnID=new JPanel(new FlowLayout(FlowLayout.LEFT));
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		panelHeader.setBackground(new Color(225,223,223));
+		panelHeader.setPreferredSize(new Dimension(561, 50));
+		pnID.add(lbID);
+		pnTen.add(lbTen);
+		ImageIcon iconid = new ImageIcon(getClass().getResource("/icons/id.png"));
+		ImageIcon iconTen = new ImageIcon(getClass().getResource("/icons/Ten.png"));
+		lbID.setIcon(iconid);
+		lbTen.setIcon(iconTen);
+		panelHeader.add(pnID,BorderLayout.NORTH);
+		panelHeader.add(pnTen,BorderLayout.CENTER);
 
-//		panelHeader.setBackground(new Color(225,223,223));
-//		panelHeader.setPreferredSize(new Dimension(561, 50));
-
-//		GroupLayout panelHeaderLayout = new GroupLayout(panelHeader);
-//		panelHeader.setLayout(panelHeaderLayout);
-//		panelHeaderLayout.setHorizontalGroup(
-//				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 855, Short.MAX_VALUE));
-//		panelHeaderLayout.setVerticalGroup(
-//				panelHeaderLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGap(0, 50, Short.MAX_VALUE));
-//
-//		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
-
+		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
+		
 		jScrollPane1.setBorder(null);
 
 		menus.setLayout(new BoxLayout(menus, BoxLayout.Y_AXIS));

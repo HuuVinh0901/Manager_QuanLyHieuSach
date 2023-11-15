@@ -26,13 +26,13 @@ public class DAOQuanLy {
 	}
 
 	
-	public QuanLy getNhanVien(String idNV) {
+	public QuanLy getQuanLy(String idNV) {
 		QuanLy nv = new QuanLy();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT * FROM QuanLy WHERE idNhanVien = ?";
+			String sql = "SELECT * FROM QuanLy WHERE idQuanLy = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, idNV);
 			ResultSet rs = statement.executeQuery();
@@ -109,7 +109,7 @@ public class DAOQuanLy {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
 		Connection con = ConnectDB.getConnection();
-		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
+		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idQuanLy = ?";
 		try {
 			pst = con.prepareStatement(sql);
 			pst.setString(1, nv.getTen());

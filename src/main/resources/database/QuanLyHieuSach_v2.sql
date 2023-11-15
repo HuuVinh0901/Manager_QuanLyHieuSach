@@ -176,6 +176,88 @@ CREATE TABLE ApDungKhuyenMaiSach (
 );
 
 go
+--Quản lý
+CREATE TRIGGER trg_GenerateQuanLyID
+ON QuanLy
+INSTEAD OF INSERT
+AS
+BEGIN
+    DECLARE @NewID NVARCHAR(15);
+    DECLARE @MaxID NVARCHAR(15);
+
+    SELECT @MaxID = MAX(idQuanLy) FROM QuanLy;
+
+    IF @MaxID IS NULL
+        SET @NewID = 'QL' + FORMAT(GETDATE(), 'yyyyMMdd') + '0001';
+    ELSE
+    BEGIN
+        DECLARE @LastCounter INT;
+        SELECT @LastCounter = CAST(RIGHT(@MaxID, 4) AS INT);
+        SET @LastCounter = @LastCounter + 1;
+
+        SET @NewID = 'QL' + FORMAT(GETDATE(), 'yyyyMMdd') + RIGHT('0000' + CAST(@LastCounter AS NVARCHAR(4)), 4);
+    END
+
+    
+    INSERT INTO QuanLy(idQuanLy,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai)
+    SELECT @NewID,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai
+    FROM INSERTED
+END;
+
+--Nhân viên
+CREATE TRIGGER trg_GenerateNhanVienID
+ON NhanVien
+INSTEAD OF INSERT
+AS
+BEGIN
+    DECLARE @NewID NVARCHAR(15);
+    DECLARE @MaxID NVARCHAR(15);
+
+    SELECT @MaxID = MAX(idNhanVien) FROM NhanVien;
+
+    IF @MaxID IS NULL
+        SET @NewID = 'NV' + FORMAT(GETDATE(), 'yyyyMMdd') + '0001';
+    ELSE
+    BEGIN
+        DECLARE @LastCounter INT;
+        SELECT @LastCounter = CAST(RIGHT(@MaxID, 4) AS INT);
+        SET @LastCounter = @LastCounter + 1;
+
+        SET @NewID = 'NV' + FORMAT(GETDATE(), 'yyyyMMdd') + RIGHT('0000' + CAST(@LastCounter AS NVARCHAR(4)), 4);
+    END
+
+    
+    INSERT INTO NhanVien(idNhanVien,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai)
+    SELECT @NewID,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai
+    FROM INSERTED
+END;
+--KhachHang
+CREATE TRIGGER trg_GenerateKhachHangID
+ON KhachHang
+INSTEAD OF INSERT
+AS
+BEGIN
+    DECLARE @NewID NVARCHAR(15);
+    DECLARE @MaxID NVARCHAR(15);
+
+    SELECT @MaxID = MAX(idKhachHang) FROM KhachHang;
+
+    IF @MaxID IS NULL
+        SET @NewID = 'KH' + FORMAT(GETDATE(), 'yyyyMMdd') + '0001';
+    ELSE
+    BEGIN
+        DECLARE @LastCounter INT;
+        SELECT @LastCounter = CAST(RIGHT(@MaxID, 4) AS INT);
+        SET @LastCounter = @LastCounter + 1;
+
+        SET @NewID = 'KH' + FORMAT(GETDATE(), 'yyyyMMdd') + RIGHT('0000' + CAST(@LastCounter AS NVARCHAR(4)), 4);
+    END
+
+    
+    INSERT INTO KhachHang(idKhachHang,tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh)
+    SELECT @NewID,tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh
+    FROM INSERTED
+END;
 --loai san pham 
 CREATE TRIGGER trg_GenerateLoaiSanPhamID
 ON LoaiSanPham

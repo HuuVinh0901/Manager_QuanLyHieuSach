@@ -141,14 +141,19 @@ public class TheLoaiView extends JPanel implements ActionListener, KeyListener, 
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
-		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+
+		
 		btnThem.setIcon(iconThem);
 		btnCapNhat.setIcon(iconCapNhat);
 		btnLamMoi.setIcon(iconLamMoi);
+
 		pnThongTinChucNang.add(btnThem);
+		btnThem.setIcon(iconThem);
 		pnThongTinChucNang.add(btnCapNhat);
+		btnCapNhat.setIcon(iconCapNhat);
 //		pnThongTinChucNang.add(btnXoa);
 		pnThongTinChucNang.add(btnLamMoi);
+		btnLamMoi.setIcon(iconLamMoi);
 		pnThongTinChucNang.setBorder(new EmptyBorder(btnInsert));
 
 		pnSounth = new JPanel(new BorderLayout());

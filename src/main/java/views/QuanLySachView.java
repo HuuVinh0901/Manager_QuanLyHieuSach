@@ -383,13 +383,21 @@ public class QuanLySachView extends JPanel
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
+
 		btnXuatExCel = new JButton("XUẤT EXCEL");
 		btnXuatExCel.setEnabled(false);
 		
+
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+
+		btnCapNhatSP.setIcon(iconCapNhat);
+	    btnThemSP.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoaSP.setIcon(iconXoa);
+
 //		ImageIcon iconExcel = new ImageIcon(getClass().getResource("/icons/Excel.png"));
 
 		btnThemSP.setIcon(iconThem);
@@ -397,6 +405,7 @@ public class QuanLySachView extends JPanel
 		btnCapNhatSP.setIcon(iconCapNhat);
 		btnXoaSP.setIcon(iconXoa);
 //		btnXuatExCel.setIcon(iconExcel);
+
 
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);

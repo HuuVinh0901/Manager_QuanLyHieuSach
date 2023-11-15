@@ -35,7 +35,11 @@ import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
 
 import connection.ConnectDB;
+import dao.DAONhanVien;
+import dao.DAOQuanLy;
 import dao.DAOTaiKhoan;
+import models.NhanVien;
+import models.QuanLy;
 import models.TaiKhoan;
 
 public class DangNhapView extends JFrame implements ActionListener , MouseListener, KeyListener{
@@ -53,9 +57,12 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 	private JLabel lblTieuDe;
 	private JCheckBox rememberPassword;
 	private DAOTaiKhoan daoTaiKhoan;
-
+	private DAONhanVien daoNV;
+	private DAOQuanLy daoQL;
 	public DangNhapView()  {
 		daoTaiKhoan = new DAOTaiKhoan();
+		daoNV=new DAONhanVien();
+		daoQL=new DAOQuanLy();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setTitle("Đăng Nhập Quản Lý Hiệu Sách");
@@ -94,7 +101,7 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 		b2.add(txtTaiKhoan = new JTextField());
 		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 		txtTaiKhoan.setToolTipText("Nhập tài khoản");
-		txtTaiKhoan.setText("QL202311130001");
+		txtTaiKhoan.setText("");
 		b2.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -105,7 +112,7 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 		b3.add(txtMatKhau = new JPasswordField());
 		txtMatKhau.setPreferredSize(new Dimension(0, 30));
 		txtMatKhau.setToolTipText("Nhập mật khẩu");
-		txtMatKhau.setText("1111");
+		txtMatKhau.setText("");
 		b3.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -126,8 +133,7 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 
 
 		add(b,BorderLayout.NORTH);
-//	    txtTaiKhoan.setText("NV202311130001");
-//	    txtMatKhau.setText("1111");
+
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
 		try {
@@ -150,37 +156,36 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 	}
 
 	public void Login() {
-		String maTK = txtTaiKhoan.getText().toString().trim();
-		String mk = txtMatKhau.getText().toString().trim();
+		String maTK=txtTaiKhoan.getText().toString().trim();
+		String mk=txtMatKhau.getText().toString().trim();
 		TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(maTK);
-		if (tk.getIdTaiKhoan() == null) {
-			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo", JOptionPane.WARNING_MESSAGE);
-		} else if (!tk.getMatKhau().equalsIgnoreCase(mk)) {
-			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng");
-		}
-//		else if(tk.getMatKhau().equals("1111")) {
-//			SetPassWordView spw = new SetPassWordView(tk);
-//			spw.setVisible(true);
-//			this.dispose();
-//		} 
-		else {
-			String PhanLoaiTK = tk.getIdTaiKhoan().substring(0, 2);
-			if (PhanLoaiTK.equals("QL")) {
-				TrangChuQuanTriView QTV = new TrangChuQuanTriView();
+		if(tk.getIdTaiKhoan()== null) {
+			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+		}else if(!tk.getMatKhau().equalsIgnoreCase(mk)) {
+			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+		}else {
+			String PhanLoaiTK=tk.getIdTaiKhoan().substring(0,2);
+			if(PhanLoaiTK.equals("QL")){
+				QuanLy ql=daoQL.getQuanLy(tk.getIdTaiKhoan());
+				TrangChuQuanTriView QTV = new TrangChuQuanTriView(ql);
 				QTV.setVisible(true);
 				this.setVisible(false);
 			}
-			if (PhanLoaiTK.equals("NV")) {
-				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView();
+			if(PhanLoaiTK.equals("NV")){
+				NhanVien nv=daoNV.getNhanVien(tk.getIdTaiKhoan());
+				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView(nv);
 				QLBH.setVisible(true);
 				this.setVisible(false);
 			}
-			if (PhanLoaiTK.equals("AD")) {
+			if(PhanLoaiTK.equals("AD")){
 				AdminView Admin = new AdminView();
 				Admin.setVisible(true);
 				this.setVisible(false);
 			}
-		}
+			}
+			
 	}
 
 	@Override
