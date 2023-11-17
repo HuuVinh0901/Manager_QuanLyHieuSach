@@ -29,6 +29,9 @@ import javax.swing.WindowConstants;
 
 import connection.ConnectDB;
 import controllers.MenuItem;
+import dao.DAONhanVien;
+import models.NhanLuc;
+import models.NhanVien;
 import models.QuanLy;
 
 public class TrangChuQuanTriView extends JFrame {
@@ -41,8 +44,11 @@ public class TrangChuQuanTriView extends JFrame {
 	private JLabel lbID;
 	private JLabel lbTen;
 	private QuanLy headerQL;
+	private NhanVien headerNV;
+	private DAONhanVien daoNV;
 	public TrangChuQuanTriView(QuanLy ql) {
 		this.headerQL=ql;
+		
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -153,7 +159,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 				switchToPanel(new QuanLyNhanVienView());
 
-				switchToPanel(new QuanLyNhanVienView());
+				
 
 			}
 		});
@@ -166,15 +172,7 @@ public class TrangChuQuanTriView extends JFrame {
 				
 			}
 		});
-		MenuItem QLBH = new MenuItem(iconBH, "Quản lý bán hàng", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				switchToPanel(new QuanLyBanHangView());
-				
-			}
-		});
+		
 		MenuItem KM = new MenuItem(iconKM, "Chương trình khuyến mãi", new ActionListener() {
 
 			@Override
@@ -220,7 +218,7 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null,subGiaoDien
 				);
 
-		addMenu(QLSP, QLBH,QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
+		addMenu(QLSP,QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
 		QLSP.setBackground(new Color(153,255,255));
 		QLNV.setBackground(new Color(153,255,255));
 		QLKH.setBackground(new Color(153,255,255));
@@ -229,7 +227,7 @@ public class TrangChuQuanTriView extends JFrame {
 		TKDT.setBackground(new Color(153,255,255));
 		CaiDat.setBackground(new Color(153,255,255));
 		DangXuat.setBackground(new Color(153,255,255));
-		QLBH.setBackground(new Color(153,255,255));
+//		QLBH.setBackground(new Color(153,255,255));
 
 
 		
