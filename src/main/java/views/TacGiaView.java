@@ -154,15 +154,16 @@ public class TacGiaView extends JPanel implements ActionListener, MouseListener,
 		btnThem = new JButton("Thêm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnXoa = new JButton("Xóa");
-
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-		
-		btnThem.setIcon(iconThem);
-		btnLamMoi.setIcon(iconLamMoi);
 		btnCapNhat.setIcon(iconCapNhat);
+	    btnThem.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoa.setIcon(iconXoa);
+
+		
 		
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);

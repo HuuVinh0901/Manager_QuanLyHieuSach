@@ -115,6 +115,14 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 		btnCapNhat = new JButton("Cập nhật");
 		btnLamMoi = new JButton("Làm mới");
 		btnXoa = new JButton("Xóa");
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		btnCapNhat.setIcon(iconCapNhat);
+	    btnThem.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoa.setIcon(iconXoa);
 //		btnThem.setBackground(new Color(208, 225, 253));
 //		btnThem.setForeground(new Color(26, 102, 227));
 
@@ -127,14 +135,7 @@ public class LoaiSanPhamView extends JPanel implements ActionListener, KeyListen
 //		btnXoa.setBackground(new Color(208, 225, 253));
 //		btnXoa.setForeground(new Color(26, 102, 227));
 
-		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
-		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
-		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
-		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-
-		btnThem.setIcon(iconThem);
-		btnCapNhat.setIcon(iconCapNhat);
-		btnLamMoi.setIcon(iconLamMoi);
+		
 
 		pnChucNang.add(btnThem);
 		pnChucNang.add(btnCapNhat);

@@ -67,11 +67,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JTextField txtsdt;
 	private JTextField txtEmail;
 	private JTextField txtDiaChi;
-	
 	private JTextField txtId;
-	
-	
-	
 	private JTextField txtTimKiem;
 	private JLabel lbTenKH;
 	private JLabel lbsdt;
@@ -80,15 +76,10 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JLabel lbDiaChi;
 	private JLabel lbNgaySinh;
 	private JLabel lbGioiTinh;
-	
-	
 	private JLabel lbTimKiem;
+	private JTabbedPane tabbedPane;
 	private JRadioButton rbNam;
 	private JRadioButton rbNu;
-	
-	
-	
-	
 	private JButton btnThemKH;
 	private JButton btnCapNhatKH;
 	private JButton btnXoaKH;
@@ -105,6 +96,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		daoKhachHang=new DAOKhachHang();
 		KhachHang kh=new KhachHang();
 		setLayout(new BorderLayout());
+		this.setBackground(new Color(102,255,255));
 ////		Tiêu đề
 		JPanel pnNouth=new JPanel(new BorderLayout());
 		JPanel pnSounth=new JPanel(new BorderLayout());
@@ -112,7 +104,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		JPanel pnInfo=new JPanel(new GridLayout(4,1,10,10));
 		JPanel pnChucNang=new JPanel(new GridLayout(1,4,10,10));
 		JPanel pnTimKiem=new JPanel(new GridLayout(1,3,10,10));
-		JPanel pntbKH=new JPanel();
+		
 		
 		JLabel lblTieuDe = new JLabel("QUẢN LÝ KHÁCH HÀNG");
 		lblTieuDe.setFont(new Font("Tahoma", Font.BOLD, 30));
@@ -179,20 +171,20 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    pnInfo.add(rbNu);
 	    pnNouth.add(pnInfo,BorderLayout.CENTER);
 	    pnInfo.setBorder(BorderFactory.createTitledBorder("Thông tin khách hàng"));
-		
+	    btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
+	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
+	    btnLamMoi=new JButton("LÀM MỚI");
+	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
 	    ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
-	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
+		btnCapNhatKH.setIcon(iconCapNhat);
 	    btnThemKH.setIcon(iconThem);
-	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
-	    btnCapNhatKH.setIcon(iconCapNhat);
-	    btnXoaKH=new JButton("XÓA KHÁCH HÀNG");
-	    btnXoaKH.setIcon(iconXoa);
-	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnLamMoi.setIcon(iconLamMoi);
-	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    btnXoaKH.setIcon(iconXoa);
+	    
 	    pnChucNang.add(btnThemKH);
 	    pnChucNang.add(btnCapNhatKH);
 	    pnChucNang.add(btnXoaKH);
@@ -205,7 +197,12 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    pnTimKiem.add(btnXemTatCa);
 	    pnSounth.add(pnTimKiem,BorderLayout.NORTH);
 	    add(pnSounth,BorderLayout.CENTER);
-	    modelKhachHang = new DefaultTableModel();
+	    modelKhachHang =  new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		tableKH = new JTable();
 		modelKhachHang.addColumn("ID KhachHang");
 		modelKhachHang.addColumn("Tên khách hàng");
@@ -219,13 +216,26 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách khách hàng"));
 
 		pnSounth.add(scrollPane,BorderLayout.CENTER);
-		    btnLamMoi.addActionListener(this);
+		
+		
+		txtId.setToolTipText("ID + Date + XXXX");
+		txtTenKH.setToolTipText("Chỉ nhận chữ");
+		txtEmail.setToolTipText("Điền mail hợp lệ");
+		txtsdt.setToolTipText("10 số bắt đầu bằng 0 hoặc +84");
+		txtDiaChi.setToolTipText("Nhận số và chữ");
+		rbNam.setToolTipText("Chọn 1 trong 2");
+		rbNu.setToolTipText("Chọn 1 trong 2");
+        chooserNgaySinh.setToolTipText("Trước ngày hiện tại");
+		
+		
+		btnLamMoi.addActionListener(this);
 		btnThemKH.addActionListener(this);
 		btnCapNhatKH.addActionListener(this);
 		btnXoaKH.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
 		tableKH.addMouseListener(this);
 		txtTimKiem.addKeyListener(this);
+		tableKH.addKeyListener(this);
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -371,7 +381,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			
 			return false;
 		}
-		if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]+( [A-Z][a-z]+)*$"))) {
+		if (!(ten.length() > 0 && ten.matches("^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$"))) {
 			JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtTenKH.selectAll();
@@ -379,7 +389,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			return false;
 		}
 //
-		if (!(diaChi.length() > 0 && diaChi.matches("^[A-Za-z0-9/,\\s]*[A-Za-z]+[A-Za-z0-9/,\\s]*$"))) {
+		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
 			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtDiaChi.requestFocus();
@@ -510,7 +520,26 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			Object o = e.getSource();
+//			if (o == txtTenKH || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
+//				ThemKH();
+//			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			lamMoi();
+		} 
+		else if (tableKH.getSelectedRow() != -1) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) 
+			{
+				lamMoi();
+				loadData();
+			}
+
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			tabbedPane.setSelectedIndex(1);
+		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -522,8 +551,19 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 			tableKH.setRowSorter(tr);
 			tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
-	}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_F5) 
+		{
+			lamMoi();
+			loadData();
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_F10) 
+		{
+			lamMoi();
+			loadData();
+		}
 		});
+		
 	}
 }
 

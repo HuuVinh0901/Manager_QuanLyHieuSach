@@ -173,18 +173,27 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
+
 		btnXuatExCel = new JButton("XUẤT EXCEL");
 		
+
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
 		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
 		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+
+		btnCapNhatSP.setIcon(iconCapNhat);
+	    btnThemSP.setIcon(iconThem);
+	    btnLamMoi.setIcon(iconLamMoi);
+	    btnXoaSP.setIcon(iconXoa);
+
 
 		btnThemSP.setIcon(iconThem);
 		btnCapNhatSP.setIcon(iconCapNhat);
 		btnLamMoi.setIcon(iconLamMoi);
 		btnXoaSP.setIcon(iconXoa);
 		
+
 		pnChucNang.add(btnThemSP);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnLamMoi);
@@ -341,7 +350,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		} else if (o.equals(btnXoaSP)) {
 			xoaSanPham();
 		}else if(o.equals(btnXuatExCel)) {
-			String filePath = "C:\\Users\\hoang\\Downloads\\tesst\\QuanLyHieuSach\\src\\main\\resources\\fileExcels\\SanPham.xlsx";
+			String filePath = "D:\\Thư mục chứa file execl\\SanPham.xlsx";
 			ghiFileExcel(filePath);
 		}
 	}

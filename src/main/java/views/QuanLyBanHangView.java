@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -188,7 +189,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		pnSanPham.add(lblTimKiemSP);
 		pnSanPham.add(txtTimKiemSP);
 		pn1.add(pnSanPham);
-		
+		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
+		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
+		ImageIcon iconLamMoi = new ImageIcon(getClass().getResource("/icons/lammoi.png"));
+		ImageIcon iconXoa = new ImageIcon(getClass().getResource("/icons/xoa.png"));
+		ImageIcon iconLuuVaIn = new ImageIcon(getClass().getResource("/icons/printing.png"));
+		ImageIcon iconLuu = new ImageIcon(getClass().getResource("/icons/bookmark.png"));
 		tblSanPham = new JTable();
 		
 		modelSP = new DefaultTableModel(){
@@ -230,7 +236,9 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		scrollTblGH.setBorder(BorderFactory.createTitledBorder("Giỏ hàng"));
 		scrollTblGH.setPreferredSize(new Dimension(scrollTblGH.getPreferredSize().width, 170));
 		btnXoaGioHang = new JButton("Xoá");
+		
 		btnLamMoiGioHang = new JButton("Làm mới giỏ hàng");
+		btnLamMoiGioHang.setIcon(iconLamMoi);
 		pnXoaLamMoi.add(btnXoaGioHang);
 		pnXoaLamMoi.add(btnLamMoiGioHang);
 		pnGioHang.add(scrollTblGH, BorderLayout.CENTER);
@@ -272,6 +280,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		tblkhachHang.setModel(modelKH);
 		JScrollPane scrollTblKH = new JScrollPane(tblkhachHang);
 		btnTaoMoiKH = new JButton("Tạo mới khách hàng");
+		btnTaoMoiKH.setIcon(iconThem);
 		btnChonKH = new JButton("Chọn khách hàng");
 		pn4.add(btnChonKH);
 		pn4.add(btnTaoMoiKH);
@@ -297,10 +306,15 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		tblHangCho.setModel(modelHangCho);
 		JScrollPane scrollTblHangDoi = new JScrollPane(tblHangCho);
 		scrollTblHangDoi.setBorder(BorderFactory.createTitledBorder("Đơn hàng chờ thanh toán"));
+		
 		btnLuuHoaDon = new JButton("Lưu");
+		btnLuuHoaDon.setIcon(iconLuu);
 		btnXoaHangCho = new JButton("Xoá");
+		btnXoaHangCho.setIcon(iconXoa);
 		btnChonThanhToan = new JButton("Chọn");
+		btnXoaGioHang.setIcon(iconXoa);
 		btnLamMoiHangCho = new JButton("Làm mới hàng chờ");
+		btnLamMoiHangCho.setIcon(iconLamMoi);
 		pnChucNangHangCho.add(btnChonThanhToan);
 		pnChucNangHangCho.add(btnLuuHoaDon);
 		pnChucNangHangCho.add(btnXoaHangCho);
@@ -323,9 +337,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		pnFooterRight.add(pn3, BorderLayout.NORTH);
 		pnFooterRight.add(pnLamMoiHD, BorderLayout.CENTER);
 		btnThanhToan = new JButton("THANH TOÁN & IN");
+		btnThanhToan.setIcon(iconLuuVaIn);
 		btnThanhToan.setPreferredSize(new Dimension(200, 35));
 		btnTaoDonHang = new JButton("Tạo mới");
+		btnTaoDonHang.setIcon(iconThem);
 		btnLamMoiDonHang = new JButton("Làm mới");
+		btnLamMoiDonHang.setIcon(iconLamMoi);
 		pnLamThanhToan.add(btnTaoDonHang);
 		pnLamThanhToan.add(btnThanhToan);
 		pnLamThanhToan.add(btnLamMoiDonHang);

@@ -347,6 +347,15 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         add(pnRigth, gbc);
+        
+        txtID.setToolTipText("ID + Date + XXXX");
+		txtTen.setToolTipText("Tên hợp lệ");
+		
+        ngayBatDau.setToolTipText("Trước ngày hiện tại");
+        
+        
+        
+        
         btnHienTatCaKM.addActionListener(this);
         btnHienTatCaSKM.addActionListener(this);
         btnLamMoi.addActionListener(this);
@@ -371,7 +380,12 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         LoadDataSach();
         LoadDataSP();
         loadSKM();
-
+        try {
+			txtID.setText(autoID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void loadData() {
@@ -564,9 +578,42 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		daoKM.ThemKM(km);
 		modelKM.addRow(new Object[] {id,tenKM,dfNgayBD.format(km.getNgayBatDau()),km.getTrangThai()?"Đang áp dụng":"Dừng áp dụng",LoaiDescription});
 	}
+	public boolean valiDate() {
+		
+		String ten = txtTen.getText().trim();
+
+		
+		
+		java.util.Date ngayBD = ngayBatDau.getDate();
+		
+		
+	
+		if(ten.equals("") ) {
+			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ!", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			txtTen.requestFocus();
+			
+			return false;
+		}
+
+		if (!(ngayBD!=null  && (ngayBD.before(new java.util.Date())))) {
+			JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải trước ngày hiện tại", "Thông báo",
+					JOptionPane.WARNING_MESSAGE);
+			ngayBatDau.requestFocus();
+			
+			return false;
+		}
+		
+		return true;
+	}
 	private void lamMoi() {
 		loadData();
-		txtID.setText("");
+		try {
+			txtID.setText(autoID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		txtTen.setText("");
 		txtTen.requestFocus();
 		ngayBatDau.setDate(new java.util.Date());

@@ -93,6 +93,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
 	private DAOTaiKhoan daoTK;
+	private JTabbedPane tabbedPane;
 	public QuanLyNhanVienView()  {
 		dfNgaySinh = new SimpleDateFormat("dd/MM/yyyy");
 		daoTK=new DAOTaiKhoan();
@@ -206,7 +207,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	    pnSounth.add(pnTimKiem,BorderLayout.NORTH);
 	    pnTimKiem.add(btnXemTatCa);
 	    
-	    modelNhanVien = new DefaultTableModel();
+	    modelNhanVien = new DefaultTableModel(){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa các ô trong bảng
+            }
+        };
 		tableNhanVien = new JTable();
         modelNhanVien.addColumn("ID nhân viên");
 		modelNhanVien.addColumn("Tên nhân viên");
@@ -222,12 +228,26 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
         scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách nhân viên"));
         pnSounth.add(scrollPane,BorderLayout.CENTER);
         
+        
+        txtID.setToolTipText("ID + Date + XXXX");
+		txtTenNV.setToolTipText("Chỉ nhận chữ");
+		txtEmail.setToolTipText("Điền mail hợp lệ");
+		txtsdt.setToolTipText("10 số bắt đầu bằng 0 hoặc +84");
+		txtDiaChi.setToolTipText("Nhận số và chữ");
+		rbNam.setToolTipText("Chọn 1 trong 2");
+		rbNu.setToolTipText("Chọn 1 trong 2");
+        chooserNgaySinh.setToolTipText("Trước ngày hiện tại");
+        
+        
+        
+        
         btnLamMoi.addActionListener(this);
 		btnThemNV.addActionListener(this);
 		btnCapNhatNV.addActionListener(this);
 		btnXoaNV.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
 		tableNhanVien.addMouseListener(this);
+		tableNhanVien.addKeyListener(this);
 		txtTimKiem.addKeyListener(this);
 		txtTenNV.addKeyListener(this);
 		txtDiaChi.addKeyListener(this);
@@ -243,6 +263,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		loadData();
 	}
 	private void ThemNV() throws SQLException {
+		
 		String id = autoID();
 		String ten = txtTenNV.getText();
 		String email= txtEmail.getText();
@@ -267,10 +288,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		nv.setEmail(email);
 		nv.setTrangThai(TrangThaibooleanValue);
 		nv.setSoDienThoai(sdt);
+		if(valiDate()) {
+			daoTK.createTK(tk);
+			daoNhanVien.themNhanVien(nv);
+			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
+		}
 		
-		daoTK.createTK(tk);
-		daoNhanVien.themNhanVien(nv);
-		modelNhanVien.addRow(new Object[] {id, ten, sdt,  diaChi,email,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
 
 	}
 	private void loadData() {
@@ -411,15 +434,15 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			
 			return false;
 		}
-		if (!(ten.length() > 0 && ten.matches("^[A-Z][a-z]+( [A-Z][a-z]+)*$"))) {
+		if (!(ten.length() > 0 && ten.matches("^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$"))) {
 			JOptionPane.showMessageDialog(this, "Tên phải viết hoa và không chứa số", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtTenNV.selectAll();
 			txtTenNV.requestFocus();
 			return false;
 		}
-	
-		if (!(diaChi.length() > 0 && diaChi.matches("^[A-Za-z0-9/,\\s]*[A-Za-z]+[A-Za-z0-9/,\\s]*$"))) {
+//
+		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
 			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtDiaChi.requestFocus();
@@ -484,13 +507,11 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThemNV)) {
-			if(valiDate()) {
-				try {
-					ThemNV();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			try {
+				ThemNV();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			
 		} 
@@ -559,7 +580,31 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//			Object o = e.getSource();
+//			if (o == txtTenNV || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
+//				try {
+//					ThemNV();
+//				} catch (SQLException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//			}
+		}
+		else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			lamMoi();
+		} 
+		else if (tableNhanVien.getSelectedRow() != -1) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) 
+			{
+				lamMoi();
+				loadData();
+			}
+
+		} 
+		else if (e.getKeyCode() == KeyEvent.VK_TAB) {
+			tabbedPane.setSelectedIndex(1);
+		}
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -571,10 +616,11 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 				tableNhanVien.setRowSorter(tr);
 				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
-			} else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			} 
+			else if (e.getKeyCode() == KeyEvent.VK_F5) {
 				lamMoi();
 				loadData();
-	}
+			}
 		});
 	}
 }
