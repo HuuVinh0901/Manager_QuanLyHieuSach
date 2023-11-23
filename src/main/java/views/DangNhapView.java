@@ -134,6 +134,9 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 
 		add(b,BorderLayout.NORTH);
 
+		txtTaiKhoan.setText("QL202311230001");
+		txtMatKhau.setText("1111");
+		
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
 		try {

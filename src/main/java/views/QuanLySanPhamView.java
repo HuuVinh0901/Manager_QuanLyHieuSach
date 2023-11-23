@@ -77,6 +77,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private JTextField txtTuKhoa;
 	private JButton btnTimKiem;
 	private JButton btnXemTatCa;
+	private JButton btnNhapNhieuSanPham;
 	private JPanel pnChucNangCha;
 	private JPanel pnChucNangTimKiem;
 	private JComboBox<String> cbLoaiSanPhamSearch;
@@ -129,6 +130,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		lblTinhTrangKinhDoanh = new JLabel("Tình Trạng Kinh Doanh(*):");
 		chkTinhTrangKinhDoanh = new JCheckBox();
 
+
 		txtIdSanPham.setToolTipText("ID + Date + XXXX");
 		txtKichThuoc.setToolTipText("Chỉ nhận số");
 		txtSoLuong.setToolTipText("Chỉ nhận số nguyên");
@@ -173,7 +175,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnTimKiem = new JButton("Tìm kiếm");
 		btnXemTatCa = new JButton("Xem tất cả");
 		btnLamMoi = new JButton("LÀM MỚI");
-
+		btnNhapNhieuSanPham = new JButton("NHẬP SẢN PHẨM EXCEL");
 		btnXuatExCel = new JButton("XUẤT EXCEL");
 		
 
@@ -195,6 +197,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		
 
 		pnChucNang.add(btnThemSP);
+		pnChucNang.add(btnNhapNhieuSanPham);
 		pnChucNang.add(btnCapNhatSP);
 		pnChucNang.add(btnLamMoi);
 		pnChucNang.add(btnXoaSP);
@@ -264,6 +267,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		btnXemTatCa.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		btnXoaSP.addActionListener(this);
+		btnNhapNhieuSanPham.addActionListener(this);
 		btnXuatExCel.addActionListener(this);
 		cbLoaiSanPhamSearch.addItemListener(this);
 		cbNhaCungCapSearch.addItemListener(this);
@@ -352,6 +356,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		}else if(o.equals(btnXuatExCel)) {
 			String filePath = "D:\\Thư mục chứa file execl\\SanPham.xlsx";
 			ghiFileExcel(filePath);
+		}else if(o.equals(btnNhapNhieuSanPham)) {
+//			System.out.println("Nhap nhieu san pham thanh cong");
 		}
 	}
 
