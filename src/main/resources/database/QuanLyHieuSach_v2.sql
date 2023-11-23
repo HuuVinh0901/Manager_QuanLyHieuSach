@@ -203,7 +203,7 @@ BEGIN
     SELECT @NewID,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai
     FROM INSERTED
 END;
-
+go
 --Nhân viên
 CREATE TRIGGER trg_GenerateNhanVienID
 ON NhanVien
@@ -231,6 +231,7 @@ BEGIN
     SELECT @NewID,tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai
     FROM INSERTED
 END;
+go
 --KhachHang
 CREATE TRIGGER trg_GenerateKhachHangID
 ON KhachHang
@@ -258,6 +259,7 @@ BEGIN
     SELECT @NewID,tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh
     FROM INSERTED
 END;
+go
 --loai san pham 
 CREATE TRIGGER trg_GenerateLoaiSanPhamID
 ON LoaiSanPham
@@ -285,7 +287,7 @@ BEGIN
     SELECT @NewID,tenLoaiSanPham
     FROM INSERTED
 END
-
+go
 --Nha Cung Cap 
 CREATE TRIGGER trg_GenerateNhaCungCapID
 ON NhaCungCap
@@ -313,7 +315,7 @@ BEGIN
     SELECT @NewID,tenNhaCungCap, diaChi, soDienThoai
     FROM INSERTED
 END
-
+go
 --Tac gia
 CREATE TRIGGER trg_GenerateTacGiaID
 ON TacGia
@@ -341,7 +343,7 @@ BEGIN
     SELECT @NewID,tenTacGia, ngaySinh, soLuongTacPham
     FROM INSERTED
 END
-
+go
 
 --The Loai
 CREATE TRIGGER trg_GenerateTheLoaiID
@@ -370,7 +372,7 @@ BEGIN
     SELECT @NewID,tenTheLoai,soLuongSach,moTa
     FROM INSERTED
 END
-
+go
 --Sach
 CREATE TRIGGER trg_GenerateSachID
 ON Sach
@@ -399,7 +401,7 @@ BEGIN
     FROM INSERTED
 END
 
-
+go
 
 INSERT INTO LoaiSanPham VALUES (N'LSP202311130001',N'Đồ chơi')
 INSERT INTO LoaiSanPham VALUES (N'LSP202311130002', N'Trò chơi giáo dục')
@@ -412,7 +414,7 @@ INSERT INTO LoaiSanPham VALUES (N'LSP202311130008', N'Văn phòng phẩm')
 INSERT INTO LoaiSanPham VALUES (N'LSP202311130009', N'Bút mực trang trí')
 INSERT INTO LoaiSanPham VALUES (N'LSP202311131010', N'Thiệp chúc mừng và thiệp ghi chú trống')
 INSERT INTO LoaiSanPham VALUES (N'LSP202311130011', N'Trò chơi bảng')
-
+go
 INSERT INTO NhaCungCap VALUES (N'NCC202311130001', N'Công ty Điện tử Minh Châu', N'123 Đường Nguyễn Văn Linh, Quận 1, TP.Hồ Chí Minh', N'0901234567');
 INSERT INTO NhaCungCap VALUES (N'NCC202311130002', N'Công ty Thời trang Áo Đẹp', N'456 Đường Lê Lai, Quận 3, TP.Hồ Chí Minh', N'0918765432');
 INSERT INTO NhaCungCap VALUES (N'NCC202311130003', N'Công ty Đồ gia dụng Hạnh Phúc', N'789 Đường Lê Thị Riêng, Quận 5, TP.Hồ Chí Minh', N'0987654321');
@@ -423,7 +425,7 @@ INSERT INTO NhaCungCap VALUES (N'NCC202311130007', N'Công ty Đồ chơi Trí T
 INSERT INTO NhaCungCap VALUES (N'NCC202311130008', N'Công ty Nước hoa Thanh Xuân', N'654 Đường Cách Mạng Tháng 8', N'0912345678');
 INSERT INTO NhaCungCap VALUES (N'NCC202311130009', N'Công ty Đồ điện gia dụng Tiến Đạt', N'111 Đường Trần Hưng Đạo', N'0932109876');
 INSERT INTO NhaCungCap VALUES (N'NCC202311130010', N'Công ty Phụ kiện Thời trang Sang Trọng', N'11 Đường Trần Hưng Đạo', N'0978563412');
-
+go
 INSERT INTO TacGia VALUES (N'TG202311130001', N'Nguyễn Nhật Ánh', '1955-05-07', 1);
 INSERT INTO TacGia VALUES (N'TG202311130002', N'Tô Hoài', '1920-08-04', 1);
 INSERT INTO TacGia VALUES (N'TG202311130003', N'Nguyễn Du', '1766-01-05', 0);
@@ -434,7 +436,7 @@ INSERT INTO TacGia VALUES (N'TG202311130007', N'Xuân Diệu', '1916-03-02', 0);
 INSERT INTO TacGia VALUES (N'TG202311130008', N'Hồ Xuân Hương', '1772-02-06', 0);
 INSERT INTO TacGia VALUES (N'TG202311130009', N'Nam Cao', '1915-12-15', 0);
 INSERT INTO TacGia VALUES (N'TG202311130010', N'Lê Lợi', '1385-01-10', 0);
-
+go
 INSERT INTO TheLoai VALUES (N'TL202311130001', N'Tiểu thuyết', 1, N'Tiểu thuyết văn học');
 INSERT INTO TheLoai VALUES (N'TL202311130002', N'Khoa học', 1, N'Sách khoa học tự nhiên');
 INSERT INTO TheLoai VALUES (N'TL202311130003', N'Lịch sử', 0, N'Sách về lịch sử');
@@ -450,21 +452,21 @@ INSERT INTO TheLoai VALUES (N'TL202311130012', N'Dựa trên sự kiện có th�
 INSERT INTO TheLoai VALUES (N'TL202311130013', N'Chính trị - Pháp luật', 0, N'Sách về chính trị và pháp luật');
 INSERT INTO TheLoai VALUES (N'TL202311130014', N'Kỹ năng sống', 0, N'Sách về kỹ năng sống');
 INSERT INTO TheLoai VALUES (N'TL202311130015', N'Hài hước', 0, N'Sách hài hước');
+go
+INSERT INTO Sach VALUES (N'S202311130001', N'Chút gió thoáng qua', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230001', N'NCC202311230001', 15.5, N'Nâu', 1, 2500, 22, 500000, 800000,800000);
+INSERT INTO Sach VALUES (N'S202311130002', N'Cây cam ngọt ngào', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230003', N'NCC202311230003', 15.5, N'Nâu', 1, 2500, 100, 700000, 1120000,1120000);
+go
 
-INSERT INTO Sach VALUES (N'S202311130001', N'Chút gió thoáng qua', N'TG202311130001', N'TL202311130001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311130001', N'NCC202311130006', 15.5, N'Nâu', 1, 2500, 22, 500000, 800000,800000);
-INSERT INTO Sach VALUES (N'S202311130002', N'Cây cam ngọt ngào', N'TG202311130002', N'TL202311130002', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311130003', N'NCC202311130001', 15.5, N'Nâu', 1, 2500, 100, 700000, 1120000,1120000);
-
-
-INSERT INTO SanPham VALUES (N'SP202311130001', N'Sản phẩm A', N'LSP202311130001', N'NCC202311130001', 10.0, N'Đỏ', 1, 0, 100000, 50, 160000, 160000);
-INSERT INTO SanPham VALUES (N'SP202311130002', N'Sản phẩm B', N'LSP202311130002', N'NCC202311130002', 12.5, N'Xanh', 1, 0, 120000, 30, 192000, 192000);
-INSERT INTO SanPham VALUES (N'SP202311130003', N'Sản phẩm C', N'LSP202311130003', N'NCC202311130003', 8.0, N'Vàng', 1, 0, 80000, 70, 128000, 128000);
-INSERT INTO SanPham VALUES (N'SP202311130004', N'Sản phẩm D', N'LSP202311130001', N'NCC202311130002', 15.0, N'Đen', 1, 0, 150000, 40, 240000, 240000);
-INSERT INTO SanPham VALUES (N'SP202311130005', N'Sản phẩm E', N'LSP202311130002', N'NCC202311130003', 9.5, N'Hồng', 1, 0, 95000, 60, 152000, 152000);
-
+INSERT INTO SanPham VALUES (N'SP202311130001', N'Sản phẩm A', N'LSP202311230001', N'NCC202311230001', 10.0, N'Đỏ', 1, 0, 100000, 50, 160000, 160000);
+INSERT INTO SanPham VALUES (N'SP202311130002', N'Sản phẩm B', N'LSP202311230002', N'NCC202311230002', 12.5, N'Xanh', 1, 0, 120000, 30, 192000, 192000);
+INSERT INTO SanPham VALUES (N'SP202311130003', N'Sản phẩm C', N'LSP202311230003', N'NCC202311230003', 8.0, N'Vàng', 1, 0, 80000, 70, 128000, 128000);
+INSERT INTO SanPham VALUES (N'SP202311130004', N'Sản phẩm D', N'LSP202311230001', N'NCC202311230002', 15.0, N'Đen', 1, 0, 150000, 40, 240000, 240000);
+INSERT INTO SanPham VALUES (N'SP202311130005', N'Sản phẩm E', N'LSP202311230002', N'NCC202311230003', 9.5, N'Hồng', 1, 0, 95000, 60, 152000, 152000);
+go
 insert TaiKhoan values('ADMIN','1111','2023-11-13')
-
-----QL202311130001
-----NV202311130001
+go
+--QL202311130001
+--NV202311130001
 --select *from TheLoai
 --select *from NhaCungCap
 --select *from LoaiSanPham
@@ -472,5 +474,6 @@ insert TaiKhoan values('ADMIN','1111','2023-11-13')
 --select *from TacGia
 --select *from SanPham
 
---use master
---drop database QLHieuSach
+use QLHieuSach
+use master
+drop database QLHieuSach
