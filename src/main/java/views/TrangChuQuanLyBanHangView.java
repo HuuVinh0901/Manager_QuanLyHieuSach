@@ -35,6 +35,8 @@ import javax.swing.border.TitledBorder;
 
 import connection.ConnectDB;
 import controllers.MenuItem;
+import dao.DAONhanVien;
+import models.NhanLuc;
 import models.NhanVien;
 
 import models.QuanLy;
@@ -54,11 +56,11 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private JLabel lbID;
 	private JLabel lbTen;
 	private NhanVien headerNV;
-	
+	private DAONhanVien daoNV;
 
 	public TrangChuQuanLyBanHangView(NhanVien nv) {
 		this.headerNV=nv;
-
+		daoNV=new DAONhanVien();
 
 		try {
 			ConnectDB.getinstance().connect();
@@ -95,18 +97,19 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		ImageIcon iconKH = new ImageIcon(getClass().getResource("/icons/KH.png"));
 		ImageIcon iconSP = new ImageIcon(getClass().getResource("/icons/banhang.png"));
 		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/plus.png"));
-
+		ImageIcon iconBH = new ImageIcon(getClass().getResource("/icons/banhang.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));	
 		
 			
 
-		MenuItem QLBH = new MenuItem(iconSP, "Quản lý bán hàng", new ActionListener() {
-
+		MenuItem QLBH = new MenuItem(iconBH, "Quản lý bán hàng", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				switchToPanel(new QuanLyBanHangView());
-
+				// TODO Auto-generated method stub
+				NhanVien nv=daoNV.getNhanVien(headerNV.getId());
+				switchToPanel(new QuanLyBanHangView(nv));
+				
 			}
 		});
 

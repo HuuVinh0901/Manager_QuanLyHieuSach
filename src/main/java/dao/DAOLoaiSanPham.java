@@ -16,6 +16,29 @@ public class DAOLoaiSanPham {
         connection = ConnectDB.getinstance().getConnection();
     }
 
+    
+    
+    public String getLoaiSanPhamFromId(String id) {
+		String ten = null;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT tenLoaiSanPham FROM LoaiSanPham WHERE idLoaiSanPham = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, id);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				ten = rs.getString(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ten;
+	}
+    
+    
     private void closeResources(PreparedStatement pst, ResultSet rs) {
         try {
             if (rs != null) {
@@ -29,6 +52,8 @@ public class DAOLoaiSanPham {
         }
     }
 
+    
+    
     public ArrayList<LoaiSanPham> getAllLoaiSanPham() {
         ArrayList<LoaiSanPham> dsLoaiSanPham = new ArrayList<>();
         String sql = "SELECT * FROM LoaiSanPham";

@@ -18,6 +18,9 @@ import java.sql.Date;
 			super();
 			// TODO Auto-generated constructor stub
 		}
+		public NhanLuc(String id) {
+			this.id = id;
+		}
 		public NhanLuc(String id, String ten, String soDienThoai, String diaChi, String email, Date ngaySinh,
 				boolean gioiTinh, String chucVu, boolean trangThai) {
 			super();

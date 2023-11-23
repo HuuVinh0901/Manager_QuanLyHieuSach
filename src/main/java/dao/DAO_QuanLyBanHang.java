@@ -14,13 +14,14 @@ import models.KhachHang;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.NhanVien;
+import models.SachCon;
 import models.SanPhamCha;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
 
 public class DAO_QuanLyBanHang {
-
+	private Connection connection;
 	
 	private void close(PreparedStatement pst) {
 		if (pst != null) {
@@ -31,6 +32,10 @@ public class DAO_QuanLyBanHang {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public DAO_QuanLyBanHang() {
+		connection = ConnectDB.getinstance().getConnection();
 	}
 	
 	public double getTongTienTheoNgay(String dayStart, String dayEnd) {
@@ -250,45 +255,33 @@ public class DAO_QuanLyBanHang {
 	}
 	
 	public boolean themHoaDon(HoaDon hd) throws SQLException {
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
 		String sql = "INSERT INTO HoaDon VALUES (?, ?, ?, ?, ?, ?)";
-		try {
-			PreparedStatement ps= con.prepareStatement(sql);
-			
-			ps.setString(1, hd.getIdDonHang());
-			ps.setDate(2, hd.getNgayLap());
-			ps.setString(3, hd.getKhachHang().getIdKhachHang());
-			ps.setString(4, hd.getNhanVien().getId());
-			ps.setDouble(5, hd.getTienKhachDua());
-			ps.setDouble(6, hd.getTongTien());
-			
-			return ps.executeUpdate() > 0;
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, hd.getIdDonHang());
+			pst.setDate(2, hd.getNgayLap());
+			pst.setString(3, hd.getKhachHang().getIdKhachHang());
+			pst.setString(4, hd.getNhanVien().getId());
+			pst.setDouble(5, hd.getTienKhachDua());
+			pst.setDouble(6, hd.getTongTien());
+			return pst.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		con.close();
-		return false;
 	}
 	
 	public boolean themChiTietHoaDon(ChiTietHoaDon cthd) throws SQLException {
-		ConnectDB.getinstance();
-		Connection con = ConnectDB.getConnection();
 		String sql = "INSERT INTO ChiTietHoaDon VALUES (?, ?, ?, ?)";
-		try {
-			PreparedStatement ps= con.prepareStatement(sql);
-			
-			ps.setInt(1, cthd.getSoLuong());
-			ps.setString(2, cthd.getHoaDon().getIdDonHang());
-			ps.setString(3, cthd.getSanPham().getIdSanPham());
-			ps.setDouble(4, cthd.getThanhTien());
-			
-			return ps.executeUpdate() > 0;
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setInt(1, cthd.getSoLuong());
+			pst.setString(2, cthd.getHoaDon().getIdDonHang());
+			pst.setString(3, cthd.getSanPham().getIdSanPham());
+			pst.setDouble(4, cthd.getThanhTien());
+			return pst.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		con.close();
-		return false;
 	}
 	
 }
