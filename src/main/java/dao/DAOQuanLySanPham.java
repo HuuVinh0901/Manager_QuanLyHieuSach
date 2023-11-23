@@ -37,7 +37,7 @@ public class DAOQuanLySanPham implements Serializable {
 			}
 		}
 	}
-
+	
 	public boolean checkIdSanPham(String idSanPham) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {

@@ -465,15 +465,17 @@ INSERT INTO SanPham VALUES (N'SP202311130005', N'Sản phẩm E', N'LSP202311230
 go
 insert TaiKhoan values('ADMIN','1111','2023-11-13')
 go
---QL202311130001
+--QL202311230001
 --NV202311130001
---select *from TheLoai
---select *from NhaCungCap
---select *from LoaiSanPham
---select *from Sach
---select *from TacGia
---select *from SanPham
+select *from TheLoai
+select *from NhaCungCap
+select *from LoaiSanPham
+select *from Sach
+select *from TacGia
+select *from SanPham
 
 use QLHieuSach
 use master
 drop database QLHieuSach
+
+delete from SanPham
