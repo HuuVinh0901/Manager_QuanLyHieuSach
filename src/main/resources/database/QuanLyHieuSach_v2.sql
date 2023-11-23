@@ -383,3 +383,9 @@ insert TaiKhoan values('ADMIN','1111','2023-11-13')
 
 --QL202311130001
 --NV202311130001
+select *from TheLoai
+select *from NhaCungCap
+select *from LoaiSanPham
+select *from TacGia
+select *from Sach
+select *from SanPham
