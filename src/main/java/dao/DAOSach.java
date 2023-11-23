@@ -11,6 +11,7 @@ import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SachCon;
+import models.SanPhamCha;
 import models.SanPhamCon;
 import models.TacGia;
 import models.TheLoai;
@@ -24,33 +25,21 @@ public class DAOSach implements Serializable {
 	}
 
 	
+	
 	public ArrayList<SachCon> getSachTimKiemTheoDieuKien(String cond) {
 		ArrayList<SachCon> dsSach = new ArrayList<>();
-		String sql = "SELECT s.idSanPham, s.tenSanPham, lsp.tenLoaiSanPham, s.giaBan,s.giaKhuyenMai "
-				+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON s.loaiSanPham = lsp.idLoaiSanPham "
-				+ "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
-				+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'"; 
+		String sql = "SELECT idSanPham, tenSanPham, loaiSanPham, giaNhap, giaKhuyenMai "
+				+ "FROM Sach  "
+				+ "WHERE idSanPham LIKE '%" + cond + "%' OR " 
+				+ "tenSanPham LIKE '%" + cond + "%'" ;
+				
 		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
 			while (rs.next()) {
 				SachCon sc = new SachCon();
 				sc.setIdSanPham(rs.getString("idSanPham"));
 				sc.setTenSanPham(rs.getString("tenSanPham"));
-				sc.setTacGia(new TacGia(rs.getString("tenTacGia")));
-				sc.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
-				sc.setNamXuatBan(rs.getDate("namXuatBan"));
-				sc.setISBN(rs.getString("ISBN"));
-				sc.setSoTrang(rs.getInt("soTrang"));
-				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
-				sc.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
-				sc.setKichThuoc(rs.getDouble("kichThuoc"));
-				sc.setMauSac(rs.getString("mauSac"));
-				int trangThai = rs.getInt("trangThai");
-				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
-				sc.setTrangThai(trangThaiEnum);
-				sc.thue();
-				sc.setSoLuong(rs.getInt("soLuong"));
+				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("loaiSanPham")));
 				sc.setGiaNhap(rs.getDouble("giaNhap"));
-				sc.giaBan();
 				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
 				dsSach.add(sc);
 			}

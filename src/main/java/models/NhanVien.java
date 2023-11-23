@@ -17,8 +17,7 @@ public class NhanVien extends NhanLuc{
 	}
 
 	public NhanVien(String id) {
-		super();
-		// TODO Auto-generated constructor stub
+		this.id=id;
 	}
 
 	

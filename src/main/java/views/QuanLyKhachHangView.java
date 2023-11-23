@@ -452,6 +452,8 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			if(valiDate()) {
 				try {
 					ThemKH();
+//					txtId.setText(autoID());
+					lamMoi();
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

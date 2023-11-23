@@ -15,8 +15,7 @@ public class QuanLy extends NhanLuc{
 		// TODO Auto-generated constructor stub
 	}
 	public QuanLy(String id) {
-		super();
-		// TODO Auto-generated constructor stub
+		this.id=id;
 	}
 	
 	
