@@ -240,7 +240,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
         
         
         
-        
+        chooserNgaySinh.setDate(new java.util.Date());
         btnLamMoi.addActionListener(this);
 		btnThemNV.addActionListener(this);
 		btnCapNhatNV.addActionListener(this);

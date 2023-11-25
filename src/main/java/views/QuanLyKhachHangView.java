@@ -227,7 +227,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		rbNu.setToolTipText("Chọn 1 trong 2");
         chooserNgaySinh.setToolTipText("Trước ngày hiện tại");
 		
-		
+        chooserNgaySinh.setDate(new java.util.Date());
 		btnLamMoi.addActionListener(this);
 		btnThemKH.addActionListener(this);
 		btnCapNhatKH.addActionListener(this);

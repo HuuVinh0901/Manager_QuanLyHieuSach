@@ -46,7 +46,7 @@ public abstract class SanPhamCha {
 	}
 
 	public void setGiaKM(double giaKM) {
-		this.giaKM = giaKM;
+		this.giaKM = 0;
 	}
 
 	public String getIdSanPham() {

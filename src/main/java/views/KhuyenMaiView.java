@@ -22,9 +22,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.BorderFactory;
@@ -34,6 +37,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -97,8 +102,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	private DefaultTableModel modelSP2;
 	private JTable tblSach;
 	private DefaultTableModel modelSach;
-	private JButton btnHienTatCaSPKM;
-	private JButton btnHienTatCaSKM;
+	
 	private JButton btnHienTatCaKM;
 	private DefaultTableModel modelKM;
 	private JTable tableKM;
@@ -118,9 +122,15 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	private JButton btnDongSach;
 	private JButton btnXoaSPKM;
 	private JButton btnXoaSKM;
+	private JPanel pnSP;
+	private JFrame FrameSP;
+	private JDialog dlogSP;
+	private JFrame FrameSach;
+	private JDialog dlogSach;
+	private NumberFormat vietnameseFormat;
 	public KhuyenMaiView() {
 		setLayout(new GridBagLayout());
-		
+		vietnameseFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 		daoKM= new DAOKhuyenMai();
 		daoQLSP=new DAOQuanLySanPham();
 		daoSach=new DAOSach();
@@ -167,8 +177,6 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		btnLamMoi=new JButton("LÀM MỚI");
 		btnLamMoi.setIcon(iconLamMoi);
 		btnHienTatCaKM=new JButton("HIỂN THỊ TẤT CẢ");
-		btnHienTatCaSPKM=new JButton("HIỂN THỊ TẤT CẢ");
-		btnHienTatCaSKM=new JButton("HIỂN THỊ TẤT CẢ");
 		lbTimKiemSPKM=new JLabel("Tìm kiếm sản phẩm khuyến mãi:");
 		txtTimKiemSPKM=new JTextField();
 		lbTimKiemSKM=new JLabel("Tìm kiếm sách khuyến mãi");
@@ -226,19 +234,25 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		JScrollPane scrollTblKH = new JScrollPane(tblSP);
 		btnChonSP = new JButton("ÁP DỤNG");
 		
-		JPanel pn = new JPanel(new GridLayout(1,4,5,5));
-		pn.setBorder(BorderFactory.createTitledBorder("SẢN PHẨM"));
-		pn.add(btnChonSP);
-		pn.add(btnDongSP);
-//		pn.add(lbTimKiemSP);
-//		pn.add(txtTimKiemSP);
-		JPanel pnSP = new JPanel(new BorderLayout());
+		JPanel TimKiemSP = new JPanel(new GridLayout(2,1,5,5));
+		JPanel FooterSP = new JPanel(new GridLayout(1,4,5,5));
+		JLabel lbChen=new JLabel();
+		JLabel lbChen2=new JLabel();
+		FooterSP.add(btnChonSP);
+		
+		
+		TimKiemSP.add(lbChen);
+		TimKiemSP.add(lbChen2);
+		TimKiemSP.add(lbTimKiemSP);
+		TimKiemSP.add(txtTimKiemSP);
+		pnSP = new JPanel(new BorderLayout());
 		pnSP.add(scrollTblKH, BorderLayout.CENTER);
-		pnSP.add(pn, BorderLayout.NORTH);
-		
-        windowSP = new JWindow();
-        windowSP.add(pnSP);
-		
+		pnSP.add(TimKiemSP, BorderLayout.NORTH);
+		pnSP.add(FooterSP, BorderLayout.SOUTH);
+		FrameSP=new JFrame();
+		dlogSP= new JDialog( dlogSP, "SẢN PHẨM", null);
+	    dlogSP.add(pnSP);
+	  //Tạo bảng chọn sach
 		tblSach = new JTable();
 		modelSach = new DefaultTableModel();
         modelSach.addColumn("ID sách");
@@ -247,17 +261,23 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         tblSach.setModel(modelSach);
 		JScrollPane scrollTblSach = new JScrollPane(tblSach);
 		btnChonSach = new JButton("ÁP DỤNG");
-		JPanel pn2 = new JPanel(new GridLayout(1,4,5,5));
-		pn2.setBorder(BorderFactory.createTitledBorder("SÁCH"));
-		pn2.add(btnChonSach);
-		pn2.add(btnDongSach);
-//		pn2.add(lbTimKiemSach);
-//		pn2.add(txtTimKiemSach);
+		JPanel TimKiemSach = new JPanel(new GridLayout(2,1,5,5));
+		JPanel FooterSach = new JPanel(new GridLayout(1,4,5,5));
+		JLabel lbChen3=new JLabel();
+		JLabel lbChen4=new JLabel();
+		FooterSach.add(btnChonSach);
+
+		TimKiemSach.add(lbChen3);
+		TimKiemSach.add(lbChen4);
+		TimKiemSach.add(lbTimKiemSach);
+		TimKiemSach.add(txtTimKiemSach);
 		JPanel pnSach = new JPanel(new BorderLayout());
 		pnSach.add(scrollTblSach, BorderLayout.CENTER);
-		pnSach.add(pn2, BorderLayout.NORTH);
-		windowSach = new JWindow();
-        windowSach.add(pnSach);
+		pnSach.add(TimKiemSach, BorderLayout.NORTH);
+		pnSach.add(FooterSach,BorderLayout.SOUTH);
+		FrameSach=new JFrame();
+		dlogSach= new JDialog( FrameSach, "SÁCH", null);
+	    dlogSach.add(pnSach);
         
 		JPanel pnTimKiemSP=new JPanel(new GridLayout(1,4,10,10));
 		pnTimKiemSP.add(lbTimKiemSPKM);
@@ -330,8 +350,6 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         pnLeft.add(pnHeaderLeft,BorderLayout.NORTH);
         pnLeft.add(pntbKM,BorderLayout.CENTER);
         
-       
-        
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -350,14 +368,10 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         
         txtID.setToolTipText("ID + Date + XXXX");
 		txtTen.setToolTipText("Tên hợp lệ");
-		
-        ngayBatDau.setToolTipText("Trước ngày hiện tại");
-        
-        
-        
+		ngayBatDau.setToolTipText("Trước ngày hiện tại");
+        ngayBatDau.setDate(new java.util.Date());
         
         btnHienTatCaKM.addActionListener(this);
-        btnHienTatCaSKM.addActionListener(this);
         btnLamMoi.addActionListener(this);
         btnCapNhat.addActionListener(this);
         btnChonSP.addActionListener(this);
@@ -367,8 +381,8 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
         txtTimKiemKM.addKeyListener(this);
         txtTimKiemSPKM.addKeyListener(this);
         txtTimKiemSKM.addKeyListener(this);
-//        txtTimKiemSP.addKeyListener(this);
-//        txtTimKiemSach.addKeyListener(this);
+        txtTimKiemSP.addKeyListener(this);
+        txtTimKiemSach.addKeyListener(this);
         btnMoTbSP.addActionListener(this);
         btnMoTbSach.addActionListener(this);
         btnDongSP.addActionListener(this);
@@ -399,7 +413,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	private void loadSPKM() {
 		modelSP.setRowCount(0);
 		for (SanPhamKhuyenMai spkm: daoKM.getAllDanhSachSPKM() ) {
-			modelSP.addRow(new Object[] {  spkm.getIdKM(),spkm.getIdSanPham(),spkm.getTenSP(),spkm.getGiaBan(),spkm.getGiaKM()
+			modelSP.addRow(new Object[] {  spkm.getIdKM(),spkm.getIdSanPham(),spkm.getTenSP(),vietnameseFormat.format(spkm.getGiaBan()),"-"+vietnameseFormat.format(spkm.getGiaKM())
 					});
 			
 		}
@@ -407,7 +421,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	private void loadSKM() {
 		modelSKM.setRowCount(0);
 		for (SachKhuyenMai skm: daoKM.getAllDanhSachSachKM() ) {
-			modelSKM.addRow(new Object[] {  skm.getIdKM(),skm.getIdSanPham(),skm.getTenSP(),skm.getGiaBan(),skm.getGiaKM()
+			modelSKM.addRow(new Object[] {  skm.getIdKM(),skm.getIdSanPham(),skm.getTenSP(),vietnameseFormat.format(skm.getGiaBan()),"-"+vietnameseFormat.format(skm.getGiaKM())
 					});
 			
 		}
@@ -416,7 +430,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		modelSP2.setRowCount(0);
 			for (SanPhamCon sp : daoQLSP.getAllSanPhamLoadData()) {
 				
-				modelSP2.addRow(new Object[] {sp.getIdSanPham(),sp.getTenSanPham(),sp.giaBan()});
+				modelSP2.addRow(new Object[] {sp.getIdSanPham(),sp.getTenSanPham(),vietnameseFormat.format(sp.giaBan())});
 				
 			} 
 		
@@ -425,17 +439,14 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		modelSach.setRowCount(0);
 			for (SachCon s : daoSach.getAllSachLoadData()) {
 				
-				modelSach.addRow(new Object[] {s.getIdSanPham(),s.getTenSanPham(),s.giaBan()});
+				modelSach.addRow(new Object[] {s.getIdSanPham(),s.getTenSanPham(),vietnameseFormat.format(s.giaBan())});
 				
 			} 
 		
 	}
 	
 	private void ThemSachKM() throws SQLException {
-		
-	    
-	    
-		 // Lấy thông tin chương trình khuyến mãi đang được chọn
+		// Lấy thông tin chương trình khuyến mãi đang được chọn
 			int chonKM = tableKM.getSelectedRow();
 			int chonSach = tblSach.getSelectedRow();
 			
@@ -449,15 +460,25 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 			        LoaiKMEnum loaiKM= (LoaiKMEnum) tableKM.getValueAt(chonKM, 4);
 			       // Lấy thông tin sản phẩm
 			        String idSP = (String) tblSach.getValueAt(chonSach, 0);
-			        double giaBan = (double) tblSach.getValueAt(chonSach, 2);
+			        NumberFormat format = NumberFormat.getCurrencyInstance(new java.util.Locale("vi", "VN"));
+			        String getGiaBan=(String)tblSach.getValueAt(chonSach, 2);
+			        Number number = null;
+					try {
+						number = format.parse(getGiaBan);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		            double giaBan=number.doubleValue();
+			       
 			        String tenSP=(String) tblSach.getValueAt(chonSach, 1);
 			        // Tính giá bán mới sau khuyến mãi
-			        double giaKM = giaBan - (giaBan * ((loaiKM.getValue()*10) / 100.0));
+			        double giaKM = giaBan * ((loaiKM.getValue()*10) / 100.0);
 			     // Cập nhật giá bán mới trong bảng và cơ sở dữ liệu
 			        if(KiemTraSKM(idSP)) { 
 				        daoKM.ThemSachKM(idSP, idKM, tenSP, giaBan, giaKM);
 				        daoKM.updateGiaKMSach(idSP, giaKM);
-				        modelSKM.addRow(new Object[] {idKM,idSP,tenSP,giaBan,giaKM});
+				        modelSKM.addRow(new Object[] {idKM,idSP,tenSP,vietnameseFormat.format(giaBan),"-"+vietnameseFormat.format(giaKM)});
 				        JOptionPane.showMessageDialog(this,"Áp dụng khuyến mãi thành công");
 			        }
 			        
@@ -469,10 +490,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		    }
 		}
 	private void ThemSPKM() throws SQLException {
-		
-	    
-	    
-	 // Lấy thông tin chương trình khuyến mãi đang được chọn
+		// Lấy thông tin chương trình khuyến mãi đang được chọn
 		int chonKM = tableKM.getSelectedRow();
 		int chonSP = tblSP.getSelectedRow();
 		
@@ -487,16 +505,24 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		        LoaiKMEnum loaiKM= (LoaiKMEnum) tableKM.getValueAt(chonKM, 4);
 		       // Lấy thông tin sản phẩm
 		        String idSP = (String) tblSP.getValueAt(chonSP, 0);
-		        double giaBan = (double) tblSP.getValueAt(chonSP, 2);
 		        String tenSP=(String) tblSP.getValueAt(chonSP, 1);
-		        
+		        NumberFormat format = NumberFormat.getCurrencyInstance(new java.util.Locale("vi", "VN"));
+		        String getGiaBan=(String)tblSP.getValueAt(chonSP, 2);
+		        Number number = null;
+				try {
+					number = format.parse(getGiaBan);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	            double giaBan=number.doubleValue();
 		        // Tính giá bán mới sau khuyến mãi
-		        double giaKM = giaBan - (giaBan * ((loaiKM.getValue()*10) / 100.0));
+		        double giaKM = giaBan * ((loaiKM.getValue()*10) / 100.0);
 		        // Cập nhật giá bán mới trong bảng và cơ sở dữ liệu
 			    if(KiemTraSPKM(idSP)){
 			    	 daoKM.ThemSPKM(idSP, idKM,tenSP,giaBan,giaKM);
 				     daoKM.updateGiaKM(idSP, giaKM);
-				     modelSP.addRow(new Object[] {idKM,idSP,tenSP,giaBan,giaKM});
+				     modelSP.addRow(new Object[] {idKM,idSP,tenSP,vietnameseFormat.format(giaBan),"-"+vietnameseFormat.format(giaKM)});
 				     JOptionPane.showMessageDialog(this,"Áp dụng khuyến mãi thành công");
 			    }
 			    
@@ -581,13 +607,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	public boolean valiDate() {
 		
 		String ten = txtTen.getText().trim();
-
-		
-		
 		java.util.Date ngayBD = ngayBatDau.getDate();
-		
-		
-	
 		if(ten.equals("") ) {
 			JOptionPane.showMessageDialog(this, "Vui lòng nhập thông tin đầy đủ!", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
@@ -620,7 +640,14 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		cbLoai.setSelectedItem(LoaiKMEnum.Giam_10);
 		cbTrangThai.setSelectedItem("Đang áp dụng");
 	}
-	
+	private void showDialog(JFrame FrameParent,JDialog dialog) {
+		
+		dialog.setVisible(true);
+		dialog.setSize(500,500);
+		dialog.setLocationRelativeTo(null);	
+		dialog.pack();
+		
+	}
 	private void CapNhatKM() {
 		String id = txtID.getText();
 		String ten = txtTen.getText();
@@ -665,11 +692,10 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 				if (hoinhac == JOptionPane.YES_OPTION) {
 					
 					String idSP=tableSP.getValueAt(row, 1).toString();
-					String giaBan=tableSP.getValueAt(row,3).toString();
-					Double giaBanDouble=Double.parseDouble(giaBan);
+					
 					daoKM.XoaSPKM(idSP);
 					modelSP.removeRow(row);
-					daoKM.updateGiaKM(idSP,giaBanDouble);
+					daoKM.updateGiaKM(idSP,0);
 					JOptionPane.showMessageDialog(this, "Xoá thành công");
 				}
 			} catch (Exception e2) {
@@ -689,11 +715,11 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 				if (hoinhac == JOptionPane.YES_OPTION) {
 					
 					String idSP=tableSKM.getValueAt(row, 1).toString();
-					String giaBan=tableSKM.getValueAt(row,3).toString();
-					Double giaBanDouble=Double.parseDouble(giaBan);
+					
+					
 					daoKM.XoaSKM(idSP);
 					modelSKM.removeRow(row);
-					daoKM.updateGiaKMSach(idSP, giaBanDouble);
+					daoKM.updateGiaKMSach(idSP, 0);
 					JOptionPane.showMessageDialog(this, "Xoá thành công");
 				}
 			} catch (Exception e2) {
@@ -775,6 +801,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		if(o.equals(btnChonSP)) {
 			try {
 				ThemSPKM();
+				dlogSP.dispose();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -783,28 +810,17 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		if(o.equals(btnChonSach)) {
 			try {
 				ThemSachKM();
+				dlogSach.dispose();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
 		if(o.equals(btnMoTbSP)) {
-			windowSP.setLocation(btnMoTbSP.getLocationOnScreen().x - 40, btnMoTbSP.getLocationOnScreen().y + btnMoTbSP.getHeight());
-	   		windowSP.pack();
-	   		windowSP.setVisible(true);
-		}
-		if(o.equals(btnDongSP)) {
-			windowSP.setVisible(false);
-			
+			showDialog(FrameSP, dlogSP);
 		}
 		if(o.equals(btnMoTbSach)) {
-			windowSach.setLocation(btnMoTbSach.getLocationOnScreen().x - 40, btnMoTbSach.getLocationOnScreen().y + btnMoTbSach.getHeight());
-			windowSach.pack();
-			windowSach.setVisible(true);
-		}
-		if(o.equals(btnDongSach)) {
-			
-			windowSach.setVisible(false);
+			showDialog(FrameSach, dlogSach);
 		}
 		if(o.equals(btnXoaSPKM)) {
 			xoaSPKM();
@@ -848,6 +864,18 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 				tableSKM.setRowSorter(tr);
 				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiemSKM.getText().trim(), 2));
+			}
+			else if (o.equals(txtTimKiemSP)) {
+				DefaultTableModel model = (DefaultTableModel) tblSP.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tblSP.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiemSP.getText().trim(), 1));
+			}
+			else if (o.equals(txtTimKiemSach)) {
+				DefaultTableModel model = (DefaultTableModel) tblSach.getModel();
+				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+				tblSach.setRowSorter(tr);
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiemSach.getText().trim(), 1));
 			}
 		});
 	}

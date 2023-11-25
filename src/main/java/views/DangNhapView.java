@@ -101,7 +101,7 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 		b2.add(txtTaiKhoan = new JTextField());
 		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 		txtTaiKhoan.setToolTipText("Nhập tài khoản");
-		txtTaiKhoan.setText("");
+		txtTaiKhoan.setText("QL202311130001");
 		b2.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -112,7 +112,7 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 		b3.add(txtMatKhau = new JPasswordField());
 		txtMatKhau.setPreferredSize(new Dimension(0, 30));
 		txtMatKhau.setToolTipText("Nhập mật khẩu");
-		txtMatKhau.setText("");
+		txtMatKhau.setText("1111");
 		b3.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
