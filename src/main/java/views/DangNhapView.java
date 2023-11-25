@@ -134,6 +134,9 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 
 		add(b,BorderLayout.NORTH);
 
+		
+		
+		
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
 		try {
