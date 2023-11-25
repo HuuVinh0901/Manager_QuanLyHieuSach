@@ -120,7 +120,7 @@ public class DAOQuanLySanPham implements Serializable {
 				String trangThai = rs.getString(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
 				sp.setTrangThai(trangThaiEnum);
-				sp.setGiaNhap(rs.getDouble(6));
+				sp.setGiaNhap(rs.getDouble(8));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,7 +272,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-			pst.setDouble(12, sp.giaBan());
+			pst.setDouble(12, sp.getGiaKM());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {
