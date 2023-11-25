@@ -189,14 +189,36 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new QuanLyHoaDonView());
 			}
 		});
-		MenuItem TKDT = new MenuItem(iconTK, "Thống kê doanh thu", new ActionListener() {
-			
+		
+		MenuItem subThongKeDoanhThu = new MenuItem(iconSubMenu, "Thống kê doanh thu", new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				switchToPanel(new ThongKeDoanhThuView());
 				
 			}
 		});
+		MenuItem subThongKeSanPham = new MenuItem(iconSubMenu, "Thống kê sản phẩm", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		MenuItem subThongKeNhanVien = new MenuItem(iconSubMenu, "Thống kê nhân viên", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		MenuItem subThongKeKhachHang = new MenuItem(iconSubMenu, "Thống kê khách hàng", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu",null,subThongKeDoanhThu,subThongKeSanPham,subThongKeKhachHang,subThongKeNhanVien); 
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
@@ -218,13 +240,13 @@ public class TrangChuQuanTriView extends JFrame {
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null,subGiaoDien
 				);
 
-		addMenu(QLSP,QLNV, QLKH,KM, QLHD, TKDT, CaiDat,DangXuat);
+		addMenu(QLSP,QLNV, QLKH,KM, QLHD, ThongKe, CaiDat,DangXuat);
 		QLSP.setBackground(new Color(153,255,255));
 		QLNV.setBackground(new Color(153,255,255));
 		QLKH.setBackground(new Color(153,255,255));
 		KM.setBackground(new Color(153,255,255));
 		QLHD.setBackground(new Color(153,255,255));
-		TKDT.setBackground(new Color(153,255,255));
+		ThongKe.setBackground(new Color(153,255,255));
 		CaiDat.setBackground(new Color(153,255,255));
 		DangXuat.setBackground(new Color(153,255,255));
 //		QLBH.setBackground(new Color(153,255,255));
