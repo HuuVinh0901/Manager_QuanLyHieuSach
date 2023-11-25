@@ -64,7 +64,7 @@ go
 CREATE TABLE NhaCungCap(
 	idNhaCungCap NVARCHAR(15) NOT NULL PRIMARY KEY,
 	tenNhaCungCap NVARCHAR(50) NOT NULL,
-	diaChi NVARCHAR(50),
+	diaChi NVARCHAR(100),
 	soDienThoai NVARCHAR(10)
 )
 go
@@ -84,9 +84,9 @@ CREATE TABLE TacGia(
 go
 CREATE TABLE TheLoai(
 	idTheLoai NVARCHAR(14) NOT NULL PRIMARY KEY,
-	tenTheLoai NVARCHAR(30) NOT NULL,
+	tenTheLoai NVARCHAR(100) NOT NULL,
 	soLuongSach INT CHECK (soLuongSach >= 0),
-	moTa NVARCHAR(50) NOT NULL
+	moTa NVARCHAR(100) NOT NULL
 )
 go
 CREATE TABLE SanPham (
@@ -403,28 +403,52 @@ END
 
 go
 
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130001',N'Đồ chơi')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130002', N'Trò chơi giáo dục')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130003', N'Sổ tay và sổ ghi chú')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130004', N'Đồ chơi')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130005', N'Phim và album')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130006', N'Bản đồ')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130007', N'Dấu trang')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130008', N'Văn phòng phẩm')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130009', N'Bút mực trang trí')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311131010', N'Thiệp chúc mừng và thiệp ghi chú trống')
-INSERT INTO LoaiSanPham VALUES (N'LSP202311130011', N'Trò chơi bảng')
+INSERT INTO LoaiSanPham VALUES (N'',N'Sách')
+INSERT INTO LoaiSanPham VALUES (N'', N'Trò chơi giáo dục')
+INSERT INTO LoaiSanPham VALUES (N'', N'Sổ tay và sổ ghi chú')
+INSERT INTO LoaiSanPham VALUES (N'', N'Đồ chơi')
+INSERT INTO LoaiSanPham VALUES (N'', N'Phim và album')
+INSERT INTO LoaiSanPham VALUES (N'', N'Bản đồ')
+INSERT INTO LoaiSanPham VALUES (N'', N'Dấu trang')
+INSERT INTO LoaiSanPham VALUES (N'', N'Văn phòng phẩm')
+INSERT INTO LoaiSanPham VALUES (N'', N'Bút mực trang trí')
+INSERT INTO LoaiSanPham VALUES (N'', N'Thiệp chúc mừng và thiệp ghi chú trống')
+INSERT INTO LoaiSanPham VALUES (N'',N'Trò chơi bảng')
 go
-INSERT INTO NhaCungCap VALUES (N'NCC202311130001', N'Công ty Điện tử Minh Châu', N'123 Đường Nguyễn Văn Linh, Quận 1, TP.Hồ Chí Minh', N'0901234567');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130002', N'Công ty Thời trang Áo Đẹp', N'456 Đường Lê Lai, Quận 3, TP.Hồ Chí Minh', N'0918765432');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130003', N'Công ty Đồ gia dụng Hạnh Phúc', N'789 Đường Lê Thị Riêng, Quận 5, TP.Hồ Chí Minh', N'0987654321');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130004', N'Công ty Mỹ phẩm Tâm Anh', N'234 Đường Bà Triệu, Quận 7, TP.Hồ Chí Minh', N'0954321897');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130005', N'Công ty Quà lưu niệm Vui Vẻ', N'567 Đường Đống Đa, Quận 10, TP.Hồ Chí Minh', N'0967890123');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130006', N'Công ty Sách Hữu Nghị', N'890 Đường Phan Chu Trinh, Quận Bình Thạnh', N'0923456789');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130007', N'Công ty Đồ chơi Trí Tuệ', N'321 Đường Hoàng Sa, Q. Phú Nhuận, TP.Hồ Chí Minh', N'0945678901');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130008', N'Công ty Nước hoa Thanh Xuân', N'654 Đường Cách Mạng Tháng 8', N'0912345678');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130009', N'Công ty Đồ điện gia dụng Tiến Đạt', N'111 Đường Trần Hưng Đạo', N'0932109876');
-INSERT INTO NhaCungCap VALUES (N'NCC202311130010', N'Công ty Phụ kiện Thời trang Sang Trọng', N'11 Đường Trần Hưng Đạo', N'0978563412');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Điện tử Minh Châu', N'123 Đường Nguyễn Văn Linh, Quận 1, TP.Hồ Chí Minh', N'0901234567');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Thời trang Áo Đẹp', N'456 Đường Lê Lai, Quận 3, TP.Hồ Chí Minh', N'0918765432');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ gia dụng Hạnh Phúc', N'789 Đường Lê Thị Riêng, Quận 5, TP.Hồ Chí Minh', N'0987654321');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Mỹ phẩm Tâm Anh', N'234 Đường Bà Triệu, Quận 7, TP.Hồ Chí Minh', N'0954321897');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà lưu niệm Vui Vẻ', N'567 Đường Đống Đa, Quận 10, TP.Hồ Chí Minh', N'0967890123');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Hữu Nghị', N'890 Đường Phan Chu Trinh, Quận Bình Thạnh', N'0923456789');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ chơi Trí Tuệ', N'321 Đường Hoàng Sa, Q. Phú Nhuận, TP.Hồ Chí Minh', N'0945678901');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Nước hoa Thanh Xuân', N'654 Đường Cách Mạng Tháng 8', N'0912345678');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ điện gia dụng Tiến Đạt', N'111 Đường Trần Hưng Đạo', N'0932109876');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Phụ kiện Thời trang Sang Trọng', N'11 Đường Trần Hưng Đạo', N'0978563412');
+ INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Văn Học Việt Nam', N'22 Đường Trần Hưng Đạo, Quận 1, TP.Hồ Chí Minh', N'0901234987');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Giáo Khoa Thành Phố', N'12 Đường Nguyễn Thị Minh Khai, Quận 1, TP.Hồ Chí Minh', N'0909123456'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Thái Bình', N'34 Đường Lý Tự Trọng, Quận 3, TP.Hồ Chí Minh', N'0919876543');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Dùng Học Tập Huy Hoàng', N'56 Đường Nguyễn Trãi, Quận 5, TP.Hồ Chí Minh', N'0987765432');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Ngoại Văn Anh Văn', N'78 Đường Nguyễn Đình Chiểu, Quận 7, TP.Hồ Chí Minh', N'0955432189');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Văn Hóa Việt', N'90 Đường Cao Thắng, Quận 10, TP.Hồ Chí Minh', N'0968901234');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Khoa Học Kỹ Thuật', N'11 Đường Trần Quang Khải, Quận Bình Thạnh, TP.Hồ Chí Minh', N'0924567890');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Chơi Giáo Dục Thông Minh', N'33 Đường Phan Đăng Lưu, Quận Phú Nhuận, TP.Hồ Chí Minh', N'0946789012'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Truyện Thiếu Nhi', N'55 Đường Nguyễn Văn Cừ, Quận 11, TP.Hồ Chí Minh', N'0913456789'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Sáng Tạo', N'77 Đường Lê Văn Sỹ, Quận Tân Bình, TP.Hồ Chí Minh', N'0933210987');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Sách Nghệ Thuật', N'99 Đường Nguyễn Thị Thập, Quận 7, TP.Hồ Chí Minh', N'0979654321');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Chất Lượng', N'44 Đường Lê Thánh Tôn, Quận 3, TP.Hồ Chí Minh', N'0918765439');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Dùng Học Tập Tiện Lợi', N'66 Đường Trần Phú, Quận 5, TP.Hồ Chí Minh', N'0987654398');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Ngoại Văn Pháp Văn', N'88 Đường Nguyễn Thái Học, Quận 7, TP.Hồ Chí Minh', N'0954321987');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Văn Hóa Nhật', N'111 Đường Lý Thường Kiệt, Quận 10, TP.Hồ Chí Minh', N'0967890345');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Khoa Học Phổ Thông', N'222 Đường Nguyễn Văn Cừ, Quận Bình Thạnh, TP.Hồ Chí Minh', N'0923456901'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Chơi Giáo Dục Vui Nhộn', N'333 Đường Nguyễn Kiệm, Quận Phú Nhuận, TP.Hồ Chí Minh', N'0945678034'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Truyện Thiếu Niên', N'444 Đường Lê Đại Hành, Quận 11, TP.Hồ Chí Minh', N'0913456987');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Đa Dạng', N'555 Đường Bạch Đằng, Quận Tân Bình, TP.Hồ Chí Minh', N'0933210976'); 
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Sách Hài Hước', N'666 Đường Nguyễn Hữu Thọ, Quận 7, TP.Hồ Chí Minh', N'0979654310');
+
+
+
+
 go
 INSERT INTO TacGia VALUES (N'TG202311130001', N'Nguyễn Nhật Ánh', '1955-05-07', 1);
 INSERT INTO TacGia VALUES (N'TG202311130002', N'Tô Hoài', '1920-08-04', 1);
@@ -437,21 +461,31 @@ INSERT INTO TacGia VALUES (N'TG202311130008', N'Hồ Xuân Hương', '1772-02-06
 INSERT INTO TacGia VALUES (N'TG202311130009', N'Nam Cao', '1915-12-15', 0);
 INSERT INTO TacGia VALUES (N'TG202311130010', N'Lê Lợi', '1385-01-10', 0);
 go
-INSERT INTO TheLoai VALUES (N'TL202311130001', N'Tiểu thuyết', 1, N'Tiểu thuyết văn học');
-INSERT INTO TheLoai VALUES (N'TL202311130002', N'Khoa học', 1, N'Sách khoa học tự nhiên');
-INSERT INTO TheLoai VALUES (N'TL202311130003', N'Lịch sử', 0, N'Sách về lịch sử');
-INSERT INTO TheLoai VALUES (N'TL202311130004', N'Tâm lý', 0, N'Sách về tâm lý');
-INSERT INTO TheLoai VALUES (N'TL202311130005', N'Thể thao', 0, N'Sách về thể thao');
-INSERT INTO TheLoai VALUES (N'TL202311130006', N'Kinh tế', 0, N'Sách về kinh tế');
-INSERT INTO TheLoai VALUES (N'TL202311130007', N'Nấu ăn', 0, N'Sách nấu ăn và ẩm thực');
-INSERT INTO TheLoai VALUES (N'TL202311130008', N'Manga', 0, N'Sách manga');
-INSERT INTO TheLoai VALUES (N'TL202311130009', N'Thơ', 0, N'Sách thơ');
-INSERT INTO TheLoai VALUES (N'TL202311130010', N'Tiểu sử', 0, N'Tiểu sử nhân vật nổi tiếng');
-INSERT INTO TheLoai VALUES (N'TL202311130011', N'Khoa học - Viễn tưởng', 0, N'Sách khoa học viễn tưởng');
-INSERT INTO TheLoai VALUES (N'TL202311130012', N'Dựa trên sự kiện có thật', 0, N'Sách dựa trên sự kiện có thật');
-INSERT INTO TheLoai VALUES (N'TL202311130013', N'Chính trị - Pháp luật', 0, N'Sách về chính trị và pháp luật');
-INSERT INTO TheLoai VALUES (N'TL202311130014', N'Kỹ năng sống', 0, N'Sách về kỹ năng sống');
-INSERT INTO TheLoai VALUES (N'TL202311130015', N'Hài hước', 0, N'Sách hài hước');
+INSERT INTO TheLoai VALUES (N'', N'Tiểu thuyết khoa học viễn tưởng', 2, N'Tiểu thuyết dựa trên những khả năng khoa học và công nghệ trong tương lai hoặc thế giới khác');
+INSERT INTO TheLoai VALUES (N'', N'Tiểu thuyết giả tưởng', 7, N'Tiểu thuyết sử dụng những yếu tố huyền bí, siêu nhiên, thần thoại hoặc không có thật');
+INSERT INTO TheLoai VALUES (N'', N'Truyện ngắn', 6, N'Tác phẩm văn học có độ dài ngắn hơn tiểu thuyết, thường xoay quanh một sự kiện');
+INSERT INTO TheLoai VALUES (N'', N'Cổ tích', 5, N'Truyện kể về những sự kiện kỳ diệu, những nhân vật có phép thuật hoặc những bài học đạo đức');
+INSERT INTO TheLoai VALUES (N'', N'Chính trị', 5, N'Sách nói về những vấn đề, quan điểm, lịch sử hoặc hệ thống chính trị của một quốc gia, vùng lãnh thổ');
+INSERT INTO TheLoai VALUES (N'', N'Giáo dục giới tính', 3, N'Sách cung cấp những kiến thức, kỹ năng, thái độ và giá trị liên quan đến giới tính, sinh lý');
+INSERT INTO TheLoai VALUES (N'', N'Hài hước', 1, N'Sách có mục đích làm cho người đọc cười hoặc giải trí bằng những tình huống, nhân vật, ngôn ngữ');
+INSERT INTO TheLoai VALUES (N'', N'Hình sự', 2, N'Sách xoay quanh những vụ án, tội phạm, điều tra, truy tố hoặc pháp lý');
+INSERT INTO TheLoai VALUES (N'', N'Hồi ký', 2, N'Sách viết về cuộc đời, sự nghiệp, trải nghiệm hoặc suy nghĩ của một người hoặc một nhóm người');
+INSERT INTO TheLoai VALUES (N'', N'Kinh dị', 4, N'Sách tạo ra những cảm xúc sợ hãi, ghê rợn, căng thẳng cho người đọc bằng những yếu tố bạo lực');
+INSERT INTO TheLoai VALUES (N'', N'Kinh doanh', 13, N'Sách cung cấp những kiến thức, kỹ năng, chiến lược, phân tích hoặc kinh nghiệm ');
+INSERT INTO TheLoai VALUES (N'', N'Kỹ năng sống', 4, N'Sách hướng dẫn người đọc cách đối phó, giải quyết hoặc cải thiện những vấn đề');
+INSERT INTO TheLoai VALUES (N'', N'Khoa học viễn tưởng', 9, N'Sách giải thích những hiện tượng, sự kiện, khả năng hoặc thế giới khác');
+INSERT INTO TheLoai VALUES (N'', N'Ngôn tình', 4, N'Tiểu thuyết tập trung vào những mối quan hệ, tình cảm, đời sống hoặc xã hội của những nhân vật nữ');
+INSERT INTO TheLoai VALUES (N'', N'Phát triển bản thân', 19, N'Sách giúp người đọc nhận thức, phát huy hoặc thay đổi những phẩm chất');
+INSERT INTO TheLoai VALUES (N'', N'Phiêu lưu', 4, N'Sách kể về những chuyến đi, cuộc hành trình, khám phá hoặc thử thách');
+INSERT INTO TheLoai VALUES (N'', N'Thiếu nhi', 1, N'Sách dành cho độc giả nhỏ tuổi, thường có nội dung giáo dục, giải trí');
+INSERT INTO TheLoai VALUES (N'', N'Truyện tranh', 8, N'Tác phẩm văn học kết hợp giữa hình ảnh và chữ viết để kể một câu chuyện');
+INSERT INTO TheLoai VALUES (N'', N'Tâm lý học', 7, N'Sách nghiên cứu, phân tích hoặc ứng dụng những kiến thức, nguyên lý, phương pháp');
+INSERT INTO TheLoai VALUES (N'', N'TIểu thuyết', 20, N'Tác phẩm văn học dài, kể về một hoặc nhiều câu chuyện, nhân vật, tình tiết hoặc đề tài');
+INSERT INTO TheLoai VALUES (N'', N'Trinh thám', 5, N'Sách kể về quá trình tìm kiếm, phát hiện, giải mã hoặc làm sáng tỏ những bí ẩn');
+INSERT INTO TheLoai VALUES (N'', N'Văn học', 13, N'Sách thuộc về lĩnh vực nghệ thuật sử dụng ngôn ngữ để thể hiện những ý nghĩa, cảm xúc, suy nghĩ');
+INSERT INTO TheLoai VALUES (N'', N'Thơ', 3, N'Tác phẩm văn học sử dụng những từ ngữ, âm điệu, nhịp điệu, hình ảnh hoặc biểu tượng');
+INSERT INTO TheLoai VALUES (N'', N'Thần thoại', 1, N'Sách kể về những truyền thuyết, thần thoại, thần tiên, thần linh hoặc những sự kiện siêu nhiên');
+
 go
 INSERT INTO Sach VALUES (N'S202311130001', N'Chút gió thoáng qua', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230001', N'NCC202311230001', 15.5, N'Nâu', 1, 2500, 22, 500000, 800000,800000);
 INSERT INTO Sach VALUES (N'S202311130002', N'Cây cam ngọt ngào', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230003', N'NCC202311230003', 15.5, N'Nâu', 1, 2500, 100, 700000, 1120000,1120000);
@@ -473,9 +507,15 @@ select *from LoaiSanPham
 select *from Sach
 select *from TacGia
 select *from SanPham
-
+select *from TaiKhoan
 use QLHieuSach
 use master
 drop database QLHieuSach
 
 delete from SanPham
+delete from Sach
+delete from TheLoai
+delete from TacGia
+delete from NhaCungCap
+delete from LoaiSanPham
+
