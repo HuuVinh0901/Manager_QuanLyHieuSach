@@ -99,7 +99,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/plus.png"));
 		ImageIcon iconBH = new ImageIcon(getClass().getResource("/icons/banhang.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));	
-		
+		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
 			
 
 		MenuItem QLBH = new MenuItem(iconBH, "Quản lý bán hàng", new ActionListener() {
@@ -151,6 +151,14 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 				frame.setVisible(true);
 			}
 		});
+		MenuItem thongKe = new MenuItem(iconTK, "Thống kê", new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new ThongKeDoanhThuNhanVienView());
+				
+			}
+		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
@@ -161,9 +169,10 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 			}
 		});
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt",null,subGiaoDien);
-		addMenu(QLBH,QLKH,CaiDat,DangXuat);
+		addMenu(QLBH,QLKH,CaiDat,thongKe,DangXuat);
 		QLKH.setBackground(new Color(153,225,225));
 		QLBH.setBackground(new Color(153,225,225));
+		thongKe.setBackground(new Color(153,225,225));
 		CaiDat.setBackground(new Color(153,225,225));
 		DangXuat.setBackground(new Color(153,225,225));
 

@@ -521,7 +521,7 @@ go
 insert TaiKhoan values('ADMIN','1111','2023-11-13')
 go
 --QL202311230001
---NV202311130001
+--NV202311260001
 select *from TheLoai
 select *from NhaCungCap
 select *from LoaiSanPham
