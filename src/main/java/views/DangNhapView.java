@@ -16,6 +16,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -33,6 +35,8 @@ import javax.swing.border.LineBorder;
 
 import org.kordamp.ikonli.materialdesign.MaterialDesign;
 import org.kordamp.ikonli.swing.FontIcon;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import connection.ConnectDB;
 import dao.DAONhanVien;
@@ -42,7 +46,7 @@ import models.NhanVien;
 import models.QuanLy;
 import models.TaiKhoan;
 
-public class DangNhapView extends JFrame implements ActionListener , MouseListener, KeyListener{
+public class DangNhapView extends JFrame implements ActionListener, MouseListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private JTextField txtTaiKhoan;
 	private JButton btnThoat;
@@ -59,10 +63,11 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 	private DAOTaiKhoan daoTaiKhoan;
 	private DAONhanVien daoNV;
 	private DAOQuanLy daoQL;
-	public DangNhapView()  {
+
+	public DangNhapView() {
 		daoTaiKhoan = new DAOTaiKhoan();
-		daoNV=new DAONhanVien();
-		daoQL=new DAOQuanLy();
+		daoNV = new DAONhanVien();
+		daoQL = new DAOQuanLy();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setResizable(false);
 		setTitle("Đăng Nhập Quản Lý Hiệu Sách");
@@ -131,12 +136,10 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 
 		add(b, BorderLayout.NORTH);
 
+		add(b, BorderLayout.NORTH);
 
-		add(b,BorderLayout.NORTH);
 
-		
-		
-		
+
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
 		try {
@@ -159,72 +162,75 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 	}
 
 	public void Login() {
-		String maTK=txtTaiKhoan.getText().toString().trim();
-		String mk=txtMatKhau.getText().toString().trim();
-		TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(maTK);
-		if(tk.getIdTaiKhoan()== null) {
-			JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-		}else if(!tk.getMatKhau().equalsIgnoreCase(mk)) {
-			JOptionPane.showMessageDialog(this, "Mật khẩu không đúng", "Thông báo",
-					JOptionPane.WARNING_MESSAGE);
-		}else {
-			String PhanLoaiTK=tk.getIdTaiKhoan().substring(0,2);
-			if(PhanLoaiTK.equals("QL")){
-				QuanLy ql=daoQL.getQuanLy(tk.getIdTaiKhoan());
-				TrangChuQuanTriView QTV = new TrangChuQuanTriView(ql);
-				QTV.setVisible(true);
-				this.setVisible(false);
-			}
-			if(PhanLoaiTK.equals("NV")){
-				NhanVien nv=daoNV.getNhanVien(tk.getIdTaiKhoan());
-				TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView(nv);
-				QLBH.setVisible(true);
-				this.setVisible(false);
-			}
-			if(PhanLoaiTK.equals("AD")){
-				AdminView Admin = new AdminView();
-				Admin.setVisible(true);
-				this.setVisible(false);
-			}
-			}
-			
+	    String maTK = txtTaiKhoan.getText().trim();
+	    String mk = txtMatKhau.getText().trim();
+	    TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(maTK);
+
+	    if (tk.getIdTaiKhoan() == null) {
+	        JOptionPane.showMessageDialog(this, "Tài khoản không đúng", "Thông báo", JOptionPane.WARNING_MESSAGE);
+	    } else {
+	        if (maTK.startsWith("AD") && mk.equals("1111")) {
+	            AdminView adminView = new AdminView();
+	            adminView.setVisible(true);
+	            this.setVisible(false);
+	        } else {
+	            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+	            if (!passwordEncoder.matches(mk, tk.getMatKhau())) {
+	                JOptionPane.showMessageDialog(this, "Mật khẩu không đúng", "Thông báo", JOptionPane.WARNING_MESSAGE);
+	            } else {
+	                String PhanLoaiTK = tk.getIdTaiKhoan().substring(0, 2);
+	                if (PhanLoaiTK.equals("QL")) {
+	                    QuanLy ql = daoQL.getQuanLy(tk.getIdTaiKhoan());
+	                    TrangChuQuanTriView QTV = new TrangChuQuanTriView(ql);
+	                    QTV.setVisible(true);
+	                    this.setVisible(false);
+	                } else if (PhanLoaiTK.equals("NV")) {
+	                    NhanVien nv = daoNV.getNhanVien(tk.getIdTaiKhoan());
+	                    TrangChuQuanLyBanHangView QLBH = new TrangChuQuanLyBanHangView(nv);
+	                    QLBH.setVisible(true);
+	                    this.setVisible(false);
+	                }
+	            }
+	        }
+	    }
 	}
+
+
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -235,13 +241,12 @@ public class DangNhapView extends JFrame implements ActionListener , MouseListen
 				Login();
 			}
 		}
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		
-		
+
 	}
 
 }

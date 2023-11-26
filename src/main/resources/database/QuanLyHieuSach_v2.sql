@@ -6,7 +6,7 @@ USE QLHieuSach
 go
 CREATE TABLE TaiKhoan (
     idTaiKhoan NVARCHAR(14) NOT NULL PRIMARY KEY,
-    matKhau NVARCHAR(20) NOT NULL, 
+    matKhau NVARCHAR(255) NOT NULL, 
     ngayLap DATE DEFAULT GETDATE(), 
 )
 CREATE TABLE NhanVien (
@@ -518,9 +518,15 @@ go
 --INSERT INTO SanPham VALUES (N'SP202311130004', N'Sản phẩm D', N'LSP202311230001', N'NCC202311230002', 15.0, N'Đen', 1, 0, 150000, 40, 240000, 240000);
 --INSERT INTO SanPham VALUES (N'SP202311130005', N'Sản phẩm E', N'LSP202311230002', N'NCC202311230003', 9.5, N'Hồng', 1, 0, 95000, 60, 152000, 152000);
 go
-insert TaiKhoan values('ADMIN','1111','2023-11-13')
+
+
+
+--insert TaiKhoan values('ADMIN','1111','2023-11-13')
+insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
+select *from NhanVien
+select *from TaiKhoan
 go
---QL202311230001
+--QL202311260001
 --NV202311260001
 select *from TheLoai
 select *from NhaCungCap
@@ -539,4 +545,6 @@ delete from TheLoai
 delete from TacGia
 delete from NhaCungCap
 delete from LoaiSanPham
-
+delete from TaiKhoan
+delete from NhanVien
+delete from QuanLy

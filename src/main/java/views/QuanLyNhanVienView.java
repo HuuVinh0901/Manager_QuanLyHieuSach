@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -45,6 +46,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -277,8 +281,11 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		String chucVu=cbChucVu.getSelectedItem().toString();
 		Date ngayLap = new Date(System.currentTimeMillis());
 		String matkhau="1111";
-		TaiKhoan tk=new TaiKhoan(id,matkhau,ngayLap);
 		NhanVien nv = new NhanVien();
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+		String hasdPassword = passwordEncoder.encode(matkhau);
+		TaiKhoan tk=new TaiKhoan(id,hasdPassword,ngayLap);
+		System.out.println(hasdPassword);
 		nv.setId(id);
 		nv.setTen(ten);
 		nv.setChucVu(chucVu);

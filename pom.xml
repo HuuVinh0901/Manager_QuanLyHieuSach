@@ -11,29 +11,40 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.2.1.RELEASE</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
 		<dependency>
-		    <groupId>org.jfree</groupId>
-		    <artifactId>jfreechart</artifactId>
-		    <version>1.5.3</version>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.5.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<!--https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>2.21.1</version>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.21.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>5.2.2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>5.2.2</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -42,11 +53,10 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.toedter/jcalendar -->
 		<dependency>
-		    <groupId>com.toedter</groupId>
-		    <artifactId>jcalendar</artifactId>
-		    <version>1.4</version>
+			<groupId>com.toedter</groupId>
+			<artifactId>jcalendar</artifactId>
+			<version>1.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
@@ -68,45 +78,6 @@
 			<artifactId>ikonli-materialdesign-pack</artifactId>
 			<version>12.3.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.miglayout</groupId>
-			<artifactId>miglayout-core</artifactId>
-			<version>4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.miglayout</groupId>
-			<artifactId>miglayout-swing</artifactId>
-			<version>4.2</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
-		<dependency>
-		    <groupId>org.jfree</groupId>
-		    <artifactId>jfreechart</artifactId>
-		    <version>1.5.3</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-		<dependency>
-		    <groupId>org.apache.logging.log4j</groupId>
-		    <artifactId>log4j-core</artifactId>
-		    <version>2.21.1</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>5.2.2</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		    <version>5.2.2</version>
-		</dependency>
-
-		
 	</dependencies>
 	<build>
 		<plugins>
@@ -119,7 +90,7 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>ui.Main</mainClass>
+							<mainClass>main.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
