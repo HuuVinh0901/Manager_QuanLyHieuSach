@@ -23,6 +23,26 @@ public class DAONhanVien {
 		}
 	}
 
+	private Connection connection;
+
+	public DAONhanVien() {
+		connection = ConnectDB.getinstance().getConnection();
+	}
+
+	public boolean kiemTraSoDienThoaiTonTai(String soDienThoai) throws SQLException {
+		String sql = "SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = ?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, soDienThoai);
+			try (ResultSet rs = pst.executeQuery()) {
+				if (rs.next()) {
+					int count = rs.getInt(1);
+					return count > 0;
+				}
+			}
+		}
+		return false;
+	}
+
 	public NhanVien getNhanVienBySoDienThoai(String soDienThoai) {
 		NhanVien nv = new NhanVien();
 		ConnectDB.getinstance();
@@ -50,6 +70,7 @@ public class DAONhanVien {
 
 		return nv;
 	}
+
 	public NhanVien getNhanVien(String idNV) {
 		NhanVien nv = new NhanVien();
 		ConnectDB.getinstance();
@@ -77,8 +98,8 @@ public class DAONhanVien {
 
 		return nv;
 	}
-	
-	public boolean themNhanVien(NhanVien nv)  {
+
+	public boolean themNhanVien(NhanVien nv) {
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		String sql = "insert into NhanVien values (?,?,?,?,?,?,?,?,?)";
@@ -94,12 +115,12 @@ public class DAONhanVien {
 			ps.setBoolean(7, nv.isGioiTinh());
 			ps.setString(8, nv.getChucVu());
 			ps.setBoolean(9, nv.isTrangThai());
-			
+
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
@@ -121,7 +142,7 @@ public class DAONhanVien {
 				nv.setGioiTinh(rs.getBoolean(7));
 				nv.setChucVu(rs.getString(8));
 				nv.setTrangThai(rs.getBoolean(9));
-				
+
 				listNV.add(nv);
 			}
 		} catch (SQLException e) {
@@ -129,6 +150,7 @@ public class DAONhanVien {
 		}
 		return listNV;
 	}
+
 	public void updateKhachHang(NhanVien nv) {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
@@ -142,7 +164,7 @@ public class DAONhanVien {
 			pst.setString(4, nv.getEmail());
 			pst.setDate(5, nv.getNgaySinh());
 			pst.setBoolean(6, nv.isGioiTinh());
-			pst.setString(7,nv.getChucVu());
+			pst.setString(7, nv.getChucVu());
 			pst.setBoolean(6, nv.isTrangThai());
 			pst.setString(7, nv.getId());
 			pst.executeUpdate();
@@ -153,6 +175,7 @@ public class DAONhanVien {
 			close(pst);
 		}
 	}
+
 	public void DeleteNV(String maXoa) {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
@@ -169,6 +192,7 @@ public class DAONhanVien {
 			close(pst);
 		}
 	}
+
 	public void updateNhanVien(NhanVien nv) {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
@@ -182,7 +206,7 @@ public class DAONhanVien {
 			pst.setString(4, nv.getEmail());
 			pst.setDate(5, nv.getNgaySinh());
 			pst.setBoolean(6, nv.isGioiTinh());
-			pst.setString(7,nv.getChucVu());
+			pst.setString(7, nv.getChucVu());
 			pst.setBoolean(8, nv.isTrangThai());
 			pst.setString(9, nv.getId());
 			pst.executeUpdate();
@@ -193,6 +217,7 @@ public class DAONhanVien {
 			close(pst);
 		}
 	}
+
 	public ArrayList<NhanVien> getMa(String maTim) {
 		ArrayList<NhanVien> lstNV = new ArrayList<NhanVien>();
 		ConnectDB.getinstance();
@@ -220,6 +245,7 @@ public class DAONhanVien {
 		}
 		return lstNV;
 	}
+
 	public ArrayList<NhanVien> getTen(String tenTim) {
 		ArrayList<NhanVien> lstNV = new ArrayList<NhanVien>();
 		ConnectDB.getinstance();

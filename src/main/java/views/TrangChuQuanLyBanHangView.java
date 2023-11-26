@@ -43,6 +43,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private NhanVien headerNV;
 	private DAONhanVien daoNV;
 	private JPanel pnDate;
+
 	public TrangChuQuanLyBanHangView(NhanVien nv) {
 		this.headerNV = nv;
 		daoNV = new DAONhanVien();
@@ -126,9 +127,8 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TaiKhoan tk = new TaiKhoan();
-				NhanVien nv = new NhanVien();
-				SetPassWordView frame = new SetPassWordView(nv, tk);
+				NhanVien nv = daoNV.getNhanVien(headerNV.getId());
+				SetPassWordView frame = new SetPassWordView(nv);
 				switchToPanel(new HomeView());
 				frame.setVisible(true);
 			}
@@ -150,8 +150,8 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 
 			}
 		});
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien);
-		addMenu(QLBH, QLKH, CaiDat, thongKe, DangXuat);
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien, subCaiDatDMK);
+		addMenu(QLBH, QLKH, thongKe, CaiDat, DangXuat);
 		QLKH.setBackground(new Color(153, 225, 225));
 		QLBH.setBackground(new Color(153, 225, 225));
 		thongKe.setBackground(new Color(153, 225, 225));
@@ -189,7 +189,6 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		lbID.setFont(new Font("Arial", Font.ITALIC, 15));
 		lbTen = new JLabel(": " + headerNV.getTen());
 
-
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 		String dateTiemString = now.format(formatter);
@@ -198,9 +197,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 
 		pnDate = new JPanel();
 		pnDate.add(lblDate);
-		
-		
-		
+
 		lbTen.setFont(new Font("Arial", Font.ITALIC, 15));
 		JPanel pnTen = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel pnID = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -217,7 +214,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		panelHeader.add(pnID, BorderLayout.NORTH);
 		panelHeader.add(pnTen, BorderLayout.WEST);
 		panelHeader.add(pnDate, BorderLayout.CENTER);
-		
+
 		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
 
 		jScrollPane1.setBorder(null);
