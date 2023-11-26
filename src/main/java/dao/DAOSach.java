@@ -78,7 +78,7 @@ public class DAOSach implements Serializable {
 				sc.giaBan();
 				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
 				dsSach.add(sc);
-				System.out.println("Load thanh cong");
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
