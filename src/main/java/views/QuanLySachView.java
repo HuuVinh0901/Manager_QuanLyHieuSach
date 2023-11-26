@@ -608,7 +608,9 @@ public class QuanLySachView extends JPanel
 						s.setTenSanPham(row.getCell(1).getStringCellValue());
 						s.setTacGia(new TacGia(row.getCell(2).getStringCellValue()));
 						s.setTheLoai(new TheLoai(row.getCell(3).getStringCellValue()));
-						Date namXuatBan = (Date) row.getCell(4).getDateCellValue();
+						java.util.Date namXuatBanUtil = row.getCell(4).getDateCellValue();
+						java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
+						s.setNamXuatBan(namXuatBanSql);
 						s.setISBN(row.getCell(5).getStringCellValue());
 						int soTrang = (int) row.getCell(6).getNumericCellValue();
 						s.setSoTrang(soTrang);
