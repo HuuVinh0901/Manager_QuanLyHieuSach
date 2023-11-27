@@ -194,7 +194,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				switchToPanel(new ThongKeDoanhThuView());
 			}
 		});
 		MenuItem subThongKeSanPham = new MenuItem(iconSubMenu, "Thống kê sản phẩm", new ActionListener() {

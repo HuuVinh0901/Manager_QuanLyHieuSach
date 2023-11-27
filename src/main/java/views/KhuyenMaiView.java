@@ -240,7 +240,6 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		JLabel lbChen2=new JLabel();
 		FooterSP.add(btnChonSP);
 		
-		
 		TimKiemSP.add(lbChen);
 		TimKiemSP.add(lbChen2);
 		TimKiemSP.add(lbTimKiemSP);
@@ -642,10 +641,9 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 	}
 	private void showDialog(JFrame FrameParent,JDialog dialog) {
 		
-		dialog.setVisible(true);
-		dialog.setSize(500,500);
-		dialog.setLocationRelativeTo(null);	
 		dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
 		
 	}
 	private void CapNhatKM() {
