@@ -13,6 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -21,7 +24,9 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -30,6 +35,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,8 +49,16 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -90,6 +104,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private JButton btnXoaNV;
 	private JButton btnLamMoi;
 	private JButton btnXemTatCa;
+	private JButton btnXuatExecl;
 	private SimpleDateFormat dfNgaySinh;
 	private DAONhanVien daoNhanVien;
 	private DAOTaiKhoan daoTK;
@@ -192,7 +207,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	    btnCapNhatNV=new JButton("CẬP NHẬT THÔNG TIN NHÂN VIÊN");
 	    btnCapNhatNV.setIcon(iconCapNhat);
 	    btnXoaNV=new JButton("XÓA NHÂN VIÊN");
-
+	    btnXuatExecl=new JButton("XUẤT EXCEL");
 	    btnXoaNV.setIcon(iconXoa);
 	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnLamMoi.setIcon(iconLamMoi);
@@ -201,6 +216,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	    pnChucNang.add(btnCapNhatNV);
 	    pnChucNang.add(btnXoaNV);
 	    pnChucNang.add(btnLamMoi);
+	    pnChucNang.add(btnXuatExecl);
 	    pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
 	    pnNouth.add(pnChucNang,BorderLayout.SOUTH);
 	    add(pnSounth,BorderLayout.CENTER);
@@ -246,6 +262,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		btnCapNhatNV.addActionListener(this);
 		btnXoaNV.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
+		btnXuatExecl.addActionListener(this);
 		tableNhanVien.addMouseListener(this);
 		tableNhanVien.addKeyListener(this);
 		txtTimKiem.addKeyListener(this);
@@ -277,8 +294,11 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		String chucVu=cbChucVu.getSelectedItem().toString();
 		Date ngayLap = new Date(System.currentTimeMillis());
 		String matkhau="1111";
-		TaiKhoan tk=new TaiKhoan(id,matkhau,ngayLap);
 		NhanVien nv = new NhanVien();
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+		String hasdPassword = passwordEncoder.encode(matkhau);
+		TaiKhoan tk=new TaiKhoan(id,hasdPassword,ngayLap);
+		System.out.println(hasdPassword);
 		nv.setId(id);
 		nv.setTen(ten);
 		nv.setChucVu(chucVu);
@@ -352,6 +372,59 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		}
 		
 }
+	private void xuatExcel() {
+
+	try {	
+		Workbook workbook = new XSSFWorkbook();
+		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Khách hàng");
+
+		Row header = sheet.createRow(0);
+		header.createCell(0).setCellValue("ID nhân viên");
+		header.createCell(1).setCellValue("Tên nhân viên");
+		header.createCell(2).setCellValue("Số điện thoại");
+		header.createCell(3).setCellValue("Email");
+		header.createCell(4).setCellValue("Địa chỉ");
+		header.createCell(5).setCellValue("Ngày sinh");
+		header.createCell(6).setCellValue("Giới tính");
+		header.createCell(7).setCellValue("Chức vụ");
+		header.createCell(8).setCellValue("Trạng thái");
+		int rowNum = 1;
+		for(NhanVien kh: daoNhanVien.getAllDanhSachNV()) {
+			Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(kh.getId());
+            row.createCell(1).setCellValue(kh.getTen());
+            row.createCell(2).setCellValue(kh.getSoDienThoai());
+            row.createCell(3).setCellValue(kh.getEmail());
+            row.createCell(4).setCellValue(kh.getDiaChi());
+            row.createCell(5).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgaySinh()));
+            row.createCell(6).setCellValue(kh.isGioiTinh()?"Nam":"Nữ");
+            row.createCell(7).setCellValue(kh.getChucVu());
+            row.createCell(8).setCellValue(kh.isTrangThai()?"Đang làm việc":"Đã nghỉ việc");
+		}
+		JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn đường dẫn và tên tệp Excel");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp Excel (*.xlsx)", "xlsx");
+        fileChooser.setFileFilter(filter);
+
+        // Hiển thị hộp thoại mở cửa sổ lưu tệp
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            // Lấy đường dẫn và tên tệp từ người dùng
+            String filePathString = fileChooser.getSelectedFile().getAbsolutePath();
+
+            // Ghi workbook ra tệp Excel
+            try (FileOutputStream outputStream = new FileOutputStream(filePathString + ".xlsx")) {
+                workbook.write(outputStream);
+            }
+
+            System.out.println("Dữ liệu đã được ghi vào tệp Excel thành công.");
+            JOptionPane.showMessageDialog(null, "Xuất Excel thành công");
+        }
+        
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+}
 	private String autoID() throws SQLException {
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -404,7 +477,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			}
 		}
 	}
-
+	
 
 
 
@@ -422,6 +495,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			gioiTinh=false;
 		}
 		java.util.Date ngaySinh = chooserNgaySinh.getDate();
+		java.util.Date ngayHienTai=new java.util.Date();
 		String diaChi = txtDiaChi.getText().trim();
 		String email = txtEmail.getText().trim();
 		String soDienThoai = txtsdt.getText().trim();
@@ -441,9 +515,9 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			txtTenNV.requestFocus();
 			return false;
 		}
-//
-		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
-			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
+
+		if (!(diaChi.length() > 0 && diaChi.matches("^[^!@#$%^&*()+-]*$"))) {
+			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa kí tự đặc biệt", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtDiaChi.requestFocus();
 			txtDiaChi.selectAll();
@@ -456,8 +530,8 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			txtEmail.selectAll();
 			return false;
 		}
-		if (!(ngaySinh!=null  && (ngaySinh.before(new java.util.Date())))) {
-			JOptionPane.showMessageDialog(this, "Ngày sinh phải trước ngày hiện tại", "Thông báo",
+		if (!(ngaySinh!=null  && (ngayHienTai.getYear()-ngaySinh.getYear()>18))) {
+			JOptionPane.showMessageDialog(this, "Nhân viên chưa đủ 18 tuổi", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			chooserNgaySinh.requestFocus();
 			
@@ -526,6 +600,9 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		 if(o.equals(btnXemTatCa)) {
 			 loadData();
 		 }
+		 if(o.equals(btnXuatExecl)) {
+			 xuatExcel();
+		 }
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -581,15 +658,15 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//			Object o = e.getSource();
-//			if (o == txtTenNV || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
-//				try {
-//					ThemNV();
-//				} catch (SQLException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//			}
+			Object o = e.getSource();
+			if (o == txtTenNV || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
+				try {
+					ThemNV();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_F5) {
 			lamMoi();

@@ -80,7 +80,49 @@ public class DAO_QuanLyBanHang {
 		}
 		return soLuong;
 	}
+	public double getTongTienTheoNgayThangNam(String ngay,String thang, String nam) {
+		double soLuong = 0;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT SUM(tongTien) AS total  FROM HoaDon WHERE DAY(ngayLap)=? AND MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? GROUP BY DAY(ngayLap),MONTH(ngayLap), YEAR(ngayLap)";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, ngay);
+			statement.setString(2, thang);
+			statement.setString(3, nam);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				soLuong = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuong;
+	}
 	
+	public int getSoHoaDonTheoNgayThangNam(String ngay,String thang, String nam) {
+		int soLuong = 0;
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT COUNT(*) AS total  FROM HoaDon WHERE DAY(ngayLap)=? AND MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? GROUP BY DAY(ngayLap),MONTH(ngayLap), YEAR(ngayLap)";
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, ngay);
+			statement.setString(2, thang);
+			statement.setString(3, nam);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				soLuong = rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuong;
+	}
 	public int getSoHoaDonTheoThangNam(String thang, String nam) {
 		int soLuong = 0;
 		ConnectDB.getinstance();
@@ -90,6 +132,7 @@ public class DAO_QuanLyBanHang {
 			String sql = "SELECT COUNT(*) AS total  FROM HoaDon WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? GROUP BY MONTH(ngayLap), YEAR(ngayLap)";
 			
 			statement = con.prepareStatement(sql);
+			
 			statement.setString(1, thang);
 			statement.setString(2, nam);
 			ResultSet rs = statement.executeQuery();
@@ -101,7 +144,6 @@ public class DAO_QuanLyBanHang {
 		}
 		return soLuong;
 	}
-	
 	
 	public ArrayList<HoaDon> getHoaDonTheoNgay(String dayStart, String dayEnd) {
 		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
