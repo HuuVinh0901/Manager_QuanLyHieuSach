@@ -526,7 +526,7 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202311260001
+--QL202311280001
 --NV202311260001
 select *from TheLoai
 select *from NhaCungCap
