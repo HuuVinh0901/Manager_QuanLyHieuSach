@@ -65,7 +65,6 @@ public class TrangChuQuanTriView extends JFrame {
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
 		setIconImage(icon.getImage());
 		paneCu = new HomeView(); // Bắt đầu với HomeView
-		panelBody.add(paneCu);
 		execute();
 		menus.setBackground(new Color(153, 255, 255));
 		addWindowListener(new WindowAdapter() {

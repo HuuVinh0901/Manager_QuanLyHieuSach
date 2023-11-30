@@ -300,8 +300,6 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			daoNhanVien.themNhanVien(nv);
 			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
 		}
-		
-
 	}
 	private void loadData() {
 		modelNhanVien.setRowCount(0);

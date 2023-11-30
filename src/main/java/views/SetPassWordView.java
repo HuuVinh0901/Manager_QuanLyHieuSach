@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,7 +39,7 @@ import models.TaiKhoan;
 public class SetPassWordView extends Dialog implements ActionListener, MouseListener {
 	private JLabel lblTieuDe;
 	private JLabel lblSub;
-	private JLabel lblMaXacNhan;
+	private JLabel lblPasswordOld;
 	private JLabel lblMatKhauMoi;
 	private JLabel lblXacNhanMatKhau;
 	private JLabel lblTenDangNhap;
@@ -46,6 +47,7 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 	private JTextField txtMaXacNhan;
 	private JPasswordField txtMatKhauMoi;
 	private JPasswordField txtXacNhanMatKhau;
+	private JPasswordField passwordOld;
 	private JTextField txtTenDangNhap;
 	private JTextField txtTenNhanVien;
 	private JButton btnGuiLaiMa;
@@ -66,6 +68,7 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 		this.nhanvien = nv;
 		daoNhanVien = new DAONhanVien();
 		daoTaiKhoan = new DAOTaiKhoan();
+		taiKhoan = new TaiKhoan();
 		setSize(300, 430);
 		setTitle("Đặt lại mật khẩu");
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
@@ -85,13 +88,13 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 			}
 		});
 		lblTieuDe = new JLabel("Đặt lại mật khẩu của bạn");
-		lblMaXacNhan = new JLabel("Số điện thoại");
+		lblPasswordOld = new JLabel("Mật khẩu cũ");
 		lblMatKhauMoi = new JLabel("Mật khẩu mới");
 		lblXacNhanMatKhau = new JLabel("Xác nhận mật khẩu");
 		lblTenDangNhap = new JLabel("Mã Nhân viên");
 		lblTenNhanVien = new JLabel("Tên nhân viên");
 
-		txtMaXacNhan = new JTextField(20);
+		passwordOld = new JPasswordField(20);
 		txtMatKhauMoi = new JPasswordField(20);
 		txtXacNhanMatKhau = new JPasswordField(20);
 		txtTenDangNhap = new JTextField(20);
@@ -128,9 +131,9 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 		pnCenter.add(txtTenNhanVien, gbc);
 
 		gbc.gridy++;
-		pnCenter.add(lblMaXacNhan, gbc);
+		pnCenter.add(lblPasswordOld, gbc);
 		gbc.gridy++;
-		pnCenter.add(txtMaXacNhan, gbc);
+		pnCenter.add(passwordOld, gbc);
 		gbc.gridy++;
 		pnCenter.add(lblMatKhauMoi, gbc);
 		gbc.gridy++;
@@ -205,54 +208,83 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 	private void lamMoi() {
 		txtMatKhauMoi.setText("");
 		txtXacNhanMatKhau.setText("");
+		passwordOld.setText("");
 		txtMatKhauMoi.requestFocus();
 
 	}
 
-	private boolean kiemTraMatKhau(String matKhauMoi, String xacNhanMatKhau) {
-		return matKhauMoi.equals(xacNhanMatKhau);
+	private boolean kiemTraMatKhauCu(String idTaiKhoan, char[] matKhauCu) {
+	    try {
+	        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+	        String plainPassword = new String(matKhauCu);
+
+	        String hashedMatKhauDB = daoTaiKhoan.kiemTraMatKhauOLD(idTaiKhoan);
+
+	        boolean passwordMatch = passwordEncoder.matches(plainPassword, hashedMatKhauDB);
+
+	        return passwordMatch;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    } finally {
+	        Arrays.fill(matKhauCu, ' ');
+	    }
+	}
+
+
+
+	private boolean kiemTraMatKhau(char[] matKhauMoi, char[] xacNhanMatKhau) {
+		return Arrays.equals(matKhauMoi, xacNhanMatKhau);
 	}
 
 	private void capNhatMatKhau() {
-		String matKhauMoi = txtMatKhauMoi.getText();
-		String xacNhanMatKhau = txtXacNhanMatKhau.getText();
-		String nhanvien = txtTenDangNhap.getText();
-		String soDienThoai = txtMaXacNhan.getText();
-		TaiKhoan tk = new TaiKhoan(nhanvien);
-		try {
-			boolean soDienThoaiTonTai = daoNhanVien.kiemTraSoDienThoaiTonTai(soDienThoai);
-			if (!soDienThoaiTonTai) {
-				JOptionPane.showMessageDialog(this, "Số điện thoại không tồn tại trong hệ thống", "Lỗi",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			} else if (matKhauMoi.isEmpty() || xacNhanMatKhau.isBlank()) {
-				JOptionPane.showConfirmDialog(this, "Mật khẩu không được để trống","Cảnh báo", JOptionPane.ERROR_MESSAGE);
-				return;
-			} else if (kiemTraMatKhau(matKhauMoi, xacNhanMatKhau)) {
-				try {
-					BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
-					String hasdPassword = passwordEncoder.encode(xacNhanMatKhau);
-					boolean updateSuccess = daoTaiKhoan.capNhatTaiKhoan(tk.getIdTaiKhoan(), hasdPassword);
-					if (updateSuccess) {
-						JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
-					} else {
-						JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại", "Cảnh báo",
-								JOptionPane.WARNING_MESSAGE);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(this, "Lỗi khi đổi mật khẩu", "Lỗi", JOptionPane.ERROR_MESSAGE);
-				}
-			} else {
-				JOptionPane.showMessageDialog(this, "Mật khẩu và xác nhận mật khẩu không trùng khớp", "Lỗi",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    char[] matKhauMoi = txtMatKhauMoi.getPassword();
+	    char[] xacNhanMatKhau = txtXacNhanMatKhau.getPassword();
+	    char[] matKhauCu = passwordOld.getPassword();
+	    TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(nhanvien.getId());
+//	    System.out.println(tk.getIdTaiKhoan());
+	    try {
+	        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+	        String hashedMatKhauDB = tk.getMatKhau();
 
+	        if (!passwordEncoder.matches(new String(matKhauCu), hashedMatKhauDB)) {
+	            JOptionPane.showMessageDialog(this, "Mật khẩu cũ không đúng", "Lỗi", JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+
+	        if (matKhauMoi.length == 0 || xacNhanMatKhau.length == 0) {
+	            JOptionPane.showMessageDialog(this, "Mật khẩu mới không được để trống", "Cảnh báo",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+
+	        if (!kiemTraMatKhau(matKhauMoi, xacNhanMatKhau)) {
+	            JOptionPane.showMessageDialog(this, "Mật khẩu và xác nhận mật khẩu không trùng khớp", "Lỗi",
+	                    JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+
+	        String hashedPassword = passwordEncoder.encode(new String(xacNhanMatKhau));
+
+	        boolean updateSuccess = daoTaiKhoan.capNhatTaiKhoan(nhanvien.getId(), hashedPassword);
+
+	        if (updateSuccess) {
+	            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
+	            lamMoi();
+	            dispose();
+	        } else {
+	            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, "Lỗi khi đổi mật khẩu", "Lỗi", JOptionPane.ERROR_MESSAGE);
+	    } finally {
+	        Arrays.fill(matKhauCu, ' ');
+	        Arrays.fill(matKhauMoi, ' ');
+	        Arrays.fill(xacNhanMatKhau, ' ');
+	    }
 	}
+
 
 	private void xacNhanHuy() {
 		int hoiNhac = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn hủy", "Cảnh báo",

@@ -43,6 +43,8 @@ public class DAONhanVien {
 		return false;
 	}
 
+	
+	
 	public NhanVien getNhanVienBySoDienThoai(String soDienThoai) {
 		NhanVien nv = new NhanVien();
 		ConnectDB.getinstance();
