@@ -243,15 +243,28 @@ public class QuanLySachView extends JPanel
 			double thuePhanTram = s.thue() * 100;
 			currencyVN = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 			df = new DecimalFormat("#,###.##");
+			String idSanPham = s.getIdSanPham();
+			String tenSanPham = s.getTenSanPham();
 			String tenTacGia = s.getTacGia().getIdTacGia();
 			String tenTheLoai = s.getTheLoai().getIdTheLoai();
+			java.sql.Date Date = s.getNamXuatBan();
+			String isbn = s.getISBN();
+			int soTrang = s.getSoTrang();
 			String loaiSanPham = s.getIdLoaiSanPham().getIdLoaiSanPham();
 			String nhaCungCap = s.getIdNhaCungCap().getIdNhaCungCap();
-			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai,
-					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
-					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "",
-					s.getGiaNhap() + "", s.giaBan() + "" };
-			model.addRow(row);
+			double kichThuoc = s.getKichThuoc();
+			String mauSac = s.getMauSac();
+			String trangThai = s.getTrangThai() + "";
+			double thue = s.thue();
+			int soLuong = s.getSoLuong();
+			double giaNhap = s.getGiaNhap();
+			double giaBan = s.giaBan();
+//			String[] row = { s.getIdSanPham(), s.getTenSanPham(), tenTacGia, tenTheLoai,
+//					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
+//					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "",
+//					s.getGiaNhap() + "", s.giaBan() + "" };
+			model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, Date, isbn, soTrang, loaiSanPham,
+					nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaNhap, giaBan });
 		}
 
 	}
@@ -391,7 +404,7 @@ public class QuanLySachView extends JPanel
 		btnThemNhieuSach = new JButton("NHẬP SÁCH EXCEL ");
 
 		btnXuatExCel = new JButton("XUẤT EXCEL");
-		btnXuatExCel.setEnabled(false);
+//		btnXuatExCel.setEnabled(false);
 
 		ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
@@ -578,8 +591,12 @@ public class QuanLySachView extends JPanel
 			lamMoi();
 			loadData();
 		} else if (o.equals(btnXuatExCel)) {
-			String filePath = "F:\\TKMT_PreMidTest\\Sach.xlsx";
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/Sach/S_" + timeStamp
+					+ ".xlsx";
+
 			ghiFileExcel(filePath);
+
 		} else if (o.equals(btnThemNhieuSach)) {
 			try {
 				themNhieuSach();
@@ -590,7 +607,7 @@ public class QuanLySachView extends JPanel
 	}
 
 	private void themNhieuSach() throws SQLException {
-		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/import";
+		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
 		JFileChooser exelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
 		exelFileChooser.setDialogTitle("Select Excel file:");
 		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
@@ -657,6 +674,9 @@ public class QuanLySachView extends JPanel
 	}
 
 	private void ghiFileExcel(String filePath) {
+		double tongGiaNhap = 0;
+		int tongSoLuong = 0;
+		double tongGiaBan = 0;
 		int rowCount = model.getRowCount();
 		ArrayList<SachCon> dsSach = new ArrayList<>();
 		for (int i = 0; i < rowCount; i++) {
@@ -664,61 +684,55 @@ public class QuanLySachView extends JPanel
 			String tenSanPham = (String) model.getValueAt(i, 1);
 			String tacGia = (String) model.getValueAt(i, 2);
 			String theLoai = (String) model.getValueAt(i, 3);
-			String namXuatBanStr = (String) model.getValueAt(i, 4);
-			String ISBN = (String) model.getValueAt(i, 5);
-//            int soTrang = (int) model.getValueAt(i, 6);
-//            String loaiSanPham = (String) model.getValueAt(i, 7);
-//            String nhaCungCap = (String) model.getValueAt(i, 8);
-//            Double kichThuoc = (Double) model.getValueAt(i, 9);
-//            String mauSac = (String) model.getValueAt(i, 10);
-//            String trangThaiStr = (String) model.getValueAt(i, 11);
-//            TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
-//            Double thue = (Double) model.getValueAt(i, 12);
-			int soLuong = (int) model.getValueAt(i, 13);
-//            Double giaNhap = (Double) model.getValueAt(i, 14);
-//            Double giaBan = (Double) model.getValueAt(i, 15);
-//            Double giaKM = (Double) model.getValueAt(i, 16);
 
+			java.sql.Date date = (java.sql.Date) model.getValueAt(i, 4);
+
+			String isbn = (String) model.getValueAt(i, 5);
+			int soTrang = (int) model.getValueAt(i, 6);
+//			double giaNhap = Double.parseDouble(txtGiaNhap2.getText());
+			String loaiSanPham = (String) model.getValueAt(i, 7);
+			String nhaCungCap = (String) model.getValueAt(i, 8);
+			Double kichThuoc = (Double) model.getValueAt(i, 9);
+			String mauSac = (String) model.getValueAt(i, 10);
+			String trangThaiStr = (String) model.getValueAt(i, 11);
+			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
+			Double thue = (Double) model.getValueAt(i, 12);
+			int soLuong = (int) model.getValueAt(i, 13);
+			Double giaNhap = (Double) model.getValueAt(i, 14);
 			SachCon s = new SachCon();
 			s.setIdSanPham(idSanPham);
 			s.setTenSanPham(tenSanPham);
-
 			if (tacGia != null) {
-				TacGia tg = new TacGia();
-				tg.setTenTacGia(tacGia);
-				s.setTacGia(tg);
+				TacGia loaiTG = new TacGia();
+				loaiTG.setTenTacGia(tacGia);
+				s.setTacGia(loaiTG);
 			}
-
 			if (theLoai != null) {
-				TheLoai tl = new TheLoai();
-				tl.setTenTheLoai(theLoai);
-				s.setTheLoai(tl);
+				TheLoai loaiTL = new TheLoai();
+				loaiTL.setTenTheLoai(theLoai);
+				s.setTheLoai(loaiTL);
 			}
 
-			// Convert the date string to Date
-			Date namXuatBan = convertStringToDate(namXuatBanStr);
-			s.setNamXuatBan(new java.sql.Date(namXuatBan.getTime()));
-			s.setISBN(ISBN);
-//            s.setSoTrang(soTrang);
-//
-//            if (loaiSanPham != null) {
-//                LoaiSanPham loaiSP = new LoaiSanPham();
-//                loaiSP.setTenLoaiSanPham(loaiSanPham);
-//                s.setIdLoaiSanPham(loaiSP);
-//            }
-//
-//            if (nhaCungCap != null) {
-//                NhaCungCap ncc = new NhaCungCap();
-//                ncc.setTenNhaCungCap(nhaCungCap);
-//                s.setIdNhaCungCap(ncc);
-//            }
-//
-//            s.setKichThuoc(kichThuoc);
-//            s.setMauSac(mauSac);
+			s.setNamXuatBan(date);
+			s.setISBN(isbn);
+
+			s.setSoTrang(soTrang);
+			if (loaiSanPham != null) {
+				LoaiSanPham loaiSP = new LoaiSanPham();
+				loaiSP.setTenLoaiSanPham(loaiSanPham);
+				s.setIdLoaiSanPham(loaiSP);
+			}
+
+			if (nhaCungCap != null) {
+				NhaCungCap ncc = new NhaCungCap();
+				ncc.setTenNhaCungCap(nhaCungCap);
+				s.setIdNhaCungCap(ncc);
+			}
+			s.setKichThuoc(kichThuoc);
+			s.setMauSac(mauSac);
+			s.setTrangThai(trangThai);
 			s.setSoLuong(soLuong);
-//            s.setGiaNhap(giaNhap);
-//            s.giaBan();
-//            s.setGiaKM(giaKM);
+			s.setGiaNhap(giaNhap);
 			dsSach.add(s);
 		}
 		try (Workbook workbook = new XSSFWorkbook()) {
@@ -726,7 +740,7 @@ public class QuanLySachView extends JPanel
 			Row headerRow = sheet.createRow(0);
 			String[] columnNames = { "ID Sản phẩm", "Tên sản phẩm", "Tác giả", "Thể loại", "Năm xuất bản", "ISBN",
 					"Số trang", "Loại sản phẩm", "Nhà cung cấp", "Kích thước", "Màu sắc", "Trạng thái", "Thuế",
-					"Số lượng", "Giá nhập", "Giá bán", "Giá khuyến mãi" };
+					"Số lượng", "Giá nhập", "Giá bán" };
 
 			for (int i = 0; i < columnNames.length; i++) {
 				org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
@@ -768,12 +782,25 @@ public class QuanLySachView extends JPanel
 				giaNhapCell.setCellValue(s.getGiaNhap());
 				org.apache.poi.ss.usermodel.Cell giaBanCell = row.createCell(15);
 				giaBanCell.setCellValue(s.giaBan());
-				org.apache.poi.ss.usermodel.Cell giaKM = row.createCell(16);
-				giaKM.setCellValue(s.getGiaKM());
+				tongGiaNhap += s.getGiaNhap();
+				tongSoLuong += s.getSoLuong();
+				tongGiaBan += s.giaBan();
 			}
 			for (int i = 0; i < columnNames.length; i++) {
 				sheet.autoSizeColumn(i);
 			}
+			sheet.createRow(rowNumber);
+			org.apache.poi.ss.usermodel.Cell summaryCell = sheet.getRow(rowNumber).createCell(0);
+			summaryCell.setCellValue("Tổng cộng");
+
+			org.apache.poi.ss.usermodel.Cell tongGiaNhapCell = sheet.getRow(rowNumber).createCell(14);
+			tongGiaNhapCell.setCellValue(tongGiaNhap);
+
+			org.apache.poi.ss.usermodel.Cell tongSoLuongCell = sheet.getRow(rowNumber).createCell(13);
+			tongSoLuongCell.setCellValue(tongSoLuong);
+
+			org.apache.poi.ss.usermodel.Cell tongGiaBanCell = sheet.getRow(rowNumber).createCell(15);
+			tongGiaBanCell.setCellValue(tongGiaBan);
 			try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
 				workbook.write(outputStream);
 			}

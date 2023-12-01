@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.TaiKhoan;
@@ -63,17 +65,31 @@ public class DAOTaiKhoan {
 	}
 
 	public boolean capNhatTaiKhoan(String tkID, String newPassword) throws SQLException {
-	    String sql = "UPDATE TaiKhoan SET matKhau = ? WHERE idTaiKhoan = ?";
-	    try (PreparedStatement pst = connection.prepareStatement(sql)) {
-	        pst.setString(1, newPassword);
-	        pst.setString(2, tkID);
-	        int n = pst.executeUpdate();
-	        return n > 0;
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+		String sql = "UPDATE TaiKhoan SET matKhau = ? WHERE idTaiKhoan = ?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
+			pst.setString(1, newPassword);
+			pst.setString(2, tkID);
+			int n = pst.executeUpdate();
+			return n > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
+
+	public String kiemTraMatKhauOLD(String idTaiKhoan) throws SQLException {
+	    String sql = "SELECT matKhau FROM TaiKhoan WHERE idTaiKhoan = ?";
+	    try (PreparedStatement pst = connection.prepareStatement(sql)) {
+	        pst.setString(1, idTaiKhoan);
+	        try (ResultSet rs = pst.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("matKhau");
+	            }
+	        }
+	    }
+	    throw new SQLException("Không thể lấy mật khẩu từ cơ sở dữ liệu.");
+	}
+
 
 	public TaiKhoan getTaiKhoanTheoMa(String maTK) {
 		TaiKhoan tk = new TaiKhoan();

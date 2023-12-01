@@ -526,7 +526,7 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202311260001
+--QL202311300001
 --NV202311260001
 select *from TheLoai
 select *from NhaCungCap
@@ -535,6 +535,9 @@ select *from Sach
 select *from TacGia
 select *from SanPham
 select *from TaiKhoan
+select *from NhanVien
+SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = N'0912345678'
+
 use QLHieuSach
 use master
 drop database QLHieuSach

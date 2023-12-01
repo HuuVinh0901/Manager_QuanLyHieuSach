@@ -31,12 +31,14 @@ import javax.swing.SwingUtilities;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import dao.DAONhanVien;
+import dao.DAOQuanLy;
 import dao.DAOTaiKhoan;
 import models.NhanLuc;
 import models.NhanVien;
+import models.QuanLy;
 import models.TaiKhoan;
 
-public class SetPassWordView extends Dialog implements ActionListener, MouseListener {
+public class SetPassWordQuanLyView extends Dialog implements ActionListener, MouseListener {
 	private JLabel lblTieuDe;
 	private JLabel lblSub;
 	private JLabel lblPasswordOld;
@@ -59,14 +61,16 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 	private JPanel pnCenter;
 	private JPanel pnSounth;
 	private TaiKhoan taiKhoan;
-	private NhanVien nhanvien;
+	private QuanLy quanLy;
 	private DAONhanVien daoNhanVien;
+	private DAOQuanLy daoQuanLy;
 	private DAOTaiKhoan daoTaiKhoan;
 
-	public SetPassWordView(NhanVien nv) {
+	public SetPassWordQuanLyView(QuanLy ql) {
 		super((JDialog) null, "Đặt lại mật khẩu", true);
-		this.nhanvien = nv;
+		this.quanLy = ql;
 		daoNhanVien = new DAONhanVien();
+		daoQuanLy = new DAOQuanLy();
 		daoTaiKhoan = new DAOTaiKhoan();
 		taiKhoan = new TaiKhoan();
 		setSize(300, 430);
@@ -79,7 +83,7 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				int result = JOptionPane.showConfirmDialog(SetPassWordView.this, "Bạn có chắc chắn muốn đóng cửa sổ?",
+				int result = JOptionPane.showConfirmDialog(SetPassWordQuanLyView.this, "Bạn có chắc chắn muốn đóng cửa sổ?",
 						"Xác nhận đóng cửa sổ", JOptionPane.YES_NO_OPTION);
 
 				if (result == JOptionPane.YES_OPTION) {
@@ -100,8 +104,8 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 		txtTenDangNhap = new JTextField(20);
 		txtTenNhanVien = new JTextField(20);
 
-		txtTenDangNhap.setText(nv.getId());
-		txtTenNhanVien.setText(nv.getTen());
+		txtTenDangNhap.setText(ql.getId());
+		txtTenNhanVien.setText(ql.getTen());
 //		txtMaXacNhan.setText(nv.getSoDienThoai());
 
 		btnGuiLaiMa = new JButton("Hủy bỏ");
@@ -241,7 +245,7 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 	    char[] matKhauMoi = txtMatKhauMoi.getPassword();
 	    char[] xacNhanMatKhau = txtXacNhanMatKhau.getPassword();
 	    char[] matKhauCu = passwordOld.getPassword();
-	    TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(nhanvien.getId());
+	    TaiKhoan tk = daoTaiKhoan.getTaiKhoanTheoMa(quanLy.getId());
 //	    System.out.println(tk.getIdTaiKhoan());
 	    try {
 	        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
@@ -266,7 +270,7 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 
 	        String hashedPassword = passwordEncoder.encode(new String(xacNhanMatKhau));
 
-	        boolean updateSuccess = daoTaiKhoan.capNhatTaiKhoan(nhanvien.getId(), hashedPassword);
+	        boolean updateSuccess = daoTaiKhoan.capNhatTaiKhoan(quanLy.getId(), hashedPassword);
 
 	        if (updateSuccess) {
 	            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
