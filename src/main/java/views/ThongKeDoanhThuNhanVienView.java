@@ -58,6 +58,7 @@ import com.toedter.calendar.JDateChooser;
 
 import dao.DAO_QuanLyBanHang;
 import models.HoaDon;
+import models.NhanVien;
 
 public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListener, ItemListener {
 	private JDateChooser chooserDayStart;
@@ -66,6 +67,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 	private JButton btnThongKe;
 	private JButton btnInThongKe;
 	private JButton btnLamMoi;
+	private JButton btnThongKeLN;
 	private JTable tblHoaDon;
 	private DefaultTableModel modelHoaDon;
 	private SimpleDateFormat dfNgaySQL;
@@ -95,7 +97,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		JLabel lblTitle = new JLabel("THỐNG KÊ DOANH THU");
 		JLabel lblDayStart = new JLabel("Từ ngày");
 		JLabel lblDayEnd = new JLabel("Đến ngày");
-		lblLoc = new JLabel("Lọc từ");
+		lblLoc = new JLabel("Thời gian:");
 		lblLoc.setPreferredSize(new Dimension(70, 50));
 		cbLoc = new JComboBox<String>();
 		cbLoc.addItem("Hiện tại");
@@ -134,9 +136,10 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		chooserDayEnd.setEnabled(false);
 
 		btnTimKiem = new JButton("Tìm kiếm");
-		btnThongKe = new JButton("Thống kê");
+		btnThongKe = new JButton("Thống kê hóa đơn");
 		btnInThongKe = new JButton("In thống kê");
 		btnLamMoi = new JButton("Làm mới");
+		btnThongKeLN=new JButton("Thống kê doanh thu & lợi nhuận");
 		btnTimKiem.setPreferredSize(new Dimension(100, 30));
 		pnTitle.add(lblTitle);
 		pnTuNgay.add(lblDayStart);
@@ -148,8 +151,9 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		pnDay.add(btnTimKiem);
 		pnDay.add(lblLoc);
 		pnDay.add(cbLoc);
-
+		
 		pnInThongKe.add(btnThongKe);
+		pnInThongKe.add(btnThongKeLN);
 		pnInThongKe.add(btnInThongKe);
 		pnInThongKe.add(btnLamMoi);
 		pn1.add(pnInThongKe);
@@ -171,6 +175,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		modelHoaDon.addColumn("Mã nhân viên");
 		modelHoaDon.addColumn("Tiền khách đưa");
 		modelHoaDon.addColumn("Tổng tiền");
+		modelHoaDon.addColumn("Lợi nhuận");
 		tblHoaDon.setModel(modelHoaDon);
 		JScrollPane scrollTblHD = new JScrollPane(tblHoaDon);
 		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Thông tin hoá đơn"));
@@ -198,6 +203,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 
 		btnTimKiem.addActionListener(this);
 		btnThongKe.addActionListener(this);
+		btnThongKeLN.addActionListener(this);
 		btnInThongKe.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		cbLoc.addItemListener(this);
@@ -221,84 +227,85 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 							JOptionPane.WARNING_MESSAGE);
 				}
 				else {
-					loadDataHoaDon();
+					loadDataHoaDonTheoTuyChinh();
 				}
 			} 
 		} else if (o.equals(btnThongKe)) {
 			String selectedOption = (String) cbLoc.getSelectedItem();
 			if("6 tháng gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption)|| "1 năm gần nhất".equals(selectedOption) ){
-				showBieuDo();
+				showBieuDoHoaDonTheoThangTrongNam();
 			}
 			else {
-				showBieuDoDayOfMonth();
+				showBieuDoHoaDonTheoNgayTrongThang();
 			}
 		} else if (o.equals(btnInThongKe)) {
 			inThongKe();
 		}
-
+		else if (o.equals(btnThongKeLN)) {
+			String selectedOption = (String) cbLoc.getSelectedItem();
+			if("6 tháng gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption)|| "1 năm gần nhất".equals(selectedOption) ){
+				showBieuDoLoiNhuanTheoThangTrongNam();
+			}
+			else {
+				showBieuDoLoiNhuanTheoNgayTrongThang();
+			}
+		}
 	}
 
 	private void inThongKe() {
-//		if ("Tùy chỉnh".equals(cbLoc.getSelectedItem())) {
-//			Date currentDate = new Date();
-//			Date startDate = chooserDayStart.getDate();
-//			Date endDate = chooserDayEnd.getDate();
-//			if (startDate == null || startDate.after(currentDate)) {
-//				JOptionPane.showConfirmDialog(this, "Ngày bắt đầu không thể nhỏ hơn ngày hiện tại", "Cảnh báo",
-//						JOptionPane.WARNING_MESSAGE);
-//			} else if (endDate == null || endDate.after(currentDate)) {
-//				JOptionPane.showConfirmDialog(this, "Ngày kết thúc không thể nhỏ hơn ngày hiện tại", "Cảnh báo",
-//						JOptionPane.WARNING_MESSAGE);
-//			} else {
-//				try {
-//					
-//
-//				} catch (Exception e) {
-//					JOptionPane.showConfirmDialog(this, "Error Message: " + e.getMessage(), "Lỗi",
-//							JOptionPane.ERROR_MESSAGE);
-//				}
+		try {
 		Workbook workbook = new XSSFWorkbook();
-		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Doanh thu");
+		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Thống kê kinh doanh");
 
 		Row header = sheet.createRow(0);
 		header.createCell(0).setCellValue("Mã Hóa Đơn");
 		header.createCell(1).setCellValue("Ngày");
 		header.createCell(2).setCellValue("Mã Khách Hàng");
 		header.createCell(3).setCellValue("Mã Nhân Viên");
-		header.createCell(4).setCellValue("Doanh Thu");
-		header.createCell(5).setCellValue("Tổng Tiền");
+		header.createCell(4).setCellValue("Tổng Tiền");
+		header.createCell(5).setCellValue("Lợi nhuận");
+		
 
-		Object[][] data = { { "HD001", "01/01/2023", "KH001", "NV001", 500000, 1000000 },
-				{ "HD002", "02/01/2023", "KH002", "NV002", 700000, 1200000 }, };
-
-		for (int i = 0; i < data.length; i++) {
-			Row row = sheet.createRow(i + 1);
-			for (int j = 0; j < data[i].length; j++) {
-				row.createCell(j).setCellValue(data[i][j].toString());
-			}
+		int rowNum = 1;
+		for(HoaDon kh: daoBanHang.getAllHoaDon()) {
+			Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(kh.getIdDonHang());
+            row.createCell(1).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgayLap()));
+            row.createCell(2).setCellValue(kh.getKhachHang().getIdKhachHang());
+            row.createCell(3).setCellValue(kh.getNhanVien().getId());
+            row.createCell(4).setCellValue(kh.getTongTien());
+            row.createCell(5).setCellValue(kh.getTongLoiNhuan());
+        
 		}
 
 		JFileChooser fileChooser = new JFileChooser();
-		File defaultDirectory = new File(System.getProperty("user.dir") + "/src/main/resources/import");
-		fileChooser.setCurrentDirectory(defaultDirectory);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xls", "xlsx");
-		fileChooser.setFileFilter(filter);
-		if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			try (FileOutputStream outputStream = new FileOutputStream(file)) {
-				workbook.write(outputStream);
-				JOptionPane.showMessageDialog(null, "Xuất file Excel thành công!");
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Lỗi khi xuất file: " + e.getMessage(), "Lỗi",
-						JOptionPane.ERROR_MESSAGE);
-			}
+        fileChooser.setDialogTitle("Chọn đường dẫn và tên tệp Excel");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp Excel (*.xlsx)", "xlsx");
+        fileChooser.setFileFilter(filter);
+
+        // Hiển thị hộp thoại mở cửa sổ lưu tệp
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            // Lấy đường dẫn và tên tệp từ người dùng
+            String filePathString = fileChooser.getSelectedFile().getAbsolutePath();
+
+            // Ghi workbook ra tệp Excel
+            try (FileOutputStream outputStream = new FileOutputStream(filePathString + ".xlsx")) {
+                workbook.write(outputStream);
+            }
+
+            System.out.println("Dữ liệu đã được ghi vào tệp Excel thành công.");
+            JOptionPane.showMessageDialog(null, "Xuất Excel thành công");
+        }
+        
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-	}
-//		}
-//	}
-	private void showBieuDoDayOfMonth() {
+}
+
+	private void showBieuDoHoaDonTheoNgayTrongThang() {
 		JDialog dialog = new JDialog();
-        dialog.setTitle("Thống kê");
+        dialog.setTitle("Thống kê hóa đơn");
         dialog.setLayout(new GridBagLayout());     
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
@@ -306,12 +313,9 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         	for(int j=1;j<32;j++) {
         		String z = String.valueOf(j);
         		dataset.addValue(daoBanHang.getSoHoaDonTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Số hóa đơn", z);
-            	dataset2.addValue(daoBanHang.getTongTienTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Doanh thu", z);
+            	
         	}
 //        	
-        	
-        
-        
         JFreeChart chart = ChartFactory.createBarChart(
             "Biểu đồ thống kê số hóa đơn đã bán theo tháng " +LocalDate.now().getMonthValue()+"/"+  Year.now().getValue(),
             "Tháng " +LocalDate.now().getMonthValue()+"/"+ Year.now().getValue(),
@@ -333,30 +337,8 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         renderer.setDrawBarOutline(false);
         ChartPanel chartPanel = new ChartPanel(chart);
 		
-	    JFreeChart chart2 = ChartFactory.createBarChart(
-		    "Biểu đồ thống kê tổng doanh thu theo tháng " +LocalDate.now().getMonthValue()+"/" +  Year.now().getValue(),
-			"Tháng "+LocalDate.now().getMonthValue()+"/" + Year.now().getValue(),
-			"Doanh thu",
-			dataset2,
-			PlotOrientation.VERTICAL,
-			true,
-			true,
-			false
-	    );
-		CategoryPlot plot2 = (CategoryPlot) chart2.getPlot();
-		CategoryAxis xAxis2 = plot2.getDomainAxis();
-		xAxis2.setLowerMargin(0.02);
-		xAxis2.setUpperMargin(0.02);
-		NumberAxis yAxis2 = (NumberAxis) plot2.getRangeAxis();
-		yAxis2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-		BarRenderer renderer2 = (BarRenderer) plot2.getRenderer();
-		renderer2.setDrawBarOutline(false);
-		for(int i = 0; i < 32; i++) {
-			renderer2.setSeriesPaint(i, Color.BLUE);
-		}
-		ChartPanel chartPanel2 = new ChartPanel(chart2);
-        
-		GridBagConstraints gbc = new GridBagConstraints();
+	    
+        GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 0.5;
@@ -364,19 +346,160 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		gbc.fill = GridBagConstraints.BOTH;
 		dialog.add(chartPanel, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.5;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        dialog.add(chartPanel2, gbc);
+ 
         
 		dialog.pack();
 		dialog.setSize(1200, 720);
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true);
 	}
-	private void showBieuDo() {
+	private void showBieuDoLoiNhuanTheoThangTrongNam() {
+		JDialog dialog = new JDialog();
+        dialog.setTitle("Thống kê lợi nhuận");
+        dialog.setLayout(new GridBagLayout());    
+		DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+		DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+		 for (int i = 1; i < 13; i++) {
+	        	String j = String.valueOf(i);
+	        	dataset3.addValue(daoBanHang.getLoiNhuanTheoThangNam(j, String.valueOf(Year.now().getValue())), "Lợi nhuận", j);
+	        	dataset2.addValue(daoBanHang.getTongTienTheoThangNam(j, String.valueOf(Year.now().getValue())), "Doanh thu", j);
+	        }
+		JFreeChart chart3 = ChartFactory.createBarChart(
+			    "BIỂU ĐỒ TỔNG LỢI NHUẬN THEO THÁNG/" +  Year.now().getValue(),
+				"Tháng/" + Year.now().getValue(),
+				"Lợi nhuận",
+				dataset3,
+				PlotOrientation.VERTICAL,
+				true,
+				true,
+				false
+		    );
+			CategoryPlot plot3 = (CategoryPlot) chart3.getPlot();
+			CategoryAxis xAxis3 = plot3.getDomainAxis();
+			xAxis3.setLowerMargin(0.05);
+			xAxis3.setUpperMargin(0.05);
+			NumberAxis yAxis3 = (NumberAxis) plot3.getRangeAxis();
+			yAxis3.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+			BarRenderer renderer3 = (BarRenderer) plot3.getRenderer();
+			renderer3.setDrawBarOutline(false);
+			ChartPanel chartPanel3 = new ChartPanel(chart3);
+			
+			JFreeChart chart2 = ChartFactory.createBarChart(
+				    "BIỂU ĐỒ TỔNG DOANH THU THEO THÁNG/" +  Year.now().getValue(),
+					"Tháng/" + Year.now().getValue(),
+					"Doanh thu",
+					dataset2,
+					PlotOrientation.VERTICAL,
+					true,
+					true,
+					false
+			    );
+				CategoryPlot plot2 = (CategoryPlot) chart2.getPlot();
+				CategoryAxis xAxis2 = plot2.getDomainAxis();
+				xAxis2.setLowerMargin(0.05);
+				xAxis2.setUpperMargin(0.05);
+				NumberAxis yAxis2 = (NumberAxis) plot2.getRangeAxis();
+				yAxis2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+				BarRenderer renderer2 = (BarRenderer) plot2.getRenderer();
+				renderer2.setDrawBarOutline(false);
+				for(int i = 0; i < 12; i++) {
+					renderer2.setSeriesPaint(i, Color.BLUE);
+				}
+				ChartPanel chartPanel2 = new ChartPanel(chart2);
+			
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.weightx = 0.5;
+			gbc.weighty = 1.0;
+			gbc.fill = GridBagConstraints.BOTH;
+			dialog.add(chartPanel2, gbc);
+			gbc.gridx = 1;
+	        gbc.gridy = 0;
+	        gbc.weightx = 0.5;
+	        gbc.weighty = 1.0;
+	        gbc.fill = GridBagConstraints.BOTH;
+	        
+			dialog.add(chartPanel3, gbc);
+			dialog.pack();
+			dialog.setSize(1200, 720);
+			dialog.setLocationRelativeTo(null);
+			dialog.setVisible(true);
+	}
+	private void showBieuDoLoiNhuanTheoNgayTrongThang() {
+		JDialog dialog = new JDialog();
+        dialog.setTitle("Thống kê lợi nhuận");
+        dialog.setLayout(new GridBagLayout());    
+		DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+		DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+		 for (int i = 1; i < 32; i++) {
+			 String z = String.valueOf(i);
+	        	dataset3.addValue(daoBanHang.getLoiNhuanTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Lợi nhuận", z);
+	        	dataset2.addValue(daoBanHang.getTongTienTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Doanh thu", z);
+	        }
+		JFreeChart chart3 = ChartFactory.createBarChart(
+			    "BIỂU ĐỒ TỔNG LỢI NHUẬN THÁNG " +LocalDate.now().getMonthValue()+"/"  +  Year.now().getValue(),
+				"Tháng/" + Year.now().getValue(),
+				"Lợi nhuận",
+				dataset3,
+				PlotOrientation.VERTICAL,
+				true,
+				true,
+				false
+		    );
+			CategoryPlot plot3 = (CategoryPlot) chart3.getPlot();
+			CategoryAxis xAxis3 = plot3.getDomainAxis();
+			xAxis3.setLowerMargin(0.02);
+			xAxis3.setUpperMargin(0.02);
+			NumberAxis yAxis3 = (NumberAxis) plot3.getRangeAxis();
+			yAxis3.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+			BarRenderer renderer3 = (BarRenderer) plot3.getRenderer();
+			renderer3.setDrawBarOutline(false);
+			
+			ChartPanel chartPanel3 = new ChartPanel(chart3);
+			
+			JFreeChart chart2 = ChartFactory.createBarChart(
+				    "BIỂU ĐỒ TỔNG DOANH THU THÁNG " +LocalDate.now().getMonthValue()+"/" +  Year.now().getValue(),
+					"Tháng "+LocalDate.now().getMonthValue()+"/" + Year.now().getValue(),
+					"Doanh thu",
+					dataset2,
+					PlotOrientation.VERTICAL,
+					true,
+					true,
+					false
+			    );
+				CategoryPlot plot2 = (CategoryPlot) chart2.getPlot();
+				CategoryAxis xAxis2 = plot2.getDomainAxis();
+				xAxis2.setLowerMargin(0.02);
+				xAxis2.setUpperMargin(0.02);
+				NumberAxis yAxis2 = (NumberAxis) plot2.getRangeAxis();
+				yAxis2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+				BarRenderer renderer2 = (BarRenderer) plot2.getRenderer();
+				renderer2.setDrawBarOutline(false);
+				for(int i = 0; i < 32; i++) {
+					renderer2.setSeriesPaint(i, Color.BLUE);
+				}
+				ChartPanel chartPanel2 = new ChartPanel(chart2);
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = 0;
+			gbc.gridy = 0;
+			gbc.weightx = 0.5;
+			gbc.weighty = 1.0;
+			gbc.fill = GridBagConstraints.BOTH;
+			dialog.add(chartPanel3, gbc);
+			
+		    gbc.gridx = 1;
+		    gbc.gridy = 0;
+		    gbc.weightx = 0.5;
+		    gbc.weighty = 1.0;
+		    gbc.fill = GridBagConstraints.BOTH;
+		    dialog.add(chartPanel2, gbc);
+			dialog.pack();
+			dialog.setSize(1200, 720);
+			dialog.setLocationRelativeTo(null);
+			dialog.setVisible(true);
+	}
+	private void showBieuDoHoaDonTheoThangTrongNam() {
 		JDialog dialog = new JDialog();
         dialog.setTitle("Thống kê");
         dialog.setLayout(new GridBagLayout());     
@@ -385,11 +508,10 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         for (int i = 1; i < 13; i++) {
         	String j = String.valueOf(i);
         	dataset.addValue(daoBanHang.getSoHoaDonTheoThangNam(j, String.valueOf(Year.now().getValue())), "Số hóa đơn", j);
-        	dataset2.addValue(daoBanHang.getTongTienTheoThangNam(j, String.valueOf(Year.now().getValue())), "Doanh thu", j);
+        	
         }
-        
         JFreeChart chart = ChartFactory.createBarChart(
-            "Biểu đồ thống kê số hóa đơn đã bán theo tháng/" +  Year.now().getValue(),
+            "BIỂU ĐỒ TỔNG HÓA ĐƠN THEO THÁNG/" +  Year.now().getValue(),
             "Tháng/" + Year.now().getValue(),
             "Số hóa đơn",
             dataset,
@@ -398,7 +520,6 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
             true,
             false
         );
-
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         CategoryAxis xAxis = plot.getDomainAxis();
         xAxis.setLowerMargin(0.05);
@@ -408,46 +529,18 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
         renderer.setDrawBarOutline(false);
         ChartPanel chartPanel = new ChartPanel(chart);
-		
-	    JFreeChart chart2 = ChartFactory.createBarChart(
-		    "Biểu đồ thống kê tổng doanh thu theo tháng/" +  Year.now().getValue(),
-			"Tháng/" + Year.now().getValue(),
-			"Doanh thu",
-			dataset2,
-			PlotOrientation.VERTICAL,
-			true,
-			true,
-			false
-	    );
-		CategoryPlot plot2 = (CategoryPlot) chart2.getPlot();
-		CategoryAxis xAxis2 = plot2.getDomainAxis();
-		xAxis2.setLowerMargin(0.05);
-		xAxis2.setUpperMargin(0.05);
-		NumberAxis yAxis2 = (NumberAxis) plot2.getRangeAxis();
-		yAxis2.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-		BarRenderer renderer2 = (BarRenderer) plot2.getRenderer();
-		renderer2.setDrawBarOutline(false);
-		for(int i = 0; i < 12; i++) {
-			renderer2.setSeriesPaint(i, Color.BLUE);
-		}
-		ChartPanel chartPanel2 = new ChartPanel(chart2);
         
-		GridBagConstraints gbc = new GridBagConstraints();
+        GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.weightx = 0.5;
+		gbc.weightx = 0.4;
 		gbc.weighty = 1.0;
 		gbc.fill = GridBagConstraints.BOTH;
 		dialog.add(chartPanel, gbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 0.5;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        dialog.add(chartPanel2, gbc);
         
-		dialog.pack();
+        
+        dialog.pack();
 		dialog.setSize(1200, 720);
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true);
@@ -462,8 +555,8 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		cbLoc.setSelectedItem("Hiện tại");
 
 	}
-	public void loadDataHoaDonOfTime(Date ngayHienTai,Date ngayChon) {
-		XoaDuLieuTable();
+	public void loadDataHoaDonTheoNgay(Date ngayHienTai,Date ngayChon) {
+		
 		modelHoaDon.setRowCount(0);
 		ArrayList<HoaDon> dsHoaDon = daoBanHang.getHoaDonTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
 		if (dsHoaDon.size() == 0) {
@@ -474,21 +567,22 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(0));
 		} else {
 			for (HoaDon hd : dsHoaDon) {
-				
 				String maHD = hd.getIdDonHang();
 				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();
 				String maNV = hd.getNhanVien().getId();
 				String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
 				String tongTien = currencyFormat.format(hd.getTongTien());
-				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien});
+				String tongLoiNhuan= currencyFormat.format(hd.getTongLoiNhuan());
+				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien,tongLoiNhuan});
 			}
 			lblTongHoaDon.setText("SỐ LƯỢNG HOÁ ĐƠN BÁN RA : " + modelHoaDon.getRowCount());
 			lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoBanHang.getTongTienTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
+			lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoBanHang.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
 		}
 	}
-	public void loadDataHoaDon() {
-		XoaDuLieuTable();
+	public void loadDataHoaDonTheoTuyChinh() {
+		
 		modelHoaDon.setRowCount(0);
 		if (chooserDayStart.getDate() == null) {
 			JOptionPane.showMessageDialog(this, "Chưa chọn ngày bắt đầu");
@@ -496,11 +590,16 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		} else if (chooserDayEnd.getDate() == null) {
 			JOptionPane.showMessageDialog(this, "Chưa chọn ngày kết thúc");
 			chooserDayEnd.requestFocus();
-		} else {
+		}
+			else if(chooserDayEnd.getDate().before(chooserDayStart.getDate())) {
+				JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải trước ngày kết thúc");
+				chooserDayEnd.requestFocus();
+			}
+		else {
 			ArrayList<HoaDon> dsHoaDon = daoBanHang.getHoaDonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()));
 			if (dsHoaDon.size() == 0) {
 				JOptionPane.showMessageDialog(this, "Khung thời gian này không bán hoá đơn nào");
-				XoaDuLieuTable();
+				
 				lblTongHoaDon.setText("SỐ LƯỢNG HOÁ ĐƠN BÁN RA : " + modelHoaDon.getRowCount());
 				lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(0));
 				lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(0));
@@ -513,10 +612,13 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 					String maNV = hd.getNhanVien().getId();
 					String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
 					String tongTien = currencyFormat.format(hd.getTongTien());
-					modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien});
+					String tongLoiNhuan= currencyFormat.format(hd.getTongLoiNhuan());
+					modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien,tongLoiNhuan});
 				}
 				lblTongHoaDon.setText("SỐ LƯỢNG HOÁ ĐƠN BÁN RA : " + modelHoaDon.getRowCount());
 				lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoBanHang.getTongTienTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
+				lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoBanHang.getLoiNhuanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
+
 			}
 		}
 			
@@ -531,13 +633,13 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			if ("Tùy chỉnh".equals(selectedOption)) {
 				chooserDayStart.setEnabled(true);
 				chooserDayEnd.setEnabled(true);
-//				btnTimKiem.setEnabled(true);
+				loadDataHoaDonTheoTuyChinh();
 			} else if("Hiện tại".equals(selectedOption)) {
 				chooserDayStart.setEnabled(false);
 				chooserDayEnd.setEnabled(false);
 				Date ngayHienTai= new Date();
 				
-				loadDataHoaDonOfTime(ngayHienTai, ngayHienTai);
+				loadDataHoaDonTheoNgay(ngayHienTai, ngayHienTai);
 			}
 			else if("7 ngày gần nhất".equals(selectedOption)) {
 				chooserDayStart.setEnabled(false);
@@ -547,7 +649,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			    calendar.setTime(ngayHienTai);
 			    calendar.add(Calendar.DAY_OF_MONTH, -7);
 			    Date sevenDaysAgo = calendar.getTime();
-				loadDataHoaDonOfTime(ngayHienTai, sevenDaysAgo);
+				loadDataHoaDonTheoNgay(ngayHienTai, sevenDaysAgo);
 			}
 			 else if("1 tháng gần nhất".equals(selectedOption)) {
 					chooserDayStart.setEnabled(false);
@@ -557,7 +659,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				    calendar.setTime(ngayHienTai);
 				    calendar.add(Calendar.MONTH, -1);
 				    Date MonthAgo = calendar.getTime();
-					loadDataHoaDonOfTime(ngayHienTai, MonthAgo);
+					loadDataHoaDonTheoNgay(ngayHienTai, MonthAgo);
 				}
 			 else if("3 tháng gần nhất".equals(selectedOption)) {
 					chooserDayStart.setEnabled(false);
@@ -567,7 +669,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				    calendar.setTime(ngayHienTai);
 				    calendar.add(Calendar.MONTH, -3);
 				    Date MonthAgo = calendar.getTime();
-					loadDataHoaDonOfTime(ngayHienTai, MonthAgo);
+					loadDataHoaDonTheoNgay(ngayHienTai, MonthAgo);
 				}
 			 else if("6 tháng gần nhất".equals(selectedOption)) {
 					chooserDayStart.setEnabled(false);
@@ -577,7 +679,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				    calendar.setTime(ngayHienTai);
 				    calendar.add(Calendar.MONTH, -6);
 				    Date MonthAgo = calendar.getTime();
-					loadDataHoaDonOfTime(ngayHienTai, MonthAgo);
+					loadDataHoaDonTheoNgay(ngayHienTai, MonthAgo);
 				}
 			 else if("1 năm gần nhất".equals(selectedOption)) {
 					chooserDayStart.setEnabled(false);
@@ -587,7 +689,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				    calendar.setTime(ngayHienTai);
 				    calendar.add(Calendar.YEAR, -1);
 				    Date MonthAgo = calendar.getTime();
-					loadDataHoaDonOfTime(ngayHienTai, MonthAgo);
+					loadDataHoaDonTheoNgay(ngayHienTai, MonthAgo);
 				}
 		}
 	}

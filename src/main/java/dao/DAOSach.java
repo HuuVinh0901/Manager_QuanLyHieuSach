@@ -11,7 +11,6 @@ import connection.ConnectDB;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.SachCon;
-import models.SanPhamCha;
 import models.SanPhamCon;
 import models.TacGia;
 import models.TheLoai;
@@ -24,30 +23,139 @@ public class DAOSach implements Serializable {
 		connection = ConnectDB.getinstance().getConnection();
 	}
 
+	public SachCon getSachTimKiemTheoMa(String cond) {
+		SachCon sc = new SachCon();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan,s.giaKhuyenMai "
+					+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON s.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON s.nhaCungCap = ncc.idNhaCungCap "
+					+ "JOIN TacGia tg ON s.tacGia = tg.idTacGia " + "JOIN TheLoai tl ON s.theLoai= tl.idTheLoai "
+					+ "WHERE s.idSanPham = ?" ;
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, cond);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				sc.setIdSanPham(rs.getString("idSanPham"));
+				sc.setTenSanPham(rs.getString("tenSanPham"));
+				sc.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				sc.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				sc.setNamXuatBan(rs.getDate("namXuatBan"));
+				sc.setISBN(rs.getString("ISBN"));
+				sc.setSoTrang(rs.getInt("soTrang"));
+				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				sc.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				sc.setKichThuoc(rs.getDouble("kichThuoc"));
+				sc.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				sc.setTrangThai(trangThaiEnum);
+				sc.thue();
+				sc.setSoLuong(rs.getInt("soLuong"));
+				sc.setGiaNhap(rs.getDouble("giaNhap"));
+				sc.giaBan();
+				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				return sc;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
 	
-	
-	public ArrayList<SachCon> getSachTimKiemTheoDieuKien(String cond) {
-		ArrayList<SachCon> dsSach = new ArrayList<>();
-		String sql = "SELECT idSanPham, tenSanPham, loaiSanPham, giaNhap, giaKhuyenMai "
-				+ "FROM Sach  "
-				+ "WHERE idSanPham LIKE '%" + cond + "%' OR " 
-				+ "tenSanPham LIKE '%" + cond + "%'" ;
-				
-		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+	public ArrayList<SachCon> getDanhSachSachTimKiemTheoMa(String cond) {
+		ArrayList<SachCon> ds = new ArrayList<SachCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan,s.giaKhuyenMai "
+					+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON s.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON s.nhaCungCap = ncc.idNhaCungCap "
+					+ "JOIN TacGia tg ON s.tacGia = tg.idTacGia " + "JOIN TheLoai tl ON s.theLoai= tl.idTheLoai "
+					+ "WHERE s.idSanPham LIKE '%" + cond + "%'" ;
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				SachCon sc = new SachCon();
 				sc.setIdSanPham(rs.getString("idSanPham"));
 				sc.setTenSanPham(rs.getString("tenSanPham"));
-				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("loaiSanPham")));
+				sc.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				sc.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				sc.setNamXuatBan(rs.getDate("namXuatBan"));
+				sc.setISBN(rs.getString("ISBN"));
+				sc.setSoTrang(rs.getInt("soTrang"));
+				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				sc.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				sc.setKichThuoc(rs.getDouble("kichThuoc"));
+				sc.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				sc.setTrangThai(trangThaiEnum);
+				sc.thue();
+				sc.setSoLuong(rs.getInt("soLuong"));
 				sc.setGiaNhap(rs.getDouble("giaNhap"));
+				sc.giaBan();
 				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
-				dsSach.add(sc);
+				ds.add(sc);
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return dsSach;
+
+		return ds;
 	}
+	
+	public ArrayList<SachCon> getDanhSachSachTimKiemTheoDieuKien(String cond) {
+		ArrayList<SachCon> ds = new ArrayList<SachCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT s.idSanPham, s.tenSanPham, tg.tenTacGia, tl.tenTheLoai, s.namXuatBan, s.ISBN, s.soTrang, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, s.kichThuoc, s.mauSac, s.trangThai, s.thue, s.soLuong, s.giaNhap, s.giaBan,s.giaKhuyenMai "
+					+ "FROM Sach s " + "JOIN LoaiSanPham lsp ON s.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON s.nhaCungCap = ncc.idNhaCungCap "
+					+ "JOIN TacGia tg ON s.tacGia = tg.idTacGia " + "JOIN TheLoai tl ON s.theLoai= tl.idTheLoai "
+					+ "WHERE s.idSanPham LIKE '%" + cond + "%' OR " 
+					+ "s.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'"; 
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SachCon sc = new SachCon();
+				sc.setIdSanPham(rs.getString("idSanPham"));
+				sc.setTenSanPham(rs.getString("tenSanPham"));
+				sc.setTacGia(new TacGia(rs.getString("tenTacGia")));
+				sc.setTheLoai(new TheLoai(rs.getString("tenTheLoai")));
+				sc.setNamXuatBan(rs.getDate("namXuatBan"));
+				sc.setISBN(rs.getString("ISBN"));
+				sc.setSoTrang(rs.getInt("soTrang"));
+				sc.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+				sc.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+				sc.setKichThuoc(rs.getDouble("kichThuoc"));
+				sc.setMauSac(rs.getString("mauSac"));
+				int trangThai = rs.getInt("trangThai");
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				sc.setTrangThai(trangThaiEnum);
+				sc.thue();
+				sc.setSoLuong(rs.getInt("soLuong"));
+				sc.setGiaNhap(rs.getDouble("giaNhap"));
+				sc.giaBan();
+				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				ds.add(sc);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return ds;
+	}
+	
 	
 	public ArrayList<SachCon> getAllSachLoadData() {
 		ArrayList<SachCon> dsSach = new ArrayList<>();
@@ -78,7 +186,7 @@ public class DAOSach implements Serializable {
 				sc.giaBan();
 				sc.setGiaKM(rs.getDouble("giaKhuyenMai"));
 				dsSach.add(sc);
-				
+				System.out.println("Load thanh cong");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

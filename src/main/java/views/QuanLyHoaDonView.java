@@ -253,7 +253,7 @@ public class QuanLyHoaDonView extends JPanel{
     		scrollTblCTHD.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
     		tblChiTietHoaDon.setPreferredScrollableViewportSize(new Dimension(500, 300));
     		
-    		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonTheoId(idHoaDon)) {
+    		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSanPhamTheoId(idHoaDon)) {
     			String idSP = cthd.getSanPham().getIdSanPham();
     			SanPhamCha sp = daoSanPham.getSanPham(idSP);
     			String tenSP = sp.getTenSanPham();

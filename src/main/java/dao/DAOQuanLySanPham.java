@@ -37,7 +37,7 @@ public class DAOQuanLySanPham implements Serializable {
 			}
 		}
 	}
-	
+
 	public boolean checkIdSanPham(String idSanPham) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
@@ -54,16 +54,51 @@ public class DAOQuanLySanPham implements Serializable {
 		return true;
 	}
 	
-	public ArrayList<SanPhamCon> getSanPhamTimKiem(String cond) {
+	public SanPhamCon getSanPhamTimKiemTheoMa(String cond) {
+		SanPhamCon lsp = new SanPhamCon();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham = ?"; 
+			
+			statement = con.prepareStatement(sql);
+			statement.setString(1, cond);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
+				lsp.setGiaKM(rs.getDouble(12));
+				return lsp;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+	
+	public ArrayList<SanPhamCon> getDanhSachSanPhamTimKiemTheoMa(String cond) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT idSanPham, tenSanPham, loaiSanPham, giaNhap, giaKhuyenMai "
-					+ "FROM SanPham " 
-					+ "WHERE idSanPham LIKE '%" + cond + "%' OR " 
-					+ "tenSanPham LIKE '%" + cond + "%'";
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%'"; 
 			
 			statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
@@ -72,8 +107,53 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.setIdSanPham(rs.getString(1));
 				lsp.setTenSanPham(rs.getString(2));
 				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
-				lsp.setGiaNhap(rs.getDouble(4));
-				lsp.setGiaKM(rs.getDouble(5));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
+				lsp.setGiaKM(rs.getDouble(12));
+				dsSanPham.add(lsp);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dsSanPham;
+	}
+	
+	public ArrayList<SanPhamCon> getDanhSachSanPhamTimKiem(String cond) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
+					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
+					+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'";
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				SanPhamCon lsp = new SanPhamCon();
+				lsp.setIdSanPham(rs.getString(1));
+				lsp.setTenSanPham(rs.getString(2));
+				lsp.setIdLoaiSanPham(new LoaiSanPham(rs.getString(3)));
+				lsp.setIdNhaCungCap(new NhaCungCap(rs.getString(4)));
+				lsp.setKichThuoc(rs.getDouble(5));
+				lsp.setMauSac(rs.getString(6));
+				int trangThai = rs.getInt(7);
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThai);
+				lsp.setTrangThai(trangThaiEnum);
+				lsp.thue();
+				lsp.setGiaNhap(rs.getDouble(9));
+				lsp.setSoLuong(rs.getInt(10));
+				lsp.setGiaKM(rs.getDouble(12));
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -120,7 +200,7 @@ public class DAOQuanLySanPham implements Serializable {
 				String trangThai = rs.getString(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
 				sp.setTrangThai(trangThaiEnum);
-				sp.setGiaNhap(rs.getDouble(8));
+				sp.setGiaNhap(rs.getDouble(6));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -272,7 +352,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-			pst.setDouble(12, sp.getGiaKM());
+			pst.setDouble(12, sp.giaBan());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {

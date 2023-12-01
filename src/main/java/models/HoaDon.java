@@ -7,19 +7,20 @@ public class HoaDon {
 	private Date ngayLap;
 	private KhachHang khachHang;
 	private NhanVien nhanVien;
-	private Double tienKhachDua;
-	private Double tongTien;
+	private double tienKhachDua;
+	private double tongTien;
+	private double tongLoiNhuan;
 	
 	public HoaDon() {
 		super();
 	}
-
-	public HoaDon(String idDonHang) {
-		this.idDonHang = idDonHang;
+	
+	public HoaDon(String id) {
+		this.idDonHang = id;
 	}
 	
-	public HoaDon(String idDonHang, Date ngayLap, KhachHang khachHang, NhanVien nhanVien, Double tienKhachDua,
-			Double tongTien) {
+	public HoaDon(String idDonHang, Date ngayLap, KhachHang khachHang, NhanVien nhanVien, double tienKhachDua,
+			double tongTien, double tongLoiNhuan) {
 		super();
 		this.idDonHang = idDonHang;
 		this.ngayLap = ngayLap;
@@ -27,6 +28,7 @@ public class HoaDon {
 		this.nhanVien = nhanVien;
 		this.tienKhachDua = tienKhachDua;
 		this.tongTien = tongTien;
+		this.tongLoiNhuan = tongLoiNhuan;
 	}
 
 	public String getIdDonHang() {
@@ -61,27 +63,37 @@ public class HoaDon {
 		this.nhanVien = nhanVien;
 	}
 
-	public Double getTienKhachDua() {
+	public double getTienKhachDua() {
 		return tienKhachDua;
 	}
 
-	public void setTienKhachDua(Double tienKhachDua) {
+	public void setTienKhachDua(double tienKhachDua) {
 		this.tienKhachDua = tienKhachDua;
 	}
 
-	public Double getTongTien() {
+	public double getTongTien() {
 		return tongTien;
 	}
 
-	public void setTongTien(Double tongTien) {
+	public void setTongTien(double tongTien) {
 		this.tongTien = tongTien;
+	}
+
+	public double getTongLoiNhuan() {
+		return tongLoiNhuan;
+	}
+
+	public void setTongLoiNhuan(double tongLoiNhuan) {
+		this.tongLoiNhuan = tongLoiNhuan;
 	}
 
 	@Override
 	public String toString() {
 		return "HoaDon [idDonHang=" + idDonHang + ", ngayLap=" + ngayLap + ", khachHang=" + khachHang + ", nhanVien="
-				+ nhanVien + ", tienKhachDua=" + tienKhachDua + ", tongTien=" + tongTien + "]";
+				+ nhanVien + ", tienKhachDua=" + tienKhachDua + ", tongTien=" + tongTien + ", tongLoiNhuan="
+				+ tongLoiNhuan + "]";
 	}
+	
 	
 	
 	

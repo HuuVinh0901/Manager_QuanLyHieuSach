@@ -464,6 +464,7 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 					modelNhanVien.removeRow(row);
 					String manv = txtID.getText();
 					daoQuanLy.DeleteNV(manv);
+					daoTaiKhoan.DeleteTK(manv);
 					JOptionPane.showMessageDialog(this, "Xoá thành công");
 				}
 			} catch (Exception e2) {
