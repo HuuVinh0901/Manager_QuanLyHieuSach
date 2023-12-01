@@ -61,7 +61,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 		setIconImage(icon.getImage());
 		initComponents();
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		paneCu = new HomeView(); // Bắt đầu với HomeView
+		paneCu = new HomeView(); 
 		panelBody.add(paneCu);
 		execute();
 		menus.setBackground(new Color(153, 225, 225));

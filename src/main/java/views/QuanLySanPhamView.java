@@ -354,7 +354,9 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		} else if (o.equals(btnXoaSP)) {
 			xoaSanPham();
 		} else if (o.equals(btnXuatExCel)) {
-			String filePath = "C:\\Users\\hoang\\Downloads\\bbbbbbbbbbbbbbb\\SanPham.xlsx";
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/SanPham/SP_" + timeStamp
+					+ ".xlsx";
 			ghiFileExcel(filePath);
 		} else if (o.equals(btnNhapNhieuSanPham)) {
 //			System.out.println("Nhap nhieu san pham thanh cong");
@@ -368,7 +370,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	}
 
 	public void themNhieuSanPham() throws SQLException {
-		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/import";
+		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
 		JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
 		excelFileChooser.setDialogTitle("Select Excel File");
 		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
@@ -458,6 +460,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		int tongSoLuong = 0;
 		double tongGiaBan = 0;
 		int rowCount = modelSP.getRowCount();
+
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
 
 		for (int i = 0; i < rowCount; i++) {

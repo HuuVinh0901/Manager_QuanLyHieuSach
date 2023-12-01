@@ -271,7 +271,6 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 	        if (updateSuccess) {
 	            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thành công");
 	            lamMoi();
-	            dispose();
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Đổi mật khẩu thất bại", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
 	        }
