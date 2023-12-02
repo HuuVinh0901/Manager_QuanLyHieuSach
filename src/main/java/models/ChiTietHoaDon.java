@@ -5,17 +5,19 @@ public class ChiTietHoaDon {
 	private HoaDon hoaDon;
 	private SanPhamCha sanPham;
 	private double thanhTien;
+	private double loiNhuan;
 	
 	public ChiTietHoaDon() {
 		super();
 	}
-
-	public ChiTietHoaDon(int soLuong, HoaDon hoaDon, SanPhamCha sanPham, double thanhTien) {
+	
+	public ChiTietHoaDon(int soLuong, HoaDon hoaDon, SanPhamCha sanPham, double thanhTien, double loiNhuan) {
 		super();
 		this.soLuong = soLuong;
 		this.hoaDon = hoaDon;
 		this.sanPham = sanPham;
 		this.thanhTien = thanhTien;
+		this.loiNhuan = loiNhuan;
 	}
 
 	public int getSoLuong() {
@@ -50,11 +52,22 @@ public class ChiTietHoaDon {
 		this.thanhTien = thanhTien;
 	}
 
+	public double getLoiNhuan() {
+		return loiNhuan;
+	}
+
+	public void setLoiNhuan(double loiNhuan) {
+		this.loiNhuan = loiNhuan;
+	}
+
+
 	@Override
 	public String toString() {
 		return "ChiTietHoaDon [soLuong=" + soLuong + ", hoaDon=" + hoaDon + ", sanPham=" + sanPham + ", thanhTien="
-				+ thanhTien + "]";
+				+ thanhTien + ", loiNhuan=" + loiNhuan + "]";
 	}
+
+	
 	
 	
 }
