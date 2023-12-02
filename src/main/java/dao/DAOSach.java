@@ -24,6 +24,22 @@ public class DAOSach implements Serializable {
 		connection = ConnectDB.getinstance().getConnection();
 	}
 
+	public boolean capNhatSoLuongSach(int sl, String idSP) {
+		String sql = "UPDATE Sach "
+				+ "SET soLuong = soLuong - ?"
+				+ "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setInt(1, sl);
+			pst.setString(2, idSP);
+			System.out.println(sql);
+			int n = pst.executeUpdate();
+			return n >0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public SachCon getSach(String idSanPham) {
 		SachCon s = new SachCon();
 		ConnectDB.getinstance();
@@ -47,6 +63,7 @@ public class DAOSach implements Serializable {
 				s.setTrangThai(trangThaiEnum);
 				s.setGiaNhap(rs.getDouble("giaNhap"));
 				s.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				s.setSoLuong(rs.getInt("soLuong"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

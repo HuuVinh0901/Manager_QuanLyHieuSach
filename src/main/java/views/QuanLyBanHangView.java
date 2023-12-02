@@ -965,6 +965,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, hd, sp, thanhTienDouble, loiNhuan);
 				try {
 					daoQLBH.themChiTietHoaDonSanPham(cthd);
+					daoQLSP.capNhatSoLuongSanPham(soLuong, maSP);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, "Thêm chi tiết hoá đơn thất bại");
 				}
@@ -994,6 +995,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, hd, sp, thanhTienDouble, loiNhuan);
 				try {
 					daoQLBH.themChiTietHoaDonSach(cthd);
+					daoSach.capNhatSoLuongSach(soLuong, maSP);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, "Thêm chi tiết hoá đơn thất bại");
 				}
@@ -1064,10 +1066,30 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	}
 	
 	
-	private void xacNhanCapNhat() {
-		modelGioHang.setValueAt(txtCapNhatSoLuong.getText(), tblGioHang.getSelectedRow(), 5);
-		dialogSoLuong.setVisible(false);
-		tinhThanhTienGioHang();
+	private void xacNhanCapNhat(String idSanPham) {
+		if (idSanPham.startsWith("SP")) {
+			SanPhamCon sp = daoQLSP.getSanPham(idSanPham);
+			if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sp.getSoLuong()) {
+				modelGioHang.setValueAt(txtCapNhatSoLuong.getText(), tblGioHang.getSelectedRow(), 5);
+				tinhThanhTienGioHang();
+				dialogSoLuong.setVisible(false);
+			} else {
+				JOptionPane.showMessageDialog(this, "Số lượng sản phẩm trong kho không đủ");
+				dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+			}
+		} else {
+			SachCon sach = daoSach.getSach(idSanPham);
+			if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sach.getSoLuong()) {
+				modelGioHang.setValueAt(txtCapNhatSoLuong.getText(), tblGioHang.getSelectedRow(), 5);
+				tinhThanhTienGioHang();
+				dialogSoLuong.setVisible(false);
+			} else {
+				JOptionPane.showMessageDialog(this, "Số lượng sách trong kho không đủ");
+				dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+			}
+		}
 	}
 	
 	
@@ -1231,40 +1253,50 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	}
 	
 	private void themGioHangBangTimKiem(int row) {
+		String soLuong = String.valueOf(spinnerSoLuong2.getValue());
 		if (cbLocSanPham.getSelectedIndex() == 0) {
-			String idSP = modelSP.getValueAt(row, 0).toString();
-			String tenSP = modelSP.getValueAt(row, 1).toString();
-			String giaBan = modelSP.getValueAt(row, 9).toString();
-			String giaKM = modelSP.getValueAt(row, 10).toString();
-			String soLuong = String.valueOf(spinnerSoLuong2.getValue());
-			String giaKMDouble = giaKM.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
-			String giaBanDouble = giaBan.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
-			double giaCuoi = Double.parseDouble(giaBanDouble) - Double.parseDouble(giaKMDouble);
-			String thanhTien = currencyFormat.format(giaCuoi * Integer.parseInt(soLuong));
-			modelGioHang.addRow(new String[] {
-				idSP, tenSP, giaBan, "-"+giaKM, currencyFormat.format(giaCuoi), soLuong, thanhTien
-			});
-			showThongBao("Đã thêm vào giỏ hàng");
-			spinnerSoLuong2.setValue(1);
-			txtTimKiemSP.setText("");
-			txtMaSP2.setText("");
+			int soLuongTrongKho = Integer.parseInt(modelSP.getValueAt(row, 8).toString());
+			if (Integer.parseInt(soLuong) <= soLuongTrongKho) {
+				String idSP = modelSP.getValueAt(row, 0).toString();
+				String tenSP = modelSP.getValueAt(row, 1).toString();
+				String giaBan = modelSP.getValueAt(row, 9).toString();
+				String giaKM = modelSP.getValueAt(row, 10).toString();
+				String giaKMDouble = giaKM.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
+				String giaBanDouble = giaBan.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
+				double giaCuoi = Double.parseDouble(giaBanDouble) - Double.parseDouble(giaKMDouble);
+				String thanhTien = currencyFormat.format(giaCuoi * Integer.parseInt(soLuong));
+				modelGioHang.addRow(new String[] {
+					idSP, tenSP, giaBan, "-"+giaKM, currencyFormat.format(giaCuoi), soLuong, thanhTien
+				});
+				showThongBao("Đã thêm vào giỏ hàng");
+				spinnerSoLuong2.setValue(1);
+				txtTimKiemSP.setText("");
+				txtMaSP2.setText("");
+			} else {
+				JOptionPane.showMessageDialog(dialogSanPham, "Số lượng sản phẩm trong kho không đủ");
+			}
 		} else {
-			String idSP = modelSP.getValueAt(row, 0).toString();
-			String tenSP = modelSP.getValueAt(row, 1).toString();
-			String giaBan = modelSP.getValueAt(row, 14).toString();
-			String giaKM = modelSP.getValueAt(row, 15).toString();
-			String soLuong = String.valueOf(spinnerSoLuong2.getValue());
-			String giaKMDouble = giaKM.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
-			String giaBanDouble = giaBan.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
-			double giaCuoi = Double.parseDouble(giaBanDouble) - Double.parseDouble(giaKMDouble);
-			String thanhTien = currencyFormat.format(giaCuoi * Integer.parseInt(soLuong));
-			modelGioHang.addRow(new String[] {
-				idSP, tenSP, giaBan, "-"+giaKM, currencyFormat.format(giaCuoi), soLuong, thanhTien
-			});
-			showThongBao("Đã thêm vào giỏ hàng");
-			spinnerSoLuong2.setValue(1);
-			txtTimKiemSP.setText("");
-			txtMaSP2.setText("");
+			int soLuongTrongKho = Integer.parseInt(modelSP.getValueAt(row, 13).toString());
+			if (Integer.parseInt(soLuong) <= soLuongTrongKho) {
+				String idSP = modelSP.getValueAt(row, 0).toString();
+				String tenSP = modelSP.getValueAt(row, 1).toString();
+				String giaBan = modelSP.getValueAt(row, 14).toString();
+				String giaKM = modelSP.getValueAt(row, 15).toString();
+				String giaKMDouble = giaKM.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
+				String giaBanDouble = giaBan.trim().replace("\u00A0", "").replaceAll("[.,₫]", "");
+				double giaCuoi = Double.parseDouble(giaBanDouble) - Double.parseDouble(giaKMDouble);
+				String thanhTien = currencyFormat.format(giaCuoi * Integer.parseInt(soLuong));
+				modelGioHang.addRow(new String[] {
+					idSP, tenSP, giaBan, "-"+giaKM, currencyFormat.format(giaCuoi), soLuong, thanhTien
+				});
+				showThongBao("Đã thêm vào giỏ hàng");
+				spinnerSoLuong2.setValue(1);
+				txtTimKiemSP.setText("");
+				txtMaSP2.setText("");
+			} else {
+				JOptionPane.showMessageDialog(dialogSanPham, "Số lượng sách trong kho không đủ");
+			}
+			
 		}
 	}
 	
@@ -1272,36 +1304,45 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	private void themGioHangBangMa() {
 		SachCon sach = daoSach.getSachTimKiemTheoMa(txtMaSP.getText());
 		SanPhamCon sp = daoQLSP.getSanPhamTimKiemTheoMa(txtMaSP.getText());
+		int soLuong = (int) spinnerSoLuong.getValue();
 		if (sach != null) {
-			String idSP = sach.getIdSanPham();
-			String tenSP = sach.getTenSanPham();
-			Double giaBan = sach.giaBan();
-			Double giaKM = sach.getGiaKM();
-			int soLuong = (int) spinnerSoLuong.getValue();
-			Double giaCuoi = giaBan - giaKM;
-			String thanhTien = currencyFormat.format(giaCuoi * soLuong);
-			modelGioHang.addRow(new Object[] {
-				idSP, tenSP, currencyFormat.format(giaBan), "-"+currencyFormat.format(giaKM), currencyFormat.format(giaCuoi), soLuong, thanhTien
-			});
-			spinnerSoLuong.setValue(1);
-			txtMaSP.setText("");
-			showThongBao("Đã thêm vào giỏ hàng");
-			spinnerSoLuong.setValue(1);
-			txtMaSP.setText("");
+			if (soLuong <= sach.getSoLuong()) {
+				String idSP = sach.getIdSanPham();
+				String tenSP = sach.getTenSanPham();
+				Double giaBan = sach.giaBan();
+				Double giaKM = sach.getGiaKM();
+				Double giaCuoi = giaBan - giaKM;
+				String thanhTien = currencyFormat.format(giaCuoi * soLuong);
+				modelGioHang.addRow(new Object[] {
+					idSP, tenSP, currencyFormat.format(giaBan), "-"+currencyFormat.format(giaKM), currencyFormat.format(giaCuoi), soLuong, thanhTien
+				});
+				spinnerSoLuong.setValue(1);
+				txtMaSP.setText("");
+				showThongBao("Đã thêm vào giỏ hàng");
+				spinnerSoLuong.setValue(1);
+				txtMaSP.setText("");
+			} else {
+				JOptionPane.showMessageDialog(this, "Số lượng sách trong kho không đủ");
+			}
 		} else if (sp != null){
-			String idSP = sp.getIdSanPham();
-			String tenSP = sp.getTenSanPham();
-			Double giaBan = sp.giaBan();
-			Double giaKM = sp.getGiaKM();
-			int soLuong = (int) spinnerSoLuong.getValue();
-			Double giaCuoi = giaBan - giaKM;
-			String thanhTien = currencyFormat.format(giaCuoi * soLuong);
-			modelGioHang.addRow(new Object[] {
-				idSP, tenSP, currencyFormat.format(giaBan), "-"+currencyFormat.format(giaKM), currencyFormat.format(giaCuoi), soLuong, thanhTien
-			});
-			showThongBao("Đã thêm vào giỏ hàng");
-			spinnerSoLuong.setValue(1);
-			txtMaSP.setText("");
+			if (soLuong <= sp.getSoLuong()) {
+				String idSP = sp.getIdSanPham();
+				String tenSP = sp.getTenSanPham();
+				Double giaBan = sp.giaBan();
+				Double giaKM = sp.getGiaKM();
+				Double giaCuoi = giaBan - giaKM;
+				String thanhTien = currencyFormat.format(giaCuoi * soLuong);
+				modelGioHang.addRow(new Object[] {
+					idSP, tenSP, currencyFormat.format(giaBan), "-"+currencyFormat.format(giaKM), currencyFormat.format(giaCuoi), soLuong, thanhTien
+				});
+				spinnerSoLuong.setValue(1);
+				txtMaSP.setText("");
+				showThongBao("Đã thêm vào giỏ hàng");
+				spinnerSoLuong.setValue(1);
+				txtMaSP.setText("");
+			} else {
+				JOptionPane.showMessageDialog(this, "Số lượng sản phẩm trong kho không đủ");
+			}
 		} else {
 			JOptionPane.showMessageDialog(this, "Mã sản phẩm không tồn tại");
 			txtMaSP.setText("");
@@ -1816,7 +1857,8 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		} else if (o.equals(btnChonMaSanPham)) {
 			chonMaSanPham();
 		} else if (o.equals(btnXacNhanCapNhat)) {
-			xacNhanCapNhat();
+			int rowSelected = tblGioHang.getSelectedRow();
+			xacNhanCapNhat(modelGioHang.getValueAt(rowSelected, 0).toString());
 		} else if (o.equals(btnXemTatCaKhachHang)) {
 			lamMoiKhachHang();
 		} else if (o.equals(btnThanhToan)) {
