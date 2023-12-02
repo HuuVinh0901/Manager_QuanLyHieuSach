@@ -807,6 +807,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				ChiTietHoaDonCho cthdc = new ChiTietHoaDonCho(hdc, maHD, sp, soLuong, giaCuoiDouble, thanhTienDouble);
 				try {
 					daoQLBH.themChiTietHoaDonChoSanPham(cthdc);
+					daoQLSP.capNhatSoLuongSanPham(soLuong, maSP);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, "Thêm chi tiết hoá đơn chờ thất bại");
 				}
@@ -820,6 +821,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				ChiTietHoaDonCho cthdc = new ChiTietHoaDonCho(hdc, maHD, sp, soLuong, giaCuoiDouble, thanhTienDouble);
 				try {
 					daoQLBH.themChiTietHoaDonChoSach(cthdc);
+					daoSach.capNhatSoLuongSach(soLuong, maSP);
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(this, "Thêm chi tiết hoá đơn chờ thất bại");
 				}

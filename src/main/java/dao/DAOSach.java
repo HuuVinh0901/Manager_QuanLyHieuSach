@@ -24,6 +24,21 @@ public class DAOSach implements Serializable {
 		connection = ConnectDB.getinstance().getConnection();
 	}
 
+	public boolean capNhatSoLuongSach(int sl, String idSP) {
+		String sql = "UPDATE Sach "
+				+ "SET soLuong = soLuong - ?"
+				+ "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setInt(1, sl);
+			pst.setString(2, idSP);
+			int n = pst.executeUpdate();
+			return n >0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public SachCon getSach(String idSanPham) {
 		SachCon s = new SachCon();
 		ConnectDB.getinstance();

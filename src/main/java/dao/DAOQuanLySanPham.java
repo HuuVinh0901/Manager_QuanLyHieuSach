@@ -38,6 +38,21 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 	}
 	
+	public boolean capNhatSoLuongSanPham(int sl, String idSP) {
+		String sql = "UPDATE SanPham "
+				+ "SET soLuong = soLuong - ?"
+				+ "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setInt(1, sl);
+			pst.setString(2, idSP);
+			int n = pst.executeUpdate();
+			return n >0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public boolean checkIdSanPham(String idSanPham) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
