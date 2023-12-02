@@ -202,6 +202,7 @@ public class DAOQuanLySanPham implements Serializable {
 				sp.setTrangThai(trangThaiEnum);
 				sp.setGiaNhap(rs.getDouble("giaNhap"));
 				sp.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				sp.setSoLuong(rs.getInt("soLuong"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

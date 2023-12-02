@@ -9,7 +9,6 @@ public class SanPhamCon extends SanPhamCha {
 
 	}
 
-	
 
 	public SanPhamCon(String idSanPham, String tenSanPham, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap,
 			double kichThuoc, String mauSac, TrangThaiSPEnum trangThai, int soLuong, double giaNhap, double giaKM) {

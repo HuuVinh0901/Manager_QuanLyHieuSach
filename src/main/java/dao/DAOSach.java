@@ -31,6 +31,7 @@ public class DAOSach implements Serializable {
 		try (PreparedStatement pst = connection.prepareStatement(sql)){
 			pst.setInt(1, sl);
 			pst.setString(2, idSP);
+			System.out.println(sql);
 			int n = pst.executeUpdate();
 			return n >0;
 		} catch (SQLException e) {
@@ -62,6 +63,7 @@ public class DAOSach implements Serializable {
 				s.setTrangThai(trangThaiEnum);
 				s.setGiaNhap(rs.getDouble("giaNhap"));
 				s.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				s.setSoLuong(rs.getInt("soLuong"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
