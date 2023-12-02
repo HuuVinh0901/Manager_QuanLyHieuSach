@@ -53,11 +53,13 @@ go
 CREATE TABLE HoaDon (
     idDonHang NVARCHAR(14) NOT NULL PRIMARY KEY, 
     ngayLap DATE NOT NULL, 
+	nhanVien NVARCHAR(14) NOT NULL, 
     khachHang NVARCHAR(14) NOT NULL, 
     tienKhachDua FLOAT CHECK (tienKhachDua >= 0), 
 	tongTien FLOAT,
+	tongLoiNhuan FLOAT,
     FOREIGN KEY (khachHang) REFERENCES KhachHang(idKhachHang), 
-    --FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
+    FOREIGN KEY (nhanVien) REFERENCES NhanVien(idNhanVien)
 )
 go
 
@@ -107,11 +109,12 @@ CREATE TABLE SanPham (
 )
 
 go
-CREATE TABLE ChiTietHoaDon (
+CREATE TABLE ChiTietHoaDonSanPham (
     soLuong INT CHECK (soLuong > 0), 
     idDonHang NVARCHAR(14) NOT NULL , 
     idSanPham NVARCHAR(14) NOT NULL, 
 	thanhTien FLOAT,
+	loiNhuan FLOAT,
 	PRIMARY KEY (idDonHang, idSanPham),
     FOREIGN KEY (idDonHang) REFERENCES HoaDon(idDonHang), 
     FOREIGN KEY (idSanPham) REFERENCES SanPham(idSanPham)
@@ -142,7 +145,59 @@ CREATE TABLE Sach (
 )
 
 go
+CREATE TABLE ChiTietHoaDonSach (
+    soLuong INT CHECK (soLuong > 0), 
+    idDonHang NVARCHAR(14) NOT NULL , 
+    idSanPham NVARCHAR(14) NOT NULL, 
+	thanhTien FLOAT,
+	loiNhuan FLOAT,
+	PRIMARY KEY (idDonHang, idSanPham),
+    FOREIGN KEY (idDonHang) REFERENCES HoaDon(idDonHang), 
+    FOREIGN KEY (idSanPham) REFERENCES Sach(idSanPham)
+)
+go
+CREATE TABLE HoaDonCho (
+	idDonHangCho NVARCHAR(15) NOT NULL PRIMARY KEY, 
+    idDonHang NVARCHAR(14) NOT NULL, 
+	idKhachHang NVARCHAR(14) NOT NULL,
+	tenKhachHang NVARCHAR(14) NOT NULL,
+	soDienThoai NVARCHAR(14) NOT NULL,
+    ngayLap DATE NOT NULL
+    FOREIGN KEY (idKhachHang) REFERENCES KhachHang(idKhachHang), 
+)
+go
 
+CREATE TABLE ChiTietHoaDonChoSach (
+    idDonHangCho NVARCHAR(15) NOT NULL , 
+	idDonHang NVARCHAR(14) NOT NULL , 
+	tenSanPham NVARCHAR(14) NOT NULL , 
+    idSanPham NVARCHAR(14) NOT NULL, 
+	giaBan FLOAT,
+	khuyenMai FLOAT,
+	soLuong INT CHECK (soLuong > 0), 
+	giaCuoi FLOAT,
+	thanhTien FLOAT,
+	PRIMARY KEY (idDonHangCho, idSanPham),
+    FOREIGN KEY (idDonHangCho) REFERENCES HoaDonCho(idDonHangCho), 
+    FOREIGN KEY (idSanPham) REFERENCES Sach(idSanPham)
+)
+go
+CREATE TABLE ChiTietHoaDonChoSanPham (
+    idDonHangCho NVARCHAR(15) NOT NULL , 
+	idDonHang NVARCHAR(14) NOT NULL , 
+	tenSanPham NVARCHAR(14) NOT NULL , 
+    idSanPham NVARCHAR(14) NOT NULL, 
+	giaBan FLOAT,
+	khuyenMai FLOAT,
+	soLuong INT CHECK (soLuong > 0), 
+	giaCuoi FLOAT,
+	thanhTien FLOAT,
+	PRIMARY KEY (idDonHangCho, idSanPham),
+    FOREIGN KEY (idDonHangCho) REFERENCES HoaDonCho(idDonHangCho), 
+    FOREIGN KEY (idSanPham) REFERENCES SanPham(idSanPham)
+)
+
+go
 CREATE TABLE KhuyenMai (
     idKM NVARCHAR(14) NOT NULL PRIMARY KEY,
     tenKM NVARCHAR(20) NOT NULL, 
