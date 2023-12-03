@@ -309,7 +309,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		nv.setTrangThai(TrangThaibooleanValue);
 		nv.setSoDienThoai(sdt);
 		if(valiDate()) {
-			
+			daoTK.createTK(tk);
 			daoNhanVien.themNhanVien(nv);
 			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
 		}
@@ -399,18 +399,13 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
             row.createCell(7).setCellValue(kh.getChucVu());
             row.createCell(8).setCellValue(kh.isTrangThai()?"Đang làm việc":"Đã nghỉ việc");
 		}
-		JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Chọn đường dẫn và tên tệp Excel");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp Excel (*.xlsx)", "xlsx");
-        fileChooser.setFileFilter(filter);
-
         // Hiển thị hộp thoại mở cửa sổ lưu tệp
         try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
 			workbook.write(outputStream);
 		}
 
-		System.out.println("Dữ liệu SanPham đã được ghi vào tệp Excel thành công.");
-		JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
+		System.out.println("Dữ liệu NhanVien đã được ghi vào tệp Excel thành công.");
+		JOptionPane.showMessageDialog(this, "Xuất excel thành công");
         
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -478,7 +473,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		String ten = txtTenNV.getText().trim();
 
 		
-		Boolean gioiTinh=null;
+		Boolean gioiTinh;
 		if(rbNam.isSelected() || rbNu.isSelected()) {
 			gioiTinh=true;
 		}
@@ -536,7 +531,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			txtsdt.selectAll();
 			return false;
 		}
-		if(gioiTinh=false)
+		if(gioiTinh==false)
 		{
 			JOptionPane.showMessageDialog(this, "Vui lòng chọn giới tính", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);

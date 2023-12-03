@@ -68,6 +68,7 @@ import dao.DAOQuanLySanPham;
 import models.KhachHang;
 import models.LoaiSanPham;
 import models.NhaCungCap;
+import models.NhanVien;
 import models.SanPhamCon;
 import utils.TrangThaiSPEnum;
 
@@ -449,15 +450,15 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		}
 		return true;
 	}
-	private void xuatExcel() {
+	private void xuatExcel(String filePath) {
 
 	try {	
 		Workbook workbook = new XSSFWorkbook();
 		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Khách hàng");
 
 		Row header = sheet.createRow(0);
-		header.createCell(0).setCellValue("ID khách hàng");
-		header.createCell(1).setCellValue("Tên khách hàng");
+		header.createCell(0).setCellValue("ID nhân viên");
+		header.createCell(1).setCellValue("Tên nhân viên");
 		header.createCell(2).setCellValue("Số điện thoại");
 		header.createCell(3).setCellValue("Email");
 		header.createCell(4).setCellValue("Địa chỉ");
@@ -474,31 +475,20 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
             row.createCell(4).setCellValue(kh.getDiaChi());
             row.createCell(5).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgaySinh()));
             row.createCell(6).setCellValue(kh.isGioiTinh()?"Nam":"Nữ");
+            
 		}
-		JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Chọn đường dẫn và tên tệp Excel");
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Tệp Excel (*.xlsx)", "xlsx");
-        fileChooser.setFileFilter(filter);
+		 // Hiển thị hộp thoại mở cửa sổ lưu tệp
+        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+			workbook.write(outputStream);
+		}
 
-        // Hiển thị hộp thoại mở cửa sổ lưu tệp
-        int userSelection = fileChooser.showSaveDialog(null);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            // Lấy đường dẫn và tên tệp từ người dùng
-            String filePathString = fileChooser.getSelectedFile().getAbsolutePath();
-
-            // Ghi workbook ra tệp Excel
-            try (FileOutputStream outputStream = new FileOutputStream(filePathString + ".xlsx")) {
-                workbook.write(outputStream);
-            }
-
-            System.out.println("Dữ liệu đã được ghi vào tệp Excel thành công.");
-            JOptionPane.showMessageDialog(null, "Xuất Excel thành công");
-        }
+		System.out.println("Dữ liệu SanPham đã được ghi vào tệp Excel thành công.");
+		JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
         
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-}	
+}
 
 	private void lamMoi() {
 		loadData();
@@ -542,7 +532,10 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			 loadData();
 		 }
 		if(o.equals(btnXuatExcel)) {
-			 xuatExcel();
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/KhachHang/KH_" + timeStamp
+					+ ".xlsx";
+		 xuatExcel(filePath);
 		 }
 	}
 	@Override

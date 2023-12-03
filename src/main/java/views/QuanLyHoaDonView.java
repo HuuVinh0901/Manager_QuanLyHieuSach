@@ -253,6 +253,14 @@ public class QuanLyHoaDonView extends JPanel{
     		scrollTblCTHD.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
     		tblChiTietHoaDon.setPreferredScrollableViewportSize(new Dimension(500, 300));
     		
+    		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSachTheoId(idHoaDon)) {
+    			String idSP = cthd.getSanPham().getIdSanPham();
+    			SanPhamCha sp = daoSanPham.getSanPham(idSP);
+    			String tenSP = sp.getTenSanPham();
+    			String soLuong = String.valueOf(cthd.getSoLuong());
+    			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			modelChiTiet.addRow(new String[] {idSP, tenSP, soLuong, thanhTien});
+    		}
     		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSanPhamTheoId(idHoaDon)) {
     			String idSP = cthd.getSanPham().getIdSanPham();
     			SanPhamCha sp = daoSanPham.getSanPham(idSP);
@@ -317,8 +325,3 @@ public class QuanLyHoaDonView extends JPanel{
 	}
 	
 }
-
-
-
-
-

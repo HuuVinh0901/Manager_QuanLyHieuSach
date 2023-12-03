@@ -15,6 +15,7 @@ public class SachCon extends SanPhamCha {
 		// TODO Auto-generated constructor stub
 	}
 
+	
 	public SachCon(String idSanPham, String tenSanPham, TacGia tacGia, TheLoai theLoai, Date namXuatBan, String iSBN,
 			int soTrang, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap, double kichThuoc, String mauSac,
 			TrangThaiSPEnum trangThai, int soLuong, double giaNhap,double giaKM) {

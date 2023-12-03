@@ -14,7 +14,12 @@ public class KhachHang {
 	private boolean gioiTinh;
 	private Date ngaySinh;
 
-	
+	public KhachHang(String idKhachHang, String tenKhachHang, String sdt) {
+		super();
+		this.idKhachHang = idKhachHang;
+		this.tenKhachHang = tenKhachHang;
+		this.sdt = sdt;
+	}
 
 	public KhachHang(String idKhachHang, String tenKhachHang, String sdt, String email, String diaChi,
 			Date ngaySinh, boolean gioiTinh) {

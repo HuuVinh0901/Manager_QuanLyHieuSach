@@ -37,7 +37,22 @@ public class DAOQuanLySanPham implements Serializable {
 			}
 		}
 	}
-
+	
+	public boolean capNhatSoLuongSanPham(int sl, String idSP) {
+		String sql = "UPDATE SanPham "
+				+ "SET soLuong = soLuong - ?"
+				+ "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)){
+			pst.setInt(1, sl);
+			pst.setString(2, idSP);
+			int n = pst.executeUpdate();
+			return n >0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
 	public boolean checkIdSanPham(String idSanPham) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
@@ -165,23 +180,8 @@ public class DAOQuanLySanPham implements Serializable {
 	
 	
 	
-	public SanPhamCha getSanPham(String idSanPham) {
-		SanPhamCha sp = new SanPhamCha() {
-			
-			@Override
-			public double thue() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-			
-			@Override
-			public double giaBan() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-
-			
-		};
+	public SanPhamCon getSanPham(String idSanPham) {
+		SanPhamCon sp = new SanPhamCon();
 		ConnectDB.getinstance();
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
@@ -200,7 +200,9 @@ public class DAOQuanLySanPham implements Serializable {
 				String trangThai = rs.getString(7);
 				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getByName(trangThai);
 				sp.setTrangThai(trangThaiEnum);
-				sp.setGiaNhap(rs.getDouble(6));
+				sp.setGiaNhap(rs.getDouble("giaNhap"));
+				sp.setGiaKM(rs.getDouble("giaKhuyenMai"));
+				sp.setSoLuong(rs.getInt("soLuong"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -352,7 +354,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(9, sp.getGiaNhap());
 			pst.setInt(10, sp.getSoLuong());
 			pst.setDouble(11, sp.giaBan());
-			pst.setDouble(12, sp.giaBan());
+			pst.setDouble(12, sp.getGiaKM());
 			int n = pst.executeUpdate();
 			return n >0 ;
 		} catch (SQLException e) {

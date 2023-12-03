@@ -2,8 +2,6 @@ package models;
 
 import java.util.Objects;
 
-import javax.swing.JComboBox;
-
 import utils.TrangThaiSPEnum;
 
 public abstract class SanPhamCha {
@@ -21,7 +19,7 @@ public abstract class SanPhamCha {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public SanPhamCha(String idSanPham) {
 		this.idSanPham = idSanPham;
 	}
@@ -46,7 +44,7 @@ public abstract class SanPhamCha {
 	}
 
 	public void setGiaKM(double giaKM) {
-		this.giaKM = 0;
+		this.giaKM = giaKM;
 	}
 
 	public String getIdSanPham() {
