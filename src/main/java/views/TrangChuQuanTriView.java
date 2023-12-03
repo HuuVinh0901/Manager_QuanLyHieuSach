@@ -33,6 +33,7 @@ import javax.swing.WindowConstants;
 import connection.ConnectDB;
 import controllers.MenuItem;
 import dao.DAONhanVien;
+import dao.DAOQuanLy;
 import models.NhanLuc;
 import models.NhanVien;
 import models.QuanLy;
@@ -47,16 +48,23 @@ public class TrangChuQuanTriView extends JFrame {
 	private JLabel lbID;
 	private JLabel lbTen;
 	private QuanLy headerQL;
+
 	private JLabel lblDate;
+
+
+	private NhanVien headerNV;
+	private DAONhanVien daoNV;
+	private DAOQuanLy daoQL;
 
 	public TrangChuQuanTriView(QuanLy ql) {
 		this.headerQL = ql;
-
+		daoQL = new DAOQuanLy();
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		setTitle("Quản trị");
 		setSize(new Dimension(871, 473));
 		setLocationRelativeTo(null);
@@ -65,7 +73,7 @@ public class TrangChuQuanTriView extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		ImageIcon icon = new ImageIcon(getClass().getResource("/icons/logo.png"));
 		setIconImage(icon.getImage());
-		paneCu = new HomeView(); // Bắt đầu với HomeView
+		paneCu = new HomeView(); 
 		panelBody.add(paneCu);
 		execute();
 		menus.setBackground(new Color(153, 255, 255));
@@ -229,16 +237,18 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-//		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				// TODO Auto-generated method stub
-//				switchToPanel(new SetPassWordView());
-//			}
-//		});
+		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				QuanLy ql = daoQL.getQuanLy(headerQL.getId());
+				SetPassWordQuanLyView frame = new SetPassWordQuanLyView(ql);
+				switchToPanel(new HomeView());
+				frame.setVisible(true);
+			}
+		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien);
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien,subCaiDatDMK);
 
 		addMenu(QLSP, QLNV, QLKH, KM, QLHD, ThongKe, CaiDat, DangXuat);
 		QLSP.setBackground(new Color(153, 255, 255));

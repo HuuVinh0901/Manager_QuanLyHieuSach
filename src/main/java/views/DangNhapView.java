@@ -63,7 +63,7 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 	private DAOTaiKhoan daoTaiKhoan;
 	private DAONhanVien daoNV;
 	private DAOQuanLy daoQL;
-
+	private JButton btnQuenMatKhau;
 	public DangNhapView() {
 		daoTaiKhoan = new DAOTaiKhoan();
 		daoNV = new DAONhanVien();
@@ -87,7 +87,7 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 		Font ftItalic = new Font("SansSerif", Font.ITALIC, 12);
 		Font ftBtn = new Font("SansSerif", Font.BOLD, 15);
 		Font ftTieuDe = new Font("SansSerif", Font.BOLD, 30);
-
+		btnQuenMatKhau = new JButton("Quên mật khẩu");
 		Box b = Box.createVerticalBox();
 		Box b1, b2, b3, b4, b5, b6, b7, b8;
 		b.add(b1 = Box.createHorizontalBox());
@@ -106,7 +106,7 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 		b2.add(txtTaiKhoan = new JTextField());
 		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 		txtTaiKhoan.setToolTipText("Nhập tài khoản");
-		txtTaiKhoan.setText("QL202311270001");
+		txtTaiKhoan.setText("QL202311300001");
 		b2.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 
@@ -127,6 +127,7 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 		btnDangNhap.setFont(ftBtn);
 		btnDangNhap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnDangNhap.setIcon(iconDangNhap);
+		
 
 		b5.add(Box.createRigidArea(new Dimension(0, 50)));
 		b5.add(btnThoat = new JButton("THOÁT"));
@@ -134,7 +135,13 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 		btnThoat.setFont(ftBtn);
 		btnThoat.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		add(b, BorderLayout.NORTH);
+//		b5.add(Box.createRigidArea(new Dimension(0, 50)));
+//		b5.add(btnQuenMatKhau = new JButton("Quên mật khẩu"));
+//		b5.add(Box.createRigidArea(new Dimension(100, 50)));
+//		btnDangNhap.setFont(ftBtn);
+//		btnDangNhap.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//		btnDangNhap.setIcon(iconDangNhap);
+
 
 		add(b, BorderLayout.NORTH);
 
@@ -142,6 +149,7 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 
 		btnThoat.addActionListener(this);
 		btnDangNhap.addActionListener(this);
+		btnQuenMatKhau.addActionListener(this);
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -156,8 +164,11 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 			System.exit(0);
 		} else if (o.equals(btnDangNhap)) {
 			Login();
-
 		}
+//		else if(o.equals(btnQuenMatKhau)) {
+//			ForgotPassWordView view = new ForgotPassWordView();
+//			view.setVisible(true);
+//		}
 
 	}
 

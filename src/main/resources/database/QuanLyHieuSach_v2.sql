@@ -560,16 +560,7 @@ insert KhachHang  (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) valu
 insert KhachHang  (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hoàng Anh','0355430754','hoang123@mail',N'Bình Quới, Bến Tre','2023/01/04',1)
 
 
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Văn Toàn','0676672993','toanracing@gmail.com',N'Bến Tre','2003-03-03',1,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Tuyết Linh','0676672713','linh@gmail.com',N'Bến Tre','2003-03-07',0,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Chí Trung','0675542993','trungpham@gmail.com',N'Bến Tre','2002-12-08',1,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Anh Trâm','0936672993','tram@gmail.com',N'phường 6, TP.Bến Tre','2003-11-03',0,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Thiên Khải','0676672773','khai123@gmail.com',N'Phú Yên','2003-07-12',1,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Đình Hoàng','0675272993','hoang@gmail.com',N'Bình Định','2003-09-03',1,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Anh Đức','0676691993','ducbill@gmail.com',N'Bến Tre','2003-03-03',1,N'Nhân viên',0)
-insert NhanVien (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values (N'Tuấn Hải','0676677793','haixabeng@gmail.com',N'Long Anh','2001-06-03',1,N'Nhân viên',0)
-insert NhanVien  (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values ('Hoang Le','0355430475','BenTre','hoang123@mail','2023/01/09',1,'Nhân viên',1)
-insert NhanVien  (tenNhanVien,soDienThoai,diaChi,email,ngaySinh,gioiTinh,chucVu,trangThai) values ('Linh Chi','0355430478','BenTre','dat@mail','2003/11/25',0,'Nhân viên',1)
+
 --INSERT INTO Sach VALUES (N'S202311130001', N'Chút gió thoáng qua', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230001', N'NCC202311230001', 15.5, N'Nâu', 1, 2500, 22, 500000, 800000,800000);
 --INSERT INTO Sach VALUES (N'S202311130002', N'Cây cam ngọt ngào', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230003', N'NCC202311230003', 15.5, N'Nâu', 1, 2500, 100, 700000, 1120000,1120000);
 --go
@@ -588,7 +579,7 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202311260001
+--QL202311300001
 --NV202311260001
 select *from TheLoai
 select *from NhaCungCap
@@ -597,6 +588,9 @@ select *from Sach
 select *from TacGia
 select *from SanPham
 select *from TaiKhoan
+select *from NhanVien
+SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = N'0912345678'
+
 use QLHieuSach
 use master
 drop database QLHieuSach

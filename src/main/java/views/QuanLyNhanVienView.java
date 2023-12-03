@@ -309,12 +309,10 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		nv.setTrangThai(TrangThaibooleanValue);
 		nv.setSoDienThoai(sdt);
 		if(valiDate()) {
-			daoTK.createTK(tk);
+			
 			daoNhanVien.themNhanVien(nv);
 			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
 		}
-		
-
 	}
 	private void loadData() {
 		modelNhanVien.setRowCount(0);
@@ -372,7 +370,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		}
 		
 }
-	private void xuatExcel() {
+	private void xuatExcel(String filePath) {
 
 	try {	
 		Workbook workbook = new XSSFWorkbook();
@@ -407,19 +405,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
         fileChooser.setFileFilter(filter);
 
         // Hiển thị hộp thoại mở cửa sổ lưu tệp
-        int userSelection = fileChooser.showSaveDialog(null);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            // Lấy đường dẫn và tên tệp từ người dùng
-            String filePathString = fileChooser.getSelectedFile().getAbsolutePath();
+        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+			workbook.write(outputStream);
+		}
 
-            // Ghi workbook ra tệp Excel
-            try (FileOutputStream outputStream = new FileOutputStream(filePathString + ".xlsx")) {
-                workbook.write(outputStream);
-            }
-
-            System.out.println("Dữ liệu đã được ghi vào tệp Excel thành công.");
-            JOptionPane.showMessageDialog(null, "Xuất Excel thành công");
-        }
+		System.out.println("Dữ liệu SanPham đã được ghi vào tệp Excel thành công.");
+		JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
         
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -601,7 +592,10 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			 loadData();
 		 }
 		 if(o.equals(btnXuatExecl)) {
-			 xuatExcel();
+			 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+				String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/NhanVien/NV_" + timeStamp
+						+ ".xlsx";
+			 xuatExcel(filePath);
 		 }
 	}
 	@Override
