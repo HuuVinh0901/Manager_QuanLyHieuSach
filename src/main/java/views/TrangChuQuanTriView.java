@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -46,9 +48,14 @@ public class TrangChuQuanTriView extends JFrame {
 	private JLabel lbID;
 	private JLabel lbTen;
 	private QuanLy headerQL;
+
+	private JLabel lblDate;
+
+
 	private NhanVien headerNV;
 	private DAONhanVien daoNV;
 	private DAOQuanLy daoQL;
+
 	public TrangChuQuanTriView(QuanLy ql) {
 		this.headerQL = ql;
 		daoQL = new DAOQuanLy();
@@ -194,6 +201,8 @@ public class TrangChuQuanTriView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				switchToPanel(new ThongKeDoanhThuNhanVienView());
+
 			}
 		});
 		MenuItem subThongKeSanPham = new MenuItem(iconSubMenu, "Thống kê sản phẩm", new ActionListener() {
@@ -284,27 +293,35 @@ public class TrangChuQuanTriView extends JFrame {
 		lbID.setFont(new Font("Arial", Font.ITALIC, 15));
 		lbTen = new JLabel(": " + headerQL.getTen());
 		lbTen.setFont(new Font("Arial", Font.ITALIC, 15));
-		JPanel pnTen = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JPanel pnID = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(": dd/MM/yyyy");
+		String dateTiemString = now.format(formatter);
+		lblDate = new JLabel(dateTiemString);
+		lblDate.setFont(new Font("Arial", Font.ITALIC, 20));
+
+		JPanel pnDate = new JPanel();
+		pnDate.add(lblDate);
+		JPanel pnTenID = new JPanel(new BorderLayout());
+		JPanel pnChen = new JPanel();
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		panelHeader.setBackground(new Color(225, 223, 223));
 		panelHeader.setPreferredSize(new Dimension(561, 50));
-		pnID.add(lbID);
-		pnTen.add(lbTen);
+		pnTenID.add(lbID,BorderLayout.NORTH);
+		pnTenID.add(lbTen,BorderLayout.CENTER);
 		ImageIcon iconid = new ImageIcon(getClass().getResource("/icons/id.png"));
 		ImageIcon iconTen = new ImageIcon(getClass().getResource("/icons/Ten.png"));
+		ImageIcon iconNgayThang = new ImageIcon(getClass().getResource("/icons/calendar.png"));
 		lbID.setIcon(iconid);
 		lbTen.setIcon(iconTen);
-		panelHeader.add(pnID, BorderLayout.NORTH);
-		panelHeader.add(pnTen, BorderLayout.CENTER);
-
+		lblDate.setIcon(iconNgayThang);
+		
+		panelHeader.add(pnTenID, BorderLayout.WEST);
+		panelHeader.add(pnChen, BorderLayout.CENTER);
+		panelHeader.add(pnDate, BorderLayout.EAST);
 		getContentPane().add(panelHeader, BorderLayout.PAGE_START);
-
 		jScrollPane1.setBorder(null);
-
 		menus.setLayout(new BoxLayout(menus, BoxLayout.Y_AXIS));
 		jScrollPane1.setViewportView(menus);
-
 		GroupLayout panelMenuLayout = new GroupLayout(panelMenu);
 		panelMenu.setLayout(panelMenuLayout);
 		panelMenuLayout.setHorizontalGroup(panelMenuLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -313,7 +330,6 @@ public class TrangChuQuanTriView extends JFrame {
 				.addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE));
 
 		getContentPane().add(panelMenu, BorderLayout.LINE_START);
-
 		panelBody.setLayout(new BorderLayout());
 		getContentPane().add(panelBody, BorderLayout.CENTER);
 	}

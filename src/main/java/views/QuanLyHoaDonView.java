@@ -325,8 +325,3 @@ public class QuanLyHoaDonView extends JPanel{
 	}
 	
 }
-
-
-
-
-

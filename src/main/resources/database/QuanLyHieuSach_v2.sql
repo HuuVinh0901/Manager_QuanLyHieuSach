@@ -33,11 +33,7 @@ CREATE TABLE QuanLy (
     trangThai BIT DEFAULT 1, -- '1' cho 'Đang làm việc', '0' cho 'Đã nghỉ việc'
    
 )
-ALTER TABLE NhanVien
-ADD FOREIGN KEY (idNhanVien) REFERENCES TaiKhoan(idTaiKhoan);
-ALTER TABLE QuanLy
-ADD FOREIGN KEY (idQuanLy) REFERENCES TaiKhoan(idTaiKhoan);
-go
+
 
 go
 CREATE TABLE KhachHang(
@@ -148,7 +144,7 @@ go
 CREATE TABLE ChiTietHoaDonSach (
     soLuong INT CHECK (soLuong > 0), 
     idDonHang NVARCHAR(14) NOT NULL , 
-    idSanPham NVARCHAR(14) NOT NULL, 
+    idSanPham NVARCHAR(13) NOT NULL, 
 	thanhTien FLOAT,
 	loiNhuan FLOAT,
 	PRIMARY KEY (idDonHang, idSanPham),
@@ -160,7 +156,7 @@ CREATE TABLE HoaDonCho (
 	idDonHangCho NVARCHAR(15) NOT NULL PRIMARY KEY, 
     idDonHang NVARCHAR(14) NOT NULL, 
 	idKhachHang NVARCHAR(14) NOT NULL,
-	tenKhachHang NVARCHAR(14) NOT NULL,
+	tenKhachHang NVARCHAR(30) NOT NULL,
 	soDienThoai NVARCHAR(14) NOT NULL,
     ngayLap DATE NOT NULL
     FOREIGN KEY (idKhachHang) REFERENCES KhachHang(idKhachHang), 
@@ -170,7 +166,7 @@ go
 CREATE TABLE ChiTietHoaDonChoSach (
     idDonHangCho NVARCHAR(15) NOT NULL , 
 	idDonHang NVARCHAR(14) NOT NULL , 
-	tenSanPham NVARCHAR(14) NOT NULL , 
+	tenSanPham NVARCHAR(30) NOT NULL , 
     idSanPham NVARCHAR(14) NOT NULL, 
 	giaBan FLOAT,
 	khuyenMai FLOAT,
@@ -185,7 +181,7 @@ go
 CREATE TABLE ChiTietHoaDonChoSanPham (
     idDonHangCho NVARCHAR(15) NOT NULL , 
 	idDonHang NVARCHAR(14) NOT NULL , 
-	tenSanPham NVARCHAR(14) NOT NULL , 
+	tenSanPham NVARCHAR(30) NOT NULL , 
     idSanPham NVARCHAR(14) NOT NULL, 
 	giaBan FLOAT,
 	khuyenMai FLOAT,
@@ -209,11 +205,9 @@ CREATE TABLE ApDungKhuyenMai (
     idSP nvarchar(14) PRIMARY KEY,
     idKM nvarchar(14),
 	tenSP nvarchar(30),
-	
-    giaBan float,
+	giaBan float,
 	giaKM float,
-	
-    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
 	FOREIGN KEY (idSP) REFERENCES SanPham(idSanPham),
 	
 );
@@ -221,11 +215,9 @@ CREATE TABLE ApDungKhuyenMaiSach (
     idS nvarchar(13) PRIMARY KEY,
     idKM nvarchar(14),
 	tenSP nvarchar(30),
-	
-    giaBan float,
+	giaBan float,
 	giaKM float,
-	
-    FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
+	FOREIGN KEY (idKM) REFERENCES KhuyenMai(idKM),
 	FOREIGN KEY (idS) REFERENCES Sach(idSanPham),
 	
 );
@@ -455,8 +447,29 @@ BEGIN
     SELECT @NewID,tenSanPham,tacGia, theLoai, namXuatBan, ISBN, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaNhap, giaBan, giaKhuyenMai
     FROM INSERTED
 END
-
+--Tạo tài khoản khi thêm nhân viên
+CREATE TRIGGER trg_TaoTKChoNV
+ON NhanVien 
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
+    SELECT idNhanVien, HASHBYTES('SHA2_512', '1111'), GETDATE()
+    FROM inserted;
+END;
 go
+--Tạo tài khoản cho quản lý
+CREATE TRIGGER trg_TaoTKChoQL
+ON QuanLy 
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
+    SELECT idQuanLy, HASHBYTES('SHA2_512', '1111'), GETDATE()
+    FROM inserted;
+END;
 
 INSERT INTO LoaiSanPham VALUES (N'',N'Sách')
 INSERT INTO LoaiSanPham VALUES (N'', N'Trò chơi giáo dục')
@@ -480,7 +493,7 @@ INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ chơi Trí Tuệ', N'321 Đ
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Nước hoa Thanh Xuân', N'654 Đường Cách Mạng Tháng 8', N'0912345678');
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ điện gia dụng Tiến Đạt', N'111 Đường Trần Hưng Đạo', N'0932109876');
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Phụ kiện Thời trang Sang Trọng', N'11 Đường Trần Hưng Đạo', N'0978563412');
- INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Văn Học Việt Nam', N'22 Đường Trần Hưng Đạo, Quận 1, TP.Hồ Chí Minh', N'0901234987');
+INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Văn Học Việt Nam', N'22 Đường Trần Hưng Đạo, Quận 1, TP.Hồ Chí Minh', N'0901234987');
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Giáo Khoa Thành Phố', N'12 Đường Nguyễn Thị Minh Khai, Quận 1, TP.Hồ Chí Minh', N'0909123456'); 
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Thái Bình', N'34 Đường Lý Tự Trọng, Quận 3, TP.Hồ Chí Minh', N'0919876543');
 INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Dùng Học Tập Huy Hoàng', N'56 Đường Nguyễn Trãi, Quận 5, TP.Hồ Chí Minh', N'0987765432');
@@ -563,6 +576,42 @@ INSERT INTO TheLoai VALUES (N'', N'Thơ', 3, N'Tác phẩm văn học sử dụn
 INSERT INTO TheLoai VALUES (N'', N'Thần thoại', 1, N'Sách kể về những truyền thuyết, thần thoại, thần tiên, thần linh hoặc những sự kiện siêu nhiên');
 
 go
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hữu Vinh',N'0918255167',N'vinhpham123@gmail.com',N'320D phường 7, TP.Bến Tre','2003-01-09',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Vũ Duy','0918288167','duy123@gmail.com','Phan Rang','2003-06-27',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Tấn Đạt','0929255167','datpham@gmail.com',N'Tiền Giang','2003-04-13',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Văn Hoàng','0918255167','hoangle@gmail.com',N'Long Thành,Đồng Nai','2003-01-09',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Bảo Trinh','0379121672','trinhxinhdep@gmail.com',N'Bình Định','2003-11-17',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hồng Luyên','0976321697','luyenxinh@gmail.com',N'Bình Định','2003-09-29',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hồng Lưu','0783126567','luuxinh@gmail.com',N'Bình Định','2003-09-29',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Phước Hậu','0783454367','haungo@gmail.com',N'Bến Tre','2003-11-21',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Đức Minh','0776754367','minhcute@gmail.com',N'Bến Tre','2003-01-21',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Thái Công','0989891437','congthai@gmail.com',N'Bến Tre','2003-07-23',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Lan Anh','0778884367','lananh25@gmail.com',N'Bến Tre','2003-11-25',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Mỹ Dung','0765754367','dungxd@gmail.com',N'Bến Tre','2003-02-06',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Thanh Thảo','0744454367','thaodep@gmail.com',N'Kon Tum','2002-02-05',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Duy Thống',N'0917755167',N'thongtruong123@gmail.com',N'329 phường 8, TP.Bến Tre','2003-08-17',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Thành Đạt','0918987867','datcool@gmail.com',N'Bến Tre','2003-06-27',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Tường Vy','0989255167','vynguyen@gmail.com',N'Bến Tre','2003-11-13',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Mỹ Hạnh','0918257767','myhanh@gmail.com',N'222 phương 7, Bến Tre','2003-01-18',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Cát Tường','0879121672','cattuong@gmail.com',N'Bến Tre','2003-05-28',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Tuyết Nhung','0976321688','tuyenxinh@gmail.com',N'Hà Nội','2003-09-29',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Yến Vân','0783776567','yenvan@gmail.com',N'250 phương 7, TP.Bến Tre','2003-09-19',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Tuấn Duy','0783455367','duy23@gmail.com',N'Bến Tre','2003-11-20',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Minh Khang','0746754367','minhkhang@gmail.com',N'Bến Tre','2003-01-16',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Duy Thuận','0989891777','dt@gmail.com',N'Bến Tre','2003-01-16',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Mỹ Vy','0778810367','vydep@gmail.com',N'Bến Tre','2003-11-25',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Tường Vân','0765754797','tv@gmail.com',N'Bến Tre','2003-02-06',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Quốc Tuấn','0744454355','tuan@gmail.com',N'Kon Tum','2002-02-05',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Minh Nhựt','0744554367','minhnhutg@gmail.com',N'Bến Tre','2003-01-26',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Thanh Nhiên','0989891789','tn@gmail.com',N'Bến Tre','2003-01-16',1)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Phương Quyên','0773303675','quyen@gmail.com',N'Bến Tre','2003-01-01',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Ngọc Châu','0765754740','chau@gmail.com',N'Cần Thơ','2003-05-06',0)
+insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Chí Khang','0744454355','khang@gmail.com',N'Kon Tum','2002-08-20',1)
+insert KhachHang  (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Quang Vinh','0355430475','vinh@mail',N'125 Bùi Đình Túy, TP.HCM','2023/01/09',1)
+insert KhachHang  (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hoàng Anh','0355430754','hoang123@mail',N'Bình Quới, Bến Tre','2023/01/04',1)
+
+
+
 --INSERT INTO Sach VALUES (N'S202311130001', N'Chút gió thoáng qua', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230001', N'NCC202311230001', 15.5, N'Nâu', 1, 2500, 22, 500000, 800000,800000);
 --INSERT INTO Sach VALUES (N'S202311130002', N'Cây cam ngọt ngào', N'TG202311230001', N'TL202311230001', '2022-01-01', N'978-123-123-123-2', 200, N'LSP202311230003', N'NCC202311230003', 15.5, N'Nâu', 1, 2500, 100, 700000, 1120000,1120000);
 --go

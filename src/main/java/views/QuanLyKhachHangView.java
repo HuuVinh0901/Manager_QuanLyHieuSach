@@ -13,6 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,6 +33,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,11 +47,16 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.codehaus.plexus.util.dag.DAG;
 
 import com.toedter.calendar.JDateChooser;
@@ -58,6 +67,10 @@ import dao.DAOKhachHang;
 import dao.DAOQuanLySanPham;
 import models.KhachHang;
 import models.LoaiSanPham;
+import models.NhaCungCap;
+import models.NhanVien;
+import models.SanPhamCon;
+import utils.TrangThaiSPEnum;
 
 
 
@@ -85,6 +98,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	private JButton btnXoaKH;
 	private JButton btnLamMoi;
 	private JButton btnXemTatCa;
+	private JButton btnXuatExcel;
 	private ButtonGroup groupGT;
 	private SimpleDateFormat dfNgaySinh;
 	private DAOKhachHang daoKhachHang;
@@ -175,6 +189,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    btnCapNhatKH=new JButton("CẬP NHẬT THÔNG TIN KHÁCH HÀNG");
 	    btnLamMoi=new JButton("LÀM MỚI");
 	    btnXemTatCa=new JButton("XEM TẤT CẢ");
+	    btnXuatExcel=new JButton("XUẤT EXCEL");
 	    btnThemKH=new JButton("THÊM KHÁCH HÀNG");
 	    ImageIcon iconThem = new ImageIcon(getClass().getResource("/icons/add.png"));
 		ImageIcon iconCapNhat = new ImageIcon(getClass().getResource("/icons/capnhat.png"));
@@ -189,6 +204,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 	    pnChucNang.add(btnCapNhatKH);
 	    pnChucNang.add(btnXoaKH);
 	    pnChucNang.add(btnLamMoi);
+	    pnChucNang.add(btnXuatExcel);
 	    pnNouth.add(pnChucNang,BorderLayout.SOUTH);
 	    pnChucNang.setBorder(BorderFactory.createTitledBorder("Chức năng"));
 	  
@@ -233,8 +249,13 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		btnCapNhatKH.addActionListener(this);
 		btnXoaKH.addActionListener(this);
 		btnXemTatCa.addActionListener(this);
+		btnXuatExcel.addActionListener(this);
 		tableKH.addMouseListener(this);
 		txtTimKiem.addKeyListener(this);
+		txtTenKH.addKeyListener(this);
+		txtDiaChi.addKeyListener(this);
+		txtsdt.addKeyListener(this);
+		txtEmail.addKeyListener(this);
 		tableKH.addKeyListener(this);
 		try {
 			ConnectDB.getinstance().connect();
@@ -254,10 +275,12 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		java.util.Date date = chooserNgaySinh.getDate();
 		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
 		Boolean GioiTinh=rbNam.isSelected();
+		if(valiDate()) {
+			KhachHang kh=new KhachHang(idKhachHang, tenKhachHang, sdt, email, diaChi,ngaySinh,GioiTinh);
+			daoKhachHang.themKhachHang(kh);
+			modelKhachHang.addRow(new Object[] {idKhachHang, tenKhachHang, sdt, email, diaChi,dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ" });
+		}
 		
-		KhachHang kh=new KhachHang(idKhachHang, tenKhachHang, sdt, email, diaChi,ngaySinh,GioiTinh);
-		daoKhachHang.themKhachHang(kh);
-		modelKhachHang.addRow(new Object[] {idKhachHang, tenKhachHang, sdt, email, diaChi,dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ" });
 
 	}
 	private void loadData() {
@@ -389,8 +412,8 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			return false;
 		}
 //
-		if (!(diaChi.length() > 0 && diaChi.matches("^[\\p{L}0-9\\s]+$"))) {
-			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa toàn số và kí tự đặc biệt", "Thông báo",
+		if (!(diaChi.length() > 0 && diaChi.matches("^[^!@#$%^&*()+-]*$"))) {
+			JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa kí tự đặc biệt", "Thông báo",
 					JOptionPane.WARNING_MESSAGE);
 			txtDiaChi.requestFocus();
 			txtDiaChi.selectAll();
@@ -427,6 +450,46 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		}
 		return true;
 	}
+	private void xuatExcel(String filePath) {
+
+	try {	
+		Workbook workbook = new XSSFWorkbook();
+		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Khách hàng");
+
+		Row header = sheet.createRow(0);
+		header.createCell(0).setCellValue("ID nhân viên");
+		header.createCell(1).setCellValue("Tên nhân viên");
+		header.createCell(2).setCellValue("Số điện thoại");
+		header.createCell(3).setCellValue("Email");
+		header.createCell(4).setCellValue("Địa chỉ");
+		header.createCell(5).setCellValue("Ngày sinh");
+		header.createCell(6).setCellValue("Giới tính");
+		
+		int rowNum = 1;
+		for(KhachHang kh: daoKhachHang.getAllDanhSachKH()) {
+			Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(kh.getIdKhachHang());
+            row.createCell(1).setCellValue(kh.getTenKhachHang());
+            row.createCell(2).setCellValue(kh.getSdt());
+            row.createCell(3).setCellValue(kh.getEmail());
+            row.createCell(4).setCellValue(kh.getDiaChi());
+            row.createCell(5).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgaySinh()));
+            row.createCell(6).setCellValue(kh.isGioiTinh()?"Nam":"Nữ");
+            
+		}
+		 // Hiển thị hộp thoại mở cửa sổ lưu tệp
+        try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
+			workbook.write(outputStream);
+		}
+
+		System.out.println("Dữ liệu SanPham đã được ghi vào tệp Excel thành công.");
+		JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
+        
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+}
+
 	private void lamMoi() {
 		loadData();
 		try {
@@ -449,15 +512,11 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		if (o.equals(btnThemKH)) {
-			if(valiDate()) {
-				try {
-					ThemKH();
-//					txtId.setText(autoID());
-					lamMoi();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			try {
+				ThemKH();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 			
 		} 
@@ -471,6 +530,12 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		}
 		if(o.equals(btnXemTatCa)) {
 			 loadData();
+		 }
+		if(o.equals(btnXuatExcel)) {
+			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
+			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/KhachHang/KH_" + timeStamp
+					+ ".xlsx";
+		 xuatExcel(filePath);
 		 }
 	}
 	@Override
@@ -524,9 +589,14 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		// TODO Auto-generated method stub
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			Object o = e.getSource();
-//			if (o == txtTenKH || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
-//				ThemKH();
-//			}
+			if (o == txtTenKH || o == txtDiaChi || o == txtEmail || o == txtsdt ) {
+				try {
+					ThemKH();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_F5) {
 			lamMoi();
