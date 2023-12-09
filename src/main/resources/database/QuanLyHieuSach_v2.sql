@@ -167,7 +167,7 @@ CREATE TABLE ChiTietHoaDonChoSach (
     idDonHangCho NVARCHAR(15) NOT NULL , 
 	idDonHang NVARCHAR(14) NOT NULL , 
 	tenSanPham NVARCHAR(30) NOT NULL , 
-    idSanPham NVARCHAR(14) NOT NULL, 
+    idSanPham NVARCHAR(13) NOT NULL, 
 	giaBan FLOAT,
 	khuyenMai FLOAT,
 	soLuong INT CHECK (soLuong > 0), 
@@ -447,29 +447,6 @@ BEGIN
     SELECT @NewID,tenSanPham,tacGia, theLoai, namXuatBan, ISBN, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaNhap, giaBan, giaKhuyenMai
     FROM INSERTED
 END
---Tạo tài khoản khi thêm nhân viên
-CREATE TRIGGER trg_TaoTKChoNV
-ON NhanVien 
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
-    SELECT idNhanVien, HASHBYTES('SHA2_512', '1111'), GETDATE()
-    FROM inserted;
-END;
-go
---Tạo tài khoản cho quản lý
-CREATE TRIGGER trg_TaoTKChoQL
-ON QuanLy 
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
-    SELECT idQuanLy, HASHBYTES('SHA2_512', '1111'), GETDATE()
-    FROM inserted;
-END;
 
 INSERT INTO LoaiSanPham VALUES (N'',N'Sách')
 INSERT INTO LoaiSanPham VALUES (N'', N'Trò chơi giáo dục')
@@ -632,8 +609,8 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202311300001
---NV202311260001
+--QL202312090001
+--NV202312090001
 select *from TheLoai
 select *from NhaCungCap
 select *from LoaiSanPham
