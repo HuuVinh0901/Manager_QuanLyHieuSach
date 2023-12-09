@@ -1069,7 +1069,19 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	private void xacNhanCapNhat(String idSanPham) {
 		if (idSanPham.startsWith("SP")) {
 			SanPhamCon sp = daoQLSP.getSanPham(idSanPham);
-			if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sp.getSoLuong()) {
+			if (txtCapNhatSoLuong.getText().equals("")) {
+        	    JOptionPane.showMessageDialog(this, "Chưa nhập số lượng cập nhật");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (!txtCapNhatSoLuong.getText().matches("\\d+")) {
+				JOptionPane.showMessageDialog(this, "Số lượng nhập sai định dạng");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= 0) {
+				JOptionPane.showMessageDialog(this, "Số lượng không được âm");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sp.getSoLuong()) {
 				modelGioHang.setValueAt(txtCapNhatSoLuong.getText(), tblGioHang.getSelectedRow(), 5);
 				tinhThanhTienGioHang();
 				dialogSoLuong.setVisible(false);
@@ -1080,7 +1092,19 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 			}
 		} else {
 			SachCon sach = daoSach.getSach(idSanPham);
-			if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sach.getSoLuong()) {
+			if (txtCapNhatSoLuong.getText().equals("")) {
+        	    JOptionPane.showMessageDialog(this, "Chưa nhập số lượng cập nhật");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (!txtCapNhatSoLuong.getText().matches("\\d+")) {
+				JOptionPane.showMessageDialog(this, "Số lượng nhập sai định dạng");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= 0) {
+				JOptionPane.showMessageDialog(this, "Số lượng không được âm");
+        	    dialogSoLuong.setVisible(false);
+				showDialogCapNhatSoLuong();
+        	} else if (Integer.parseInt(txtCapNhatSoLuong.getText()) <= sach.getSoLuong()) {
 				modelGioHang.setValueAt(txtCapNhatSoLuong.getText(), tblGioHang.getSelectedRow(), 5);
 				tinhThanhTienGioHang();
 				dialogSoLuong.setVisible(false);
@@ -1089,6 +1113,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 				dialogSoLuong.setVisible(false);
 				showDialogCapNhatSoLuong();
 			}
+			
 		}
 	}
 	
