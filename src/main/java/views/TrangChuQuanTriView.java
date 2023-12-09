@@ -37,6 +37,7 @@ import dao.DAOQuanLy;
 import models.NhanLuc;
 import models.NhanVien;
 import models.QuanLy;
+import views.QuanLyNhanVienView;
 
 public class TrangChuQuanTriView extends JFrame {
 	private JScrollPane jScrollPane1;
@@ -164,7 +165,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				switchToPanel(new QuanLyNhanVienView());
 
 			}
@@ -209,7 +209,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				switchToPanel(new ThongKeSanPhamQuanLyView());
 			}
 		});
 		MenuItem subThongKeNhanVien = new MenuItem(iconSubMenu, "Thống kê nhân viên", new ActionListener() {

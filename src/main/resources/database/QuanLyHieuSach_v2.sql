@@ -616,21 +616,27 @@ select *from NhaCungCap
 select *from LoaiSanPham
 select *from Sach
 select *from TacGia
-select *from SanPham
 select *from TaiKhoan
 select *from NhanVien
+select *from HoaDon
+select *from SanPham
+select *from ChiTietHoaDonSanPham
 SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = N'0912345678'
 
 use QLHieuSach
 use master
 drop database QLHieuSach
 
-delete from SanPham
-delete from Sach
-delete from TheLoai
-delete from TacGia
-delete from NhaCungCap
-delete from LoaiSanPham
-delete from TaiKhoan
-delete from NhanVien
-delete from QuanLy
+select *from HoaDon
+select *from ChiTietHoaDonSanPham
+select *from SanPham
+SELECT TOP 10 sp.idSanPham, sp.tenSanPham,lsp.tenLoaiSanPham, ncc.tenNhaCungCap,sp.soLuong, SUM(ct.soLuong) AS soLuongBan,sp.giaNhap,sp.giaBan,SUM(ct.thanhTien) AS doanhThu,
+    SUM(ct.loiNhuan) AS loiNhuan,sp.trangThai
+FROM ChiTietHoaDonSanPham ct 
+JOIN SanPham sp ON ct.idSanPham = sp.idSanPham
+JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang
+JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham
+JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap
+WHERE hd.ngayLap BETWEEN '2023-12-01' AND '2023-12-09'
+GROUP BY sp.idSanPham, sp.tenSanPham,lsp.tenLoaiSanPham,ncc.tenNhaCungCap,sp.soLuong,sp.giaNhap, sp.giaBan,sp.trangThai
+ORDER BY soLuongBan DESC;
