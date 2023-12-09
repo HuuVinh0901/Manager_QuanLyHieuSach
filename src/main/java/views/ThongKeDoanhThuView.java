@@ -214,51 +214,7 @@ public class ThongKeDoanhThuView extends JPanel implements ActionListener{
 			dsHoaDon = daoBanHang.getHoaDonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()));
 			if (dsHoaDon.size() == 0) {
 				JOptionPane.showMessageDialog(this, "Khung thời gian này không bán hoá đơn nào để ghi vào file excel");
-			} else {
-//				try (Workbook workbook = new XSSFWorkbook()) {
-//					String dayStart = String.valueOf(chooserDayStart.getDate());
-//					String dayEnd = String.valueOf(chooserDayEnd.getDate());
-//		            Sheet sheet = workbook.createSheet("Danh sách Hoá Đơn từ " + dayStart + " đến " + dayEnd);
-//		            Row headerRow = sheet.createRow(0);
-//			        int columnCount = modelHoaDon.getColumnCount();
-//			        for (int i = 0; i < columnCount; i++) {
-//			            Cell cell = headerRow.createCell(i);
-//			            cell.setCellValue(modelHoaDon.getColumnName(i));
-//			        }
-//		            int rowNumber = 1;
-//		            for (HoaDon hd : dsHoaDon) {
-//		                Row row = sheet.createRow(rowNumber++);
-//		                Cell maHDCell = row.createCell(0);
-//		                maHDCell.setCellValue(hd.getIdDonHang());
-//
-//		                Cell ngayLapCell = row.createCell(1);
-//		                ngayLapCell.setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap()));
-//
-//		                Cell maKHCell = row.createCell(2);
-//		                maKHCell.setCellValue(hd.getKhachHang().getIdKhachHang());
-//
-//		                Cell maNVCell = row.createCell(3);
-//		                maNVCell.setCellValue(hd.getNhanVien().getId());
-//
-//		                Cell tienKhachDuaCell = row.createCell(4);
-//		                tienKhachDuaCell.setCellValue(hd.getTienKhachDua());
-//
-//		                Cell tongTienCell = row.createCell(5);
-//		                tongTienCell.setCellValue(hd.getTongTien());
-//		            }
-//
-//		            // Ghi workbook ra tệp Excel
-//		            try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
-//		                workbook.write(outputStream);
-//		            }
-//
-//		            System.out.println("Dữ liệu HoaDon đã được ghi vào tệp Excel thành công.");
-//		            JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
-//		        } catch (IOException e) {
-//		            e.printStackTrace();
-//		        }
-				
-				
+			} else {				
 				try {
 		            // Tạo workbook mới
 		            Workbook workbook = new XSSFWorkbook();
@@ -416,7 +372,6 @@ public class ThongKeDoanhThuView extends JPanel implements ActionListener{
 		} else if (o.equals(btnThongKe)) {
 			showBieuDo();
 		} else if (o.equals(btnInThongKe)) {
-			String filePath = "C:\\Users\\Admin\\Documents\\HoaDon.xlsx";
 			ghiFileExcel();
 		} else if (o.equals(btnLamMoi)) {
 			lamMoi();
