@@ -312,8 +312,8 @@ public class DAO_QuanLyBanHang {
 				HoaDon hd = new HoaDon();
 				hd.setIdDonHang(rs.getString(1));
 				hd.setNgayLap(rs.getDate(2));
-				hd.setKhachHang(new KhachHang(rs.getString(3)));
-				hd.setNhanVien(new NhanVien(rs.getString(4)));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
 				hd.setTienKhachDua(rs.getDouble(5));
 				hd.setTongTien(rs.getDouble(6));
 				hd.setTongLoiNhuan(rs.getDouble(7));
@@ -422,8 +422,8 @@ public class DAO_QuanLyBanHang {
 				HoaDon hd = new HoaDon();
 				hd.setIdDonHang(rs.getString(1));
 				hd.setNgayLap(rs.getDate(2));
-				hd.setKhachHang(new KhachHang(rs.getString(3)));
-				hd.setNhanVien(new NhanVien(rs.getString(4)));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
 				hd.setTienKhachDua(rs.getDouble(5));
 				hd.setTongTien(rs.getDouble(6));
 				hd.setTongLoiNhuan(rs.getDouble(7));
@@ -449,8 +449,8 @@ public class DAO_QuanLyBanHang {
 			while (rs.next()) {
 				hd.setIdDonHang(rs.getString(1));
 				hd.setNgayLap(rs.getDate(2));
-				hd.setKhachHang(new KhachHang(rs.getString(3)));
-				hd.setNhanVien(new NhanVien(rs.getString(4)));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
 				hd.setTienKhachDua(rs.getDouble(5));
 				hd.setTongTien(rs.getDouble(6));
 				hd.setTongLoiNhuan(rs.getDouble(7));
@@ -468,7 +468,7 @@ public class DAO_QuanLyBanHang {
 		Connection con = ConnectDB.getConnection();
 		PreparedStatement statement = null;
 		try {
-			String sql = "SELECT idDonHang, ngayLap, khachHang, nhanVien, tienKhachDua, tongTien, tongLoiNhuan"
+			String sql = "SELECT idDonHang, ngayLap, nhanVien, khachHang, tienKhachDua, tongTien, tongLoiNhuan"
 					+ " FROM HoaDon hd" + " JOIN KhachHang kh ON hd.khachHang = kh.idKhachHang"
 					+ " WHERE idDonHang LIKE '%" + cond + "%' OR" 
 					+ " soDienThoai LIKE '%" + cond + "%' OR" + " idKhachHang LIKE N'%" + cond + "%'";
@@ -479,8 +479,8 @@ public class DAO_QuanLyBanHang {
 				HoaDon hd = new HoaDon();
 				hd.setIdDonHang(rs.getString(1));
 				hd.setNgayLap(rs.getDate(2));
-				hd.setKhachHang(new KhachHang(rs.getString(3)));
-				hd.setNhanVien(new NhanVien(rs.getString(4)));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
 				hd.setTienKhachDua(rs.getDouble(5));
 				hd.setTongTien(rs.getDouble(6));
 				hd.setTongLoiNhuan(rs.getDouble(7));

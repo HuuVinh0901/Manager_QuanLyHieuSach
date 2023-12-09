@@ -33,11 +33,13 @@ import javax.swing.table.TableCellRenderer;
 import dao.DAOKhachHang;
 import dao.DAONhanVien;
 import dao.DAOQuanLySanPham;
+import dao.DAOSach;
 import dao.DAO_QuanLyBanHang;
 import models.ChiTietHoaDon;
 import models.HoaDon;
 import models.KhachHang;
 import models.NhanVien;
+import models.SachCon;
 import models.SanPhamCha;
 
 public class QuanLyHoaDonView extends JPanel{
@@ -48,6 +50,7 @@ public class QuanLyHoaDonView extends JPanel{
 	private DAO_QuanLyBanHang daoBanHang;
 	private DAONhanVien daoNhanVien;
 	private DAOQuanLySanPham daoSanPham;
+	private DAOSach daoSach;
 	private DAOKhachHang daoKhachHang;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 	
@@ -88,6 +91,7 @@ public class QuanLyHoaDonView extends JPanel{
 		daoNhanVien = new DAONhanVien();
 		daoSanPham = new DAOQuanLySanPham();
 		daoKhachHang = new DAOKhachHang();
+		daoSach= new DAOSach();
 		
 		tblHoaDon = new JTable();
 		modelHoaDon = new DefaultTableModel() {
@@ -125,8 +129,8 @@ public class QuanLyHoaDonView extends JPanel{
         
         modelHoaDon.addColumn("Mã hoá đơn");
         modelHoaDon.addColumn("Ngày lập");
-        modelHoaDon.addColumn("Mã khách hàng");
-        modelHoaDon.addColumn("Mã nhân viên");
+        modelHoaDon.addColumn("Tên khách hàng");
+        modelHoaDon.addColumn("Tên nhân viên");
         modelHoaDon.addColumn("Tiền khách đưa");
         modelHoaDon.addColumn("Tổng tiền");
         modelHoaDon.addColumn("Xem chi tiết");
@@ -184,9 +188,8 @@ public class QuanLyHoaDonView extends JPanel{
 				public void actionPerformed(ActionEvent e) {
 					int Row = tblHoaDon.convertRowIndexToModel(tblHoaDon.getEditingRow());
                     String idHoaDon = (String) modelHoaDon.getValueAt(Row, 0);
-                    String idNhanVien = (String) modelHoaDon.getValueAt(Row, 3);
-                    String idKhachHang = (String) modelHoaDon.getValueAt(Row, 2);
-                    showDetail(idHoaDon, idNhanVien, idKhachHang);
+                    HoaDon hd = daoBanHang.getHoaDonTheoID(idHoaDon);
+                    showDetail(idHoaDon, hd.getNhanVien().getId(), hd.getKhachHang().getIdKhachHang());
 				}
 			});
         }
@@ -255,8 +258,8 @@ public class QuanLyHoaDonView extends JPanel{
     		
     		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSachTheoId(idHoaDon)) {
     			String idSP = cthd.getSanPham().getIdSanPham();
-    			SanPhamCha sp = daoSanPham.getSanPham(idSP);
-    			String tenSP = sp.getTenSanPham();
+    			SachCon s = daoSach.getSach(idSP);
+    			String tenSP = s.getTenSanPham();
     			String soLuong = String.valueOf(cthd.getSoLuong());
     			String thanhTien = currencyFormat.format(cthd.getThanhTien());
     			modelChiTiet.addRow(new String[] {idSP, tenSP, soLuong, thanhTien});
@@ -299,10 +302,12 @@ public class QuanLyHoaDonView extends JPanel{
 			String maHD = hd.getIdDonHang();
 			String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 			String maKH = hd.getKhachHang().getIdKhachHang();
+			KhachHang kh = daoKhachHang.getKhachHang(maKH);
 			String maNV = hd.getNhanVien().getId();
+			NhanVien nv = daoNhanVien.getNhanVien(maNV);
 			String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
 			String tongTien = currencyFormat.format(hd.getTongTien());
-			modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
+			modelHoaDon.addRow(new String[] {maHD, ngayLap, kh.getTenKhachHang(), nv.getTen(), tienKhachDua, tongTien, "Xem"});
 			
 		}
    }
@@ -314,10 +319,12 @@ public class QuanLyHoaDonView extends JPanel{
 				String maHD = hd.getIdDonHang();
 				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();
+				KhachHang kh = daoKhachHang.getKhachHang(maKH);
 				String maNV = hd.getNhanVien().getId();
+				NhanVien nv = daoNhanVien.getNhanVien(maNV);
 				String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
 				String tongTien = currencyFormat.format(hd.getTongTien());
-				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien, "Xem"});
+				modelHoaDon.addRow(new String[] {maHD, ngayLap, kh.getTenKhachHang(), nv.getTen(), tienKhachDua, tongTien, "Xem"});
 			}
 		} else {
 			loadHoaDon();
