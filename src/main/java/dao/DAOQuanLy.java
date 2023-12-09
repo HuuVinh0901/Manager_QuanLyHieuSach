@@ -133,7 +133,7 @@ public class DAOQuanLy {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
 		Connection con = ConnectDB.getConnection();
-		String sql = "delete from QuanLy where idNhanVien = ? ";
+		String sql = "delete from QuanLy where idQuanLy = ? ";
 		try {
 			pst = con.prepareStatement(sql);
 			pst.setString(1, maXoa);
@@ -149,7 +149,7 @@ public class DAOQuanLy {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
 		Connection con = ConnectDB.getConnection();
-		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ?, ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
+		String sql = "update QuanLy set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ?, ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idQuanLy = ?";
 		try {
 			pst = con.prepareStatement(sql);
 			pst.setString(1, nv.getTen());
