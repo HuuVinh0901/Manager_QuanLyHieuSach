@@ -207,6 +207,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		btnInThongKe.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		cbLoc.addItemListener(this);
+		
 	}
 
 	@Override
@@ -638,7 +639,6 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				chooserDayStart.setEnabled(false);
 				chooserDayEnd.setEnabled(false);
 				Date ngayHienTai= new Date();
-				
 				loadDataHoaDonTheoNgay(ngayHienTai, ngayHienTai);
 			}
 			else if("7 ngày gần nhất".equals(selectedOption)) {

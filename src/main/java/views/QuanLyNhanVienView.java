@@ -289,8 +289,14 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		java.util.Date date = chooserNgaySinh.getDate();
 		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
 		Boolean GioiTinh=rbNam.isSelected();
-		String TrangThai=(String)cbTrangThai.getSelectedItem().toString();
-		Boolean TrangThaibooleanValue = Boolean.parseBoolean(TrangThai);
+		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
+		Boolean trangThai=null;
+		if(trangThaiValue.equals("Đang làm việc")) {
+			trangThai=true;
+		}
+		if(trangThaiValue.equals("Đã nghỉ việc")) {
+			trangThai=false;
+		}
 		String chucVu=cbChucVu.getSelectedItem().toString();
 		Date ngayLap = new Date(System.currentTimeMillis());
 		String matkhau="1111";
@@ -306,12 +312,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		nv.setNgaySinh(ngaySinh);
 		nv.setDiaChi(diaChi);
 		nv.setEmail(email);
-		nv.setTrangThai(TrangThaibooleanValue);
+		nv.setTrangThai(trangThai);
 		nv.setSoDienThoai(sdt);
 		if(valiDate()) {
 			daoTK.createTK(tk);
 			daoNhanVien.themNhanVien(nv);
-			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
+			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,trangThaiValue });
 		}
 	}
 	private void loadData() {
