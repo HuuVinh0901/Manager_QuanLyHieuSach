@@ -403,8 +403,10 @@ public class DAO_QuanLyBanHang {
 		try {
 			String sql = "SELECT idDonHang, ngayLap, nhanVien, khachHang, tienKhachDua, tongTien, tongLoiNhuan"
 					+ " FROM HoaDon hd" + " JOIN KhachHang kh ON hd.khachHang = kh.idKhachHang"
+					+ " JOIN NhanVien nv ON hd.nhanVien = nv.idNhanVien"
 					+ " WHERE idDonHang LIKE '%" + cond + "%' OR" 
-					+ " soDienThoai LIKE '%" + cond + "%' OR" + " idKhachHang LIKE N'%" + cond + "%'";
+					+ " kh.soDienThoai LIKE '%" + cond + "%' OR" + " kh.tenKhachHang LIKE N'%" + cond + "%'"
+					+ " OR nv.tenNhanVien LIKE N'%" + cond + "%'" ;
 			
 			statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();

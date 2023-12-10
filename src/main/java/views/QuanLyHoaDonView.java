@@ -68,7 +68,7 @@ public class QuanLyHoaDonView extends JPanel{
 		JPanel pn1 = new JPanel(new GridLayout(2, 1, 5, 5));
 		JPanel pn2 = new JPanel();
 		JLabel lblTitle = new JLabel("QUẢN LÝ HOÁ ĐƠN");
-		JLabel lblTimKiem = new JLabel("Tìm kiếm theo mã hoá đơn / SĐT / mã khách hàng");
+		JLabel lblTimKiem = new JLabel("Mã hoá đơn / SĐT / tên khách hàng / tên nhân viên");
 		txtTimKiem = new JTextField(16);
 		btnXemTatCa = new JButton("Xem tất cả");
 		pnTitle.add(lblTitle);

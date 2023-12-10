@@ -210,7 +210,6 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		txtTongTienHoaDon.setText(currencyFormat.format(0.0));
 		txtTienKhachDua = new JTextField(20);
 		txtTienKhachDua.setFont(new Font("SansSerif", Font.PLAIN, 14));
-//		txtTienKhachDua.setText(currencyFormat.format(0.0));
 		txtTienTraKhach = new JTextField(20);
 		txtTienTraKhach.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		txtTienTraKhach.setEditable(false);
@@ -595,7 +594,11 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 			Double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText());
 			String tongThanhTienHoaDon = txtTongTienHoaDon.getText();
 			double tongThanhTienHoaDonDouble = Double.parseDouble(tongThanhTienHoaDon.trim().replace("\u00A0", "").replaceAll("[.,₫]", ""));
-			txtTienTraKhach.setText(currencyFormat.format(tienKhachDua - tongThanhTienHoaDonDouble));
+			if (tienKhachDua - tongThanhTienHoaDonDouble < 0) {
+				txtTienTraKhach.setText(currencyFormat.format(0.0));
+			} else {
+				txtTienTraKhach.setText(currencyFormat.format(tienKhachDua - tongThanhTienHoaDonDouble));
+			}
 		}
 	}
 	
@@ -1586,7 +1589,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		JLabel lblMaKH;
 		JLabel lblTenKH;
 		
-		lblTimKiem = new JLabel("Tìm kiếm");
+		lblTimKiem = new JLabel("Tìm kiếm theo Tên / Mã / SDT");
 		lblTimKiem.setFont(new Font("SansSerif", Font.BOLD, 14));
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setForeground(new Color(26, 102, 227));
@@ -1697,7 +1700,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		JLabel lblSoLuong;
 		JLabel lblTieuChiLoc;
 		
-		lblTimKiem = new JLabel("Tìm kiếm");
+		lblTimKiem = new JLabel("Tìm kiếm theo Tên / Mã / Loại");
 		lblTimKiem.setFont(new Font("SansSerif", Font.BOLD, 14));
 		lblTitle.setFont(new Font("Tahoma", Font.BOLD, 30));
 		lblTitle.setForeground(new Color(26, 102, 227));
