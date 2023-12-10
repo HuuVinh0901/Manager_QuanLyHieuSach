@@ -56,8 +56,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.toedter.calendar.JDateChooser;
 
+import dao.DAOKhachHang;
+import dao.DAONhanVien;
+import dao.DAOThongKeDT;
 import dao.DAO_QuanLyBanHang;
 import models.HoaDon;
+import models.KhachHang;
 import models.NhanVien;
 
 public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListener, ItemListener {
@@ -77,11 +81,15 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 	private JLabel lblLoc;
 	private JComboBox<String> cbLoc;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-	private DAO_QuanLyBanHang daoBanHang;
+	private DAOThongKeDT daoTKDT;
+	private DAOKhachHang daoKH;
+	private DAONhanVien daoNV;
 	public ThongKeDoanhThuNhanVienView() {
 		setLayout(new BorderLayout());
 		currencyFormat.setCurrency(Currency.getInstance("VND"));
-		daoBanHang = new DAO_QuanLyBanHang();
+		daoTKDT=new DAOThongKeDT();
+		daoKH=new DAOKhachHang();
+		daoNV=new DAONhanVien();
 		dfNgaySQL = new SimpleDateFormat("yyyy-MM-dd");
 		JPanel pn2 = new JPanel(new BorderLayout());
 		JPanel pn1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -169,11 +177,11 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			}
 		};
 
-		modelHoaDon.addColumn("Mã hoá đơn");
+		modelHoaDon.addColumn("ID hoá đơn");
 		modelHoaDon.addColumn("Ngày lập");
-		modelHoaDon.addColumn("Mã khách hàng");
-		modelHoaDon.addColumn("Mã nhân viên");
-		modelHoaDon.addColumn("Tiền khách đưa");
+		modelHoaDon.addColumn("ID khách hàng");
+		modelHoaDon.addColumn("Tên khách hàng");
+		modelHoaDon.addColumn("Tên nhân viên");
 		modelHoaDon.addColumn("Tổng tiền");
 		modelHoaDon.addColumn("Lợi nhuận");
 		tblHoaDon.setModel(modelHoaDon);
@@ -259,23 +267,29 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Thống kê kinh doanh");
 
 		Row header = sheet.createRow(0);
-		header.createCell(0).setCellValue("Mã Hóa Đơn");
+		header.createCell(0).setCellValue("ID Hóa Đơn");
 		header.createCell(1).setCellValue("Ngày");
-		header.createCell(2).setCellValue("Mã Khách Hàng");
-		header.createCell(3).setCellValue("Mã Nhân Viên");
-		header.createCell(4).setCellValue("Tổng Tiền");
-		header.createCell(5).setCellValue("Lợi nhuận");
+		header.createCell(2).setCellValue("ID Khách Hàng");
+		header.createCell(3).setCellValue("Tên Khách Hàng");
+		header.createCell(4).setCellValue("Tên Nhân Viên");
+		header.createCell(5).setCellValue("Tổng Tiền");
+		header.createCell(6).setCellValue("Lợi Nhuận");
 		
 
 		int rowNum = 1;
-		for(HoaDon kh: daoBanHang.getAllHoaDon()) {
+		for(HoaDon hd: daoTKDT.getAllHoaDon()) {
+			String maKH = hd.getKhachHang().getIdKhachHang();
+			String maNV = hd.getNhanVien().getId();
+			KhachHang kh=daoKH.getKhachHang(maKH);
+			NhanVien nv=daoNV.getNhanVien(maNV);
 			Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(kh.getIdDonHang());
-            row.createCell(1).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgayLap()));
-            row.createCell(2).setCellValue(kh.getKhachHang().getIdKhachHang());
-            row.createCell(3).setCellValue(kh.getNhanVien().getId());
-            row.createCell(4).setCellValue(kh.getTongTien());
-            row.createCell(5).setCellValue(kh.getTongLoiNhuan());
+            row.createCell(0).setCellValue(hd.getIdDonHang());
+            row.createCell(1).setCellValue(new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap()));
+            row.createCell(2).setCellValue(kh.getIdKhachHang());
+            row.createCell(3).setCellValue(kh.getTenKhachHang());
+            row.createCell(4).setCellValue(nv.getTen());
+            row.createCell(5).setCellValue(hd.getTongTien());
+            row.createCell(6).setCellValue(hd.getTongLoiNhuan());
         
 		}
 
@@ -313,7 +327,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         
         	for(int j=1;j<32;j++) {
         		String z = String.valueOf(j);
-        		dataset.addValue(daoBanHang.getSoHoaDonTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Số hóa đơn", z);
+        		dataset.addValue(daoTKDT.getSoHoaDonTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Số hóa đơn", z);
             	
         	}
 //        	
@@ -362,8 +376,8 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
 		 for (int i = 1; i < 13; i++) {
 	        	String j = String.valueOf(i);
-	        	dataset3.addValue(daoBanHang.getLoiNhuanTheoThangNam(j, String.valueOf(Year.now().getValue())), "Lợi nhuận", j);
-	        	dataset2.addValue(daoBanHang.getTongTienTheoThangNam(j, String.valueOf(Year.now().getValue())), "Doanh thu", j);
+	        	dataset3.addValue(daoTKDT.getLoiNhuanTheoThangNam(j, String.valueOf(Year.now().getValue())), "Lợi nhuận", j);
+	        	dataset2.addValue(daoTKDT.getTongTienTheoThangNam(j, String.valueOf(Year.now().getValue())), "Doanh thu", j);
 	        }
 		JFreeChart chart3 = ChartFactory.createBarChart(
 			    "BIỂU ĐỒ TỔNG LỢI NHUẬN THEO THÁNG/" +  Year.now().getValue(),
@@ -435,8 +449,8 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 		DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
 		 for (int i = 1; i < 32; i++) {
 			 String z = String.valueOf(i);
-	        	dataset3.addValue(daoBanHang.getLoiNhuanTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Lợi nhuận", z);
-	        	dataset2.addValue(daoBanHang.getTongTienTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Doanh thu", z);
+	        	dataset3.addValue(daoTKDT.getLoiNhuanTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Lợi nhuận", z);
+	        	dataset2.addValue(daoTKDT.getTongTienTheoNgayThangNam(z,String.valueOf(LocalDate.now().getMonthValue()), String.valueOf(Year.now().getValue())), "Doanh thu", z);
 	        }
 		JFreeChart chart3 = ChartFactory.createBarChart(
 			    "BIỂU ĐỒ TỔNG LỢI NHUẬN THÁNG " +LocalDate.now().getMonthValue()+"/"  +  Year.now().getValue(),
@@ -508,7 +522,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
         DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
         for (int i = 1; i < 13; i++) {
         	String j = String.valueOf(i);
-        	dataset.addValue(daoBanHang.getSoHoaDonTheoThangNam(j, String.valueOf(Year.now().getValue())), "Số hóa đơn", j);
+        	dataset.addValue(daoTKDT.getSoHoaDonTheoThangNam(j, String.valueOf(Year.now().getValue())), "Số hóa đơn", j);
         	
         }
         JFreeChart chart = ChartFactory.createBarChart(
@@ -559,7 +573,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 	public void loadDataHoaDonTheoNgay(Date ngayHienTai,Date ngayChon) {
 		
 		modelHoaDon.setRowCount(0);
-		ArrayList<HoaDon> dsHoaDon = daoBanHang.getHoaDonTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+		ArrayList<HoaDon> dsHoaDon = daoTKDT.getHoaDonTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
 		if (dsHoaDon.size() == 0) {
 			JOptionPane.showMessageDialog(this, "Khung thời gian này không bán hoá đơn nào");
 			XoaDuLieuTable();
@@ -568,18 +582,19 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(0));
 		} else {
 			for (HoaDon hd : dsHoaDon) {
-				String maHD = hd.getIdDonHang();
-				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();
 				String maNV = hd.getNhanVien().getId();
-				String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
+				KhachHang kh=daoKH.getKhachHang(maKH);
+				NhanVien nv=daoNV.getNhanVien(maNV);
+				String maHD = hd.getIdDonHang();
+				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String tongTien = currencyFormat.format(hd.getTongTien());
 				String tongLoiNhuan= currencyFormat.format(hd.getTongLoiNhuan());
-				modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien,tongLoiNhuan});
+				modelHoaDon.addRow(new String[] {maHD, ngayLap,maKH, kh.getTenKhachHang(), nv.getTen(), tongTien,tongLoiNhuan});
 			}
 			lblTongHoaDon.setText("SỐ LƯỢNG HOÁ ĐƠN BÁN RA : " + modelHoaDon.getRowCount());
-			lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoBanHang.getTongTienTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
-			lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoBanHang.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
+			lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoTKDT.getTongTienTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
+			lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoTKDT.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai))));
 		}
 	}
 	public void loadDataHoaDonTheoTuyChinh() {
@@ -597,7 +612,7 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 				chooserDayEnd.requestFocus();
 			}
 		else {
-			ArrayList<HoaDon> dsHoaDon = daoBanHang.getHoaDonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()));
+			ArrayList<HoaDon> dsHoaDon = daoTKDT.getHoaDonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()));
 			if (dsHoaDon.size() == 0) {
 				JOptionPane.showMessageDialog(this, "Khung thời gian này không bán hoá đơn nào");
 				
@@ -607,18 +622,19 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			} else {
 				for (HoaDon hd : dsHoaDon) {
 					
-					String maHD = hd.getIdDonHang();
-					String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 					String maKH = hd.getKhachHang().getIdKhachHang();
 					String maNV = hd.getNhanVien().getId();
-					String tienKhachDua = currencyFormat.format(hd.getTienKhachDua());
+					KhachHang kh=daoKH.getKhachHang(maKH);
+					NhanVien nv=daoNV.getNhanVien(maNV);
+					String maHD = hd.getIdDonHang();
+					String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 					String tongTien = currencyFormat.format(hd.getTongTien());
 					String tongLoiNhuan= currencyFormat.format(hd.getTongLoiNhuan());
-					modelHoaDon.addRow(new String[] {maHD, ngayLap, maKH, maNV, tienKhachDua, tongTien,tongLoiNhuan});
+					modelHoaDon.addRow(new String[] {maHD, ngayLap,maKH, kh.getTenKhachHang(), nv.getTen(), tongTien,tongLoiNhuan});
 				}
 				lblTongHoaDon.setText("SỐ LƯỢNG HOÁ ĐƠN BÁN RA : " + modelHoaDon.getRowCount());
-				lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoBanHang.getTongTienTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
-				lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoBanHang.getLoiNhuanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
+				lblTongDoanhThu.setText("TỔNG DOANH THU : " + currencyFormat.format(daoTKDT.getTongTienTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
+				lblTongLoiNhuan.setText("TỔNG LỢI NHUẬN : " + currencyFormat.format(daoTKDT.getLoiNhuanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()))));
 
 			}
 		}
