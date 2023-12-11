@@ -69,46 +69,82 @@ public class DAOQuanLySanPham implements Serializable {
 	}
 
 	public ArrayList<SanPhamCon> getTopSanPhamTheoNgay(String dayStart, String dayEnd) {
-	    ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
-	    ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<ChiTietHoaDon>();
-	    String sql = "SELECT TOP 10 sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
-	            + "SUM(ct.soLuong) AS soLuongBan, sp.giaNhap, sp.giaBan, "
-	            + "SUM(ct.thanhTien) AS doanhThu, SUM(ct.loiNhuan) AS loiNhuan, sp.trangThai "
-	            + "FROM ChiTietHoaDonSanPham ct " + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
-	            + "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
-	            + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-	            + "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE hd.ngayLap BETWEEN ? AND ? "
-	            + "GROUP BY sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
-	            + "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan DESC;";
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
+		ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<ChiTietHoaDon>();
+		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "SUM(ct.soLuong) AS soLuongBan, sp.giaNhap, sp.giaBan, "
+				+ "SUM(ct.thanhTien) AS doanhThu, SUM(ct.loiNhuan) AS loiNhuan, sp.trangThai "
+				+ "FROM ChiTietHoaDonSanPham ct " + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
+				+ "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+				+ "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE hd.ngayLap BETWEEN ? AND ? "
+				+ "GROUP BY sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan DESC;";
 
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+
+			try (ResultSet rs = preparedStatement.executeQuery()) {
+				while (rs.next()) {
+					SanPhamCon sp = new SanPhamCon();
+					sp.setIdSanPham(rs.getString("idSanPham"));
+					sp.setTenSanPham(rs.getString("tenSanPham"));
+					sp.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+					sp.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+					sp.setSoLuong(rs.getInt("soLuong"));
+					sp.setGiaNhap(rs.getDouble("giaNhap"));
+					sp.setSoLuongBan(rs.getInt("soLuongBan"));
+					sp.giaBan();
+					sp.setDoanhThu(rs.getDouble("doanhThu"));
+					sp.setLoiNhuan(rs.getDouble("loiNhuan"));
+					sp.setTrangThai(TrangThaiSPEnum.getById(rs.getInt("trangThai")));
+					dsSanPham.add(sp);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsSanPham;
+	}
+	
+	public double getSoLuongTonTheoNgay(String dayStart, String dayEnd) {
+	    double soLuongTon = 0;
+	    String sql = "SELECT SUM(sp.soLuong) FROM SanPham sp "
+	            + "JOIN ChiTietHoaDonSanPham ct ON sp.idSanPham = ct.idSanPham "
+	            + "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+	            + "WHERE hd.ngayLap BETWEEN ? AND ? "
+	            + "GROUP BY sp.idSanPham";
 	    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 	        preparedStatement.setString(1, dayStart);
 	        preparedStatement.setString(2, dayEnd);
-
-	        try (ResultSet rs = preparedStatement.executeQuery()) {
-	            while (rs.next()) {
-	                SanPhamCon sp = new SanPhamCon();
-	                sp.setIdSanPham(rs.getString("idSanPham"));
-	                sp.setTenSanPham(rs.getString("tenSanPham"));
-	                sp.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
-	                sp.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
-	                sp.setSoLuong(rs.getInt("soLuong"));
-	                sp.setGiaNhap(rs.getDouble("giaNhap"));
-	                sp.setSoLuongBan(rs.getInt("soLuongBan"));
-	                sp.giaBan();
-	                sp.setDoanhThu(rs.getDouble("doanhThu"));
-	                sp.setLoiNhuan(rs.getDouble("loiNhuan"));
-	                sp.setTrangThai(TrangThaiSPEnum.getById(rs.getInt("trangThai")));
-	                dsSanPham.add(sp);
-	            }
+	        ResultSet rs = preparedStatement.executeQuery();
+	        while (rs.next()) {
+	            soLuongTon = rs.getDouble(1);
 	        }
-
-	    } catch (SQLException e) {
+	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-	    return dsSanPham;
+	    return soLuongTon;
 	}
 
+	
+	public double getSoLuongDaBanTheoNgay(String dayStart, String dayEnd) {
+		double soLuongTon = 0;
+		String sql = "SELECT SUM(soLuong) FROM ChiTietHoaDonSanPham ct join HoaDon hd ON ct.idDonHang = hd.idDonHang WHERE hd.ngayLap BETWEEN ? AND ?";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				soLuongTon = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuongTon;
+	}
 
 	public SanPhamCon getSanPhamTimKiemTheoMa(String cond) {
 		SanPhamCon lsp = new SanPhamCon();
