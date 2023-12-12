@@ -37,6 +37,7 @@ import dao.DAOQuanLy;
 import models.NhanLuc;
 import models.NhanVien;
 import models.QuanLy;
+import views.QuanLyNhanVienView;
 
 public class TrangChuQuanTriView extends JFrame {
 	private JScrollPane jScrollPane1;
@@ -164,7 +165,6 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				switchToPanel(new QuanLyNhanVienView());
 
 			}
@@ -209,7 +209,15 @@ public class TrangChuQuanTriView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new ThongKeSanPhamQuanLyView());
+			}
+		});
+		
+		MenuItem subThongKeSach = new MenuItem(iconSubMenu, "Thống kê sách", new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new ThongKeSachQuanLyView());
 			}
 		});
 		MenuItem subThongKeNhanVien = new MenuItem(iconSubMenu, "Thống kê nhân viên", new ActionListener() {
@@ -226,7 +234,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,
+		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,subThongKeSach,
 				subThongKeKhachHang, subThongKeNhanVien);
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {

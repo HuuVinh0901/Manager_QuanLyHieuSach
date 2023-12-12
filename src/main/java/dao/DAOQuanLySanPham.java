@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import connection.ConnectDB;
+import models.ChiTietHoaDon;
 import models.KhuyenMai;
 import models.LoaiSanPham;
 import models.NhaCungCap;
@@ -37,22 +38,20 @@ public class DAOQuanLySanPham implements Serializable {
 			}
 		}
 	}
-	
+
 	public boolean capNhatSoLuongSanPham(int sl, String idSP) {
-		String sql = "UPDATE SanPham "
-				+ "SET soLuong = soLuong - ?"
-				+ "WHERE idSanPham = ? ";
-		try (PreparedStatement pst = connection.prepareStatement(sql)){
+		String sql = "UPDATE SanPham " + "SET soLuong = soLuong - ?" + "WHERE idSanPham = ? ";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setInt(1, sl);
 			pst.setString(2, idSP);
 			int n = pst.executeUpdate();
-			return n >0;
+			return n > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	public boolean checkIdSanPham(String idSanPham) throws SQLException {
 		String sql = "SELECT COUNT(*) FROM SanPham WHERE idSanPham = ?";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
@@ -68,7 +67,166 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return true;
 	}
+
+	public ArrayList<SanPhamCon> getTopSanPhamTheoNgay(String dayStart, String dayEnd) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
+		ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<ChiTietHoaDon>();
+		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "SUM(ct.soLuong) AS soLuongBan, sp.giaNhap, sp.giaBan, "
+				+ "SUM(ct.thanhTien) AS doanhThu, SUM(ct.loiNhuan) AS loiNhuan, sp.trangThai "
+				+ "FROM ChiTietHoaDonSanPham ct " + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
+				+ "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+				+ "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE hd.ngayLap BETWEEN ? AND ? "
+				+ "GROUP BY sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan DESC";
+
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+
+			try (ResultSet rs = preparedStatement.executeQuery()) {
+				while (rs.next()) {
+					SanPhamCon sp = new SanPhamCon();
+					sp.setIdSanPham(rs.getString("idSanPham"));
+					sp.setTenSanPham(rs.getString("tenSanPham"));
+					sp.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+					sp.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+					sp.setSoLuong(rs.getInt("soLuong"));
+					sp.setGiaNhap(rs.getDouble("giaNhap"));
+					sp.setSoLuongBan(rs.getInt("soLuongBan"));
+					sp.giaBan();
+					sp.setDoanhThu(rs.getDouble("doanhThu"));
+					sp.setLoiNhuan(rs.getDouble("loiNhuan"));
+					sp.setTrangThai(TrangThaiSPEnum.getById(rs.getInt("trangThai")));
+					dsSanPham.add(sp);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsSanPham;
+	}
+
+	public ArrayList<SanPhamCon> getTopSanPhamBanChamTheoNgay(String dayStart, String dayEnd) {
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
+		ArrayList<ChiTietHoaDon> dsChiTietHoaDon = new ArrayList<ChiTietHoaDon>();
+		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "SUM(ct.soLuong) AS soLuongBan, sp.giaNhap, sp.giaBan, "
+				+ "SUM(ct.thanhTien) AS doanhThu, SUM(ct.loiNhuan) AS loiNhuan, sp.trangThai "
+				+ "FROM ChiTietHoaDonSanPham ct " + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
+				+ "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+				+ "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE hd.ngayLap BETWEEN ? AND ? "
+				+ "GROUP BY sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
+				+ "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan ASC";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+
+			try (ResultSet rs = preparedStatement.executeQuery()) {
+				while (rs.next()) {
+					SanPhamCon sp = new SanPhamCon();
+					sp.setIdSanPham(rs.getString("idSanPham"));
+					sp.setTenSanPham(rs.getString("tenSanPham"));
+					sp.setIdLoaiSanPham(new LoaiSanPham(rs.getString("tenLoaiSanPham")));
+					sp.setIdNhaCungCap(new NhaCungCap(rs.getString("tenNhaCungCap")));
+					sp.setSoLuong(rs.getInt("soLuong"));
+					sp.setGiaNhap(rs.getDouble("giaNhap"));
+					sp.setSoLuongBan(rs.getInt("soLuongBan"));
+					sp.giaBan();
+					sp.setDoanhThu(rs.getDouble("doanhThu"));
+					sp.setLoiNhuan(rs.getDouble("loiNhuan"));
+					sp.setTrangThai(TrangThaiSPEnum.getById(rs.getInt("trangThai")));
+					dsSanPham.add(sp);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dsSanPham;
+	}
+
+	public double getSoLuongTonTheoNgay(String dayStart, String dayEnd) {
+		double soLuongTon = 0;
+		String sql = "SELECT SUM(sp.soLuong) FROM SanPham sp "
+				+ "JOIN ChiTietHoaDonSanPham ct ON sp.idSanPham = ct.idSanPham "
+				+ "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang " + "WHERE hd.ngayLap BETWEEN ? AND ? ";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				soLuongTon = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuongTon;
+	}
+
+	public double getDoanhThuTheoNgay(String dayStart, String dayEnd) {
+		double soLuongTon = 0;
+		String sql = "SELECT SUM(ct.thanhTien) AS doanhThu "
+                + "FROM ChiTietHoaDonSanPham ct " 
+                + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
+                + "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+                + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+                + "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " 
+                + "WHERE hd.ngayLap BETWEEN ? AND ?";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				soLuongTon = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuongTon;
+	}
 	
+	public double getLoiNhuanTheoNgay(String dayStart, String dayEnd) {
+		double soLuongTon = 0;
+		String sql = "SELECT SUM(ct.loiNhuan) AS loiNhuan "
+                + "FROM ChiTietHoaDonSanPham ct " 
+                + "JOIN SanPham sp ON ct.idSanPham = sp.idSanPham "
+                + "JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang "
+                + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
+                + "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " 
+                + "WHERE hd.ngayLap BETWEEN ? AND ?";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				soLuongTon = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuongTon;
+	}
+	
+	public double getSoLuongDaBanTheoNgay(String dayStart, String dayEnd) {
+		double soLuongTon = 0;
+		String sql = "SELECT SUM(soLuong) FROM ChiTietHoaDonSanPham ct join HoaDon hd ON ct.idDonHang = hd.idDonHang WHERE hd.ngayLap BETWEEN ? AND ?";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+			preparedStatement.setString(1, dayStart);
+			preparedStatement.setString(2, dayEnd);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				soLuongTon = rs.getDouble(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return soLuongTon;
+	}
+
 	public SanPhamCon getSanPhamTimKiemTheoMa(String cond) {
 		SanPhamCon lsp = new SanPhamCon();
 		ConnectDB.getinstance();
@@ -77,8 +235,8 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham = ?"; 
-			
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham = ?";
+
 			statement = con.prepareStatement(sql);
 			statement.setString(1, cond);
 			ResultSet rs = statement.executeQuery();
@@ -102,9 +260,9 @@ public class DAOQuanLySanPham implements Serializable {
 			e.printStackTrace();
 		}
 		return null;
-		
+
 	}
-	
+
 	public ArrayList<SanPhamCon> getDanhSachSanPhamTimKiemTheoMa(String cond) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
@@ -113,8 +271,9 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%'"; 
-			
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond
+					+ "%'";
+
 			statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -140,7 +299,7 @@ public class DAOQuanLySanPham implements Serializable {
 
 		return dsSanPham;
 	}
-	
+
 	public ArrayList<SanPhamCon> getDanhSachSanPhamTimKiem(String cond) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
@@ -149,9 +308,10 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan, sp.giaKhuyenMai "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond + "%' OR " 
-					+ "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond + "%'";
-			
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE sp.idSanPham LIKE '%" + cond
+					+ "%' OR " + "sp.tenSanPham LIKE '%" + cond + "%' OR " + "lsp.tenLoaiSanPham LIKE N'%" + cond
+					+ "%'";
+
 			statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -177,9 +337,7 @@ public class DAOQuanLySanPham implements Serializable {
 
 		return dsSanPham;
 	}
-	
-	
-	
+
 	public SanPhamCon getSanPham(String idSanPham) {
 		SanPhamCon sp = new SanPhamCon();
 		ConnectDB.getinstance();
@@ -210,7 +368,7 @@ public class DAOQuanLySanPham implements Serializable {
 
 		return sp;
 	}
-	
+
 	public ArrayList<SanPhamCon> loadComboBoxByLoaiSanPham(String id) {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		ConnectDB.getinstance();
@@ -219,7 +377,7 @@ public class DAOQuanLySanPham implements Serializable {
 		try {
 			String sql = "SELECT  sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue, sp.giaNhap ,sp.soLuong,sp.giaBan "
 					+ "FROM SanPham sp " + "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
-					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " +"WHERE lsp.tenLoaiSanPham = ?";
+					+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE lsp.tenLoaiSanPham = ?";
 			statement = con.prepareStatement(sql);
 			statement.setString(1, id);
 			ResultSet rs = statement.executeQuery();
@@ -238,8 +396,7 @@ public class DAOQuanLySanPham implements Serializable {
 				lsp.setGiaNhap(rs.getDouble(9));
 				lsp.setSoLuong(rs.getInt(10));
 				lsp.giaBan();
-				
-				
+
 				dsSanPham.add(lsp);
 			}
 		} catch (Exception e) {
@@ -289,7 +446,7 @@ public class DAOQuanLySanPham implements Serializable {
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
 		String sql = "SELECT sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.kichThuoc, sp.mauSac, sp.trangThai, sp.thue,sp.giaNhap, sp.soLuong, sp.giaBan ,sp.giaKhuyenMai FROM SanPham sp JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap";
 		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
-			while(rs.next()) {
+			while (rs.next()) {
 				SanPhamCon lsp = new SanPhamCon();
 				lsp.setIdSanPham(rs.getString("idSanPham"));
 				lsp.setTenSanPham(rs.getString("tenSanPham"));
@@ -339,10 +496,10 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return dsSanPham;
 	}
-	
+
 	public boolean themSanPham(SanPhamCon sp) {
 		String sql = "INSERT INTO SanPham VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-		try (PreparedStatement pst = connection.prepareStatement(sql)){
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setString(1, sp.getIdSanPham());
 			pst.setString(2, sp.getTenSanPham());
 			pst.setString(3, sp.getIdLoaiSanPham().getIdLoaiSanPham());
@@ -356,7 +513,7 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setDouble(11, sp.giaBan());
 			pst.setDouble(12, sp.getGiaKM());
 			int n = pst.executeUpdate();
-			return n >0 ;
+			return n > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
@@ -366,9 +523,8 @@ public class DAOQuanLySanPham implements Serializable {
 	public String getLatestProductID() {
 		String productID = null;
 		String sql = "SELECT TOP 1 idSanPham FROM SanPham ORDER BY idSanPham DESC";
-		try (PreparedStatement pst = connection.prepareStatement(sql);
-				ResultSet rs = pst.executeQuery()){
-			if(rs.next()) {
+		try (PreparedStatement pst = connection.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+			if (rs.next()) {
 				productID = rs.getString("idSanPham");
 			}
 		} catch (SQLException e) {
@@ -376,14 +532,12 @@ public class DAOQuanLySanPham implements Serializable {
 		}
 		return productID;
 	}
-	
-	
-	
+
 	public boolean capNhatSanPham(SanPhamCon sp) {
 		String sql = "UPDATE SanPham "
 				+ "SET  tenSanPham = ?, loaiSanPham = ?, nhaCungCap = ?, kichThuoc = ?, mauSac = ?, trangThai = ?, thue = ?, giaNhap = ?, soLuong = ? "
 				+ "WHERE idSanPham = ? ";
-		try (PreparedStatement pst = connection.prepareStatement(sql)){
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setString(1, sp.getTenSanPham());
 			pst.setString(2, sp.getIdLoaiSanPham().getIdLoaiSanPham());
 			pst.setString(3, sp.getIdNhaCungCap().getIdNhaCungCap());
@@ -395,15 +549,16 @@ public class DAOQuanLySanPham implements Serializable {
 			pst.setInt(9, sp.getSoLuong());
 			pst.setString(10, sp.getIdSanPham());
 			int n = pst.executeUpdate();
-			return n >0;
+			return n > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
+
 	public void xoaSanPham(String idSanPham) {
-		String sql ="DELETE FROM SanPham WHERE idSanPham =?";
-		try (PreparedStatement pst = connection.prepareStatement(sql)){
+		String sql = "DELETE FROM SanPham WHERE idSanPham =?";
+		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setString(1, idSanPham);
 			pst.executeUpdate();
 		} catch (SQLException e) {

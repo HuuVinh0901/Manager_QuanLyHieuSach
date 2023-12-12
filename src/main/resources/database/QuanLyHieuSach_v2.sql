@@ -167,7 +167,7 @@ CREATE TABLE ChiTietHoaDonChoSach (
     idDonHangCho NVARCHAR(15) NOT NULL , 
 	idDonHang NVARCHAR(14) NOT NULL , 
 	tenSanPham NVARCHAR(30) NOT NULL , 
-    idSanPham NVARCHAR(14) NOT NULL, 
+    idSanPham NVARCHAR(13) NOT NULL, 
 	giaBan FLOAT,
 	khuyenMai FLOAT,
 	soLuong INT CHECK (soLuong > 0), 
@@ -447,29 +447,6 @@ BEGIN
     SELECT @NewID,tenSanPham,tacGia, theLoai, namXuatBan, ISBN, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaNhap, giaBan, giaKhuyenMai
     FROM INSERTED
 END
---Tạo tài khoản khi thêm nhân viên
-CREATE TRIGGER trg_TaoTKChoNV
-ON NhanVien 
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
-    SELECT idNhanVien, HASHBYTES('SHA2_512', '1111'), GETDATE()
-    FROM inserted;
-END;
-go
---Tạo tài khoản cho quản lý
-CREATE TRIGGER trg_TaoTKChoQL
-ON QuanLy 
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan(idTaiKhoan,matKhau,ngayLap)
-    SELECT idQuanLy, HASHBYTES('SHA2_512', '1111'), GETDATE()
-    FROM inserted;
-END;
 
 INSERT INTO LoaiSanPham VALUES (N'',N'Sách')
 INSERT INTO LoaiSanPham VALUES (N'', N'Trò chơi giáo dục')
@@ -622,6 +599,8 @@ insert KhachHang  (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) valu
 --INSERT INTO SanPham VALUES (N'SP202311130004', N'Sản phẩm D', N'LSP202311230001', N'NCC202311230002', 15.0, N'Đen', 1, 0, 150000, 40, 240000, 240000);
 --INSERT INTO SanPham VALUES (N'SP202311130005', N'Sản phẩm E', N'LSP202311230002', N'NCC202311230003', 9.5, N'Hồng', 1, 0, 95000, 60, 152000, 152000);
 go
+insert TaiKhoan values(N'QL202311300002',N'1111',N'2023-11-30')
+
 
 
 
@@ -630,28 +609,18 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202311300001
---NV202311260001
+--QL202312120001
+--NV202312090001
 select *from TheLoai
 select *from NhaCungCap
 select *from LoaiSanPham
 select *from Sach
 select *from TacGia
-select *from SanPham
 select *from TaiKhoan
 select *from NhanVien
-SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = N'0912345678'
+select *from HoaDon
+select *from SanPham
+select *from ChiTietHoaDonSanPham
 
-use QLHieuSach
-use master
-drop database QLHieuSach
 
-delete from SanPham
-delete from Sach
-delete from TheLoai
-delete from TacGia
-delete from NhaCungCap
-delete from LoaiSanPham
-delete from TaiKhoan
-delete from NhanVien
-delete from QuanLy
+
