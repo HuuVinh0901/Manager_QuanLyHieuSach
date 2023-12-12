@@ -226,9 +226,16 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
+		MenuItem HDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new HuongDanSuDungView());
+			}
+		});
 		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,
 				subThongKeKhachHang, subThongKeNhanVien);
-		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
+		
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
 			@Override
@@ -248,7 +255,7 @@ public class TrangChuQuanTriView extends JFrame {
 			}
 		});
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
-		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien,subCaiDatDMK);
+		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien,subCaiDatDMK,HDSD);
 
 		addMenu(QLSP, QLNV, QLKH, KM, QLHD, ThongKe, CaiDat, DangXuat);
 		QLSP.setBackground(new Color(153, 255, 255));

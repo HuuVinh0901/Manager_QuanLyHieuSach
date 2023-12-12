@@ -398,7 +398,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 						int soLuong = (int) row.getCell(9).getNumericCellValue();
 						sp.setSoLuong(soLuong);
 						sp.giaBan();
-						sp.setGiaKM(row.getCell(10).getNumericCellValue());
+						sp.setGiaKM(row.getCell(11).getNumericCellValue());
 						boolean checkIDLoaiSanPham = daoLoaiSanPham
 								.checkIdLoaiSanPham(sp.getIdLoaiSanPham().getIdLoaiSanPham());
 						boolean checkIDNhaCungCap = daoNhaCungCap

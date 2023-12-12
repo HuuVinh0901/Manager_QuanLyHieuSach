@@ -38,11 +38,12 @@ import dao.DAO_QuanLyBanHang;
 import models.ChiTietHoaDon;
 import models.HoaDon;
 import models.KhachHang;
+import models.NhanLuc;
 import models.NhanVien;
 import models.SachCon;
 import models.SanPhamCha;
 
-public class QuanLyHoaDonView extends JPanel{
+public class QuanLyHoaDonNhanVienView extends JPanel{
 	private JTextField txtTimKiem;
 	private JButton btnXemTatCa;
 	private JTable tblHoaDon;
@@ -53,8 +54,9 @@ public class QuanLyHoaDonView extends JPanel{
 	private DAOSach daoSach;
 	private DAOKhachHang daoKhachHang;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-	
-	public QuanLyHoaDonView() {
+	private NhanVien nvLogIn;
+	public QuanLyHoaDonNhanVienView(NhanVien nv) {
+		nvLogIn = nv;
 		setLayout(new BorderLayout());
 		currencyFormat.setCurrency(Currency.getInstance("VND"));
 		JPanel pnTitle = new JPanel();
@@ -68,7 +70,7 @@ public class QuanLyHoaDonView extends JPanel{
 		JPanel pn1 = new JPanel(new GridLayout(2, 1, 5, 5));
 		JPanel pn2 = new JPanel();
 		JLabel lblTitle = new JLabel("QUẢN LÝ HOÁ ĐƠN");
-		JLabel lblTimKiem = new JLabel("Mã hoá đơn / SĐT / tên khách hàng / tên nhân viên");
+		JLabel lblTimKiem = new JLabel("Mã hoá đơn / SĐT / Tên khách hàng / Tên nhân viên");
 		txtTimKiem = new JTextField(16);
 		btnXemTatCa = new JButton("Xem tất cả");
 		pnTitle.add(lblTitle);
@@ -297,7 +299,7 @@ public class QuanLyHoaDonView extends JPanel{
     
    public void loadHoaDon() {
 	    modelHoaDon.setRowCount(0);
-		ArrayList<HoaDon> dsHoaDon = daoBanHang.getAllHoaDon();
+	    ArrayList<HoaDon> dsHoaDon=daoBanHang.getHoaDonTheoNV(nvLogIn.getId());
 		for (HoaDon hd : dsHoaDon) {
 			String maHD = hd.getIdDonHang();
 			String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());

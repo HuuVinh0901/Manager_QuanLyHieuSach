@@ -81,12 +81,10 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 	private void execute() {
 		ImageIcon iconSetting = new ImageIcon(getClass().getResource("/icons/settings.png"));
 		ImageIcon iconKH = new ImageIcon(getClass().getResource("/icons/KH.png"));
-		ImageIcon iconSP = new ImageIcon(getClass().getResource("/icons/banhang.png"));
 		ImageIcon iconSubMenu = new ImageIcon(getClass().getResource("/icons/plus.png"));
 		ImageIcon iconBH = new ImageIcon(getClass().getResource("/icons/banhang.png"));
 		ImageIcon iconDX = new ImageIcon(getClass().getResource("/icons/DX.png"));
-		ImageIcon iconTK = new ImageIcon(getClass().getResource("/icons/TK.png"));
-
+		ImageIcon iconHD = new ImageIcon(getClass().getResource("/icons/bill.png"));
 		MenuItem QLBH = new MenuItem(iconBH, "Quản lý bán hàng", new ActionListener() {
 
 			@Override
@@ -122,7 +120,15 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 				switchToPanel(new QuanLyKhachHangView());
 			}
 		});
-		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
+		MenuItem QLHDNV = new MenuItem(iconHD, "Quản lý hóa đơn nhân viên", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				NhanVien nv = daoNV.getNhanVien(headerNV.getId());
+				switchToPanel(new QuanLyHoaDonNhanVienView(nv));
+			}
+		});
 		MenuItem subCaiDatDMK = new MenuItem(iconSubMenu, "Đổi mật khẩu", new ActionListener() {
 
 			@Override
@@ -133,14 +139,7 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 				frame.setVisible(true);
 			}
 		});
-		MenuItem thongKe = new MenuItem(iconTK, "Thống kê", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				switchToPanel(new ThongKeDoanhThuNhanVienView());
-
-			}
-		});
+		
 		MenuItem subCaiDatHDSD = new MenuItem(iconSubMenu, "Hướng dẫn sử dụng", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
@@ -151,10 +150,10 @@ public class TrangChuQuanLyBanHangView extends JFrame {
 			}
 		});
 		MenuItem CaiDat = new MenuItem(iconSetting, "Cài đặt", null, subGiaoDien, subCaiDatDMK);
-		addMenu(QLBH, QLKH, thongKe, CaiDat, DangXuat);
+		addMenu(QLBH, QLKH, QLHDNV, CaiDat, DangXuat);
 		QLKH.setBackground(new Color(153, 225, 225));
 		QLBH.setBackground(new Color(153, 225, 225));
-		thongKe.setBackground(new Color(153, 225, 225));
+		QLHDNV.setBackground(new Color(153, 225, 225));
 		CaiDat.setBackground(new Color(153, 225, 225));
 		DangXuat.setBackground(new Color(153, 225, 225));
 

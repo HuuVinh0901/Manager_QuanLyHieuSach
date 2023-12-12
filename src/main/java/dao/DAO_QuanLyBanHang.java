@@ -366,7 +366,33 @@ public class DAO_QuanLyBanHang {
 
 		return hd;
 	}
-	
+	public ArrayList<HoaDon> getHoaDonTheoNV(String idNV) {
+		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM HoaDon WHERE nhanVien = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, idNV);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				HoaDon hd=new HoaDon();
+				hd.setIdDonHang(rs.getString(1));
+				hd.setNgayLap(rs.getDate(2));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
+				hd.setTienKhachDua(rs.getDouble(5));
+				hd.setTongTien(rs.getDouble(6));
+				hd.setTongLoiNhuan(rs.getDouble(7));
+				dsHoaDon.add(hd);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return dsHoaDon;
+	}
 	public ArrayList<HoaDon> getHoaDonTimKiem(String cond) {
 		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
 		ConnectDB.getinstance();
@@ -375,8 +401,10 @@ public class DAO_QuanLyBanHang {
 		try {
 			String sql = "SELECT idDonHang, ngayLap, nhanVien, khachHang, tienKhachDua, tongTien, tongLoiNhuan"
 					+ " FROM HoaDon hd" + " JOIN KhachHang kh ON hd.khachHang = kh.idKhachHang"
+					+ " JOIN NhanVien nv ON hd.nhanVien = nv.idNhanVien"
 					+ " WHERE idDonHang LIKE '%" + cond + "%' OR" 
-					+ " soDienThoai LIKE '%" + cond + "%' OR" + " idKhachHang LIKE N'%" + cond + "%'";
+					+ " kh.soDienThoai LIKE '%" + cond + "%' OR" + " kh.tenKhachHang LIKE N'%" + cond + "%'"
+					+ " OR nv.tenNhanVien LIKE N'%" + cond + "%'" ;
 			
 			statement = con.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();

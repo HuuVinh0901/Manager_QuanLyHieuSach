@@ -111,7 +111,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		KhachHang kh=new KhachHang();
 		setLayout(new BorderLayout());
 		this.setBackground(new Color(102,255,255));
-////		Tiêu đề
+///		Tiêu đề
 		JPanel pnNouth=new JPanel(new BorderLayout());
 		JPanel pnSounth=new JPanel(new BorderLayout());
 		JPanel pnTitle=new JPanel();
@@ -622,7 +622,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			DefaultTableModel model = (DefaultTableModel) tableKH.getModel();
 			TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 			tableKH.setRowSorter(tr);
-			tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
+			tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1,2));
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_F5) 
 		{

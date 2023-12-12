@@ -590,7 +590,9 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			 CapNhatNV();
 		 }
 		 if(o.equals(btnXemTatCa)) {
+			 txtTimKiem.setText("");
 			 loadData();
+			 lamMoi();
 		 }
 		 if(o.equals(btnXuatExecl)) {
 			 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
@@ -687,7 +689,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 				DefaultTableModel model = (DefaultTableModel) tableNhanVien.getModel();
 				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
 				tableNhanVien.setRowSorter(tr);
-				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
+				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1,2));
 			} 
 			else if (e.getKeyCode() == KeyEvent.VK_F5) {
 				lamMoi();
