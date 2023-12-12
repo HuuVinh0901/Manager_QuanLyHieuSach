@@ -609,7 +609,7 @@ insert TaiKhoan values('ADMIN',HASHBYTES('SHA2_512', '1111'),'2023-10-13')
 select *from NhanVien
 select *from TaiKhoan
 go
---QL202312090001
+--QL202312120001
 --NV202312090001
 select *from TheLoai
 select *from NhaCungCap
@@ -623,6 +623,7 @@ select *from SanPham
 select *from ChiTietHoaDonSanPham
 SELECT COUNT(*) FROM NhanVien WHERE soDienThoai = N'0912345678'
 
+delete Sach 
 use QLHieuSach
 use master
 drop database QLHieuSach
@@ -645,6 +646,18 @@ JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap
 WHERE hd.ngayLap BETWEEN '2023-12-01' AND '2023-12-09'
 GROUP BY sp.idSanPham, sp.tenSanPham,lsp.tenLoaiSanPham,ncc.tenNhaCungCap,sp.soLuong,sp.giaNhap, sp.giaBan,sp.trangThai
 ORDER BY soLuongBan DESC;
+
+SELECT SUM(ct.thanhTien) AS tongDoanhThu 
+  FROM ChiTietHoaDonSanPham ct 
+JOIN SanPham sp ON ct.idSanPham = sp.idSanPham 
+JOIN HoaDon hd ON ct.idDonHang = hd.idDonHang 
+JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham 
+JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap
+WHERE hd.ngayLap BETWEEN '2023-12-09' AND '2023-12-09'
+
+
+
+
 
 
 SELECT sp.idSanPham, SUM(sp.soLuong) AS TongSoLuong
