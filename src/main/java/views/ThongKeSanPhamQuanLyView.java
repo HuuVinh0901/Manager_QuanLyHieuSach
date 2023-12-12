@@ -92,6 +92,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	private DAOQuanLySanPham daoSanPham;
 	private JLabel lblTongLN;
 	private JPanel pnTongLN;
+
 	public ThongKeSanPhamQuanLyView() {
 		setLayout(new BorderLayout());
 		daoSanPham = new DAOQuanLySanPham();
@@ -206,19 +207,19 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		lblTongLN = new JLabel("TỔNG LỢI NHUẬN: " + currencyFormat.format(0));
 		lblTongDoanhThu = new JLabel("TỔNG SỐ LƯỢNG TỒN  : " + currencyFormat.format(0));
 		lblTongLoiNhuan = new JLabel("TỔNG SỐ LƯỢNG ĐÃ BÁN  : " + currencyFormat.format(0));
-		
+
 		lblTongLN.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTongLN.setForeground(Color.red);
-		
+
 		lblTongHoaDon.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTongHoaDon.setForeground(Color.red);
-		
+
 		lblTongDoanhThu.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTongDoanhThu.setForeground(new Color(26, 102, 227));
-		
+
 		lblTongLoiNhuan.setFont(new Font("Tahoma", Font.BOLD, 20));
 		lblTongLoiNhuan.setForeground(new Color(26, 102, 227));
-		
+
 		pnTongHoaDon.add(lblTongHoaDon);
 		pnTongLN.add(lblTongLN);
 		pnTongDoanhThu.add(lblTongDoanhThu);
@@ -236,13 +237,12 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		btnInThongKe.addActionListener(this);
 		btnLamMoi.addActionListener(this);
 		cbLoc.addItemListener(this);
-		
 
 		Date ngayHienTai = new Date();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(ngayHienTai);
 		loadDataSanPhamTheoNgay(ngayHienTai, ngayHienTai);
-		
+
 	}
 
 	@Override
@@ -267,23 +267,23 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			}
 		} else if (o.equals(btnThongKe)) {
 			String selectedOption = (String) cbLoc.getSelectedItem();
-			if ("6 tháng gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption) || "7 ngày gần nhất".equals(selectedOption)
-					|| "1 năm gần nhất".equals(selectedOption)) {
+			if ("6 tháng gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption)
+					|| "7 ngày gần nhất".equals(selectedOption) || "1 năm gần nhất".equals(selectedOption)) {
 				Date ngayHienTai = new Date();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(ngayHienTai);
 				calendar.add(Calendar.DAY_OF_MONTH, -7);
 				Date sevenDaysAgo = calendar.getTime();
-				showBieuDoTheoNgayVaThang(ngayHienTai,sevenDaysAgo);
-			}else if("Hiện tại".equals(selectedOption)) {
+				showBieuDoTheoNgayVaThang(ngayHienTai, sevenDaysAgo);
+			} else if ("Hiện tại".equals(selectedOption)) {
 				Date ngayHienTai = new Date();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(ngayHienTai);
-				showBieuDoTheoNgayVaThang(ngayHienTai,ngayHienTai);
+				showBieuDoTheoNgayVaThang(ngayHienTai, ngayHienTai);
 			}
 		} else if (o.equals(btnInThongKe)) {
 			inThongKe();
-		} 
+		}
 	}
 
 	private void inThongKe() {
@@ -303,141 +303,137 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	}
 
 	private void showBieuDoTheoNgayVaThang(Date ngayHienTai, Date ngayChon) {
-	    ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
-	    DefaultCategoryDataset datasetSoLuongBan = createDatasetSoLuongBan("Số lượng bán chạy", ngayHienTai, ngayChon);
-	    DefaultCategoryDataset datasetSoLuongBanCham = createDatasetSoLuongBanCham("Số lượng bán chậm", ngayHienTai, ngayChon);
-	    DefaultCategoryDataset datasetDoanhThu = createDatasetDoanhThu("Doanh thu", ngayHienTai, ngayChon);
-	    DefaultCategoryDataset datasetLoiNhuan = createDatasetLoiNhuan("Lợi nhuận", ngayHienTai, ngayChon);
-	    DefaultPieDataset dataset = createDatasetNhaCungCap("Tỉ lệ nhà cung cấp", ngayHienTai, ngayChon);
-	    DefaultPieDataset datasetLoaiSanPham = createDatasetLoaiSanPham("Tỉ lệ LoaiSanPham", ngayHienTai, ngayChon);
-	    
-	    
-	    JFreeChart barChartSoLuongBan = createBarChart(datasetSoLuongBan, "Sản phẩm", "Số lượng sản phẩm bán chạy");
-	    JFreeChart barChartSoLuongBanCham = createBarChart(datasetSoLuongBanCham, "Sản phẩm", "Số lượng sản phẩm bán chậm");
-	    JFreeChart lineChartDoanhThu = createLineChart(datasetDoanhThu, "Sản phẩm", "Doanh thu");
-	    JFreeChart barChartLoiNhuan = createBarChart(datasetLoiNhuan, "Sản phẩm", "Lợi nhuận");
-	    JFreeChart pieChart = createPieChart(dataset, "Tỉ lệ nhà cung cấp của sản phẩm");
-	    JFreeChart pieChartLoaiSanPham = createPieChart(datasetLoaiSanPham, "Tỉ lệ loại sản phẩm của sản phẩm");
-	    
-	    ChartPanel chartPanelSoLuongBan = new ChartPanel(barChartSoLuongBan);
-	    ChartPanel chartPanelSoLuongBanCham = new ChartPanel(barChartSoLuongBanCham);
-	    ChartPanel chartPanelDoanhThu = new ChartPanel(lineChartDoanhThu);
-	    ChartPanel chartPanelLoiNhuan = new ChartPanel(barChartLoiNhuan);
-	    ChartPanel chartPanel = new ChartPanel(pieChart);
-	    ChartPanel chartPanelLoaiSanPham = new ChartPanel(pieChartLoaiSanPham);
-	    
-	    chartPanelSoLuongBan.setPreferredSize(new Dimension(400, 600)); 
-	    chartPanelSoLuongBanCham.setPreferredSize(new Dimension(400, 600)); 
-	    chartPanelDoanhThu.setPreferredSize(new Dimension(400, 300));
-	    chartPanelLoiNhuan.setPreferredSize(new Dimension(400, 300));
-	    chartPanel.setPreferredSize(new Dimension(400, 300));
-	    chartPanelLoaiSanPham.setPreferredSize(new Dimension(400, 300));
+		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		DefaultCategoryDataset datasetSoLuongBan = createDatasetSoLuongBan("Số lượng bán chạy", ngayHienTai, ngayChon);
+		DefaultCategoryDataset datasetSoLuongBanCham = createDatasetSoLuongBanCham("Số lượng bán chậm", ngayHienTai,
+				ngayChon);
+		DefaultCategoryDataset datasetDoanhThu = createDatasetDoanhThu("Doanh thu", ngayHienTai, ngayChon);
+		DefaultCategoryDataset datasetLoiNhuan = createDatasetLoiNhuan("Lợi nhuận", ngayHienTai, ngayChon);
+		DefaultPieDataset dataset = createDatasetNhaCungCap("Tỉ lệ nhà cung cấp", ngayHienTai, ngayChon);
+		DefaultPieDataset datasetLoaiSanPham = createDatasetLoaiSanPham("Tỉ lệ LoaiSanPham", ngayHienTai, ngayChon);
 
-	    JPanel contentPanel = new JPanel(new GridLayout(3,2 ));
-	    contentPanel.add(chartPanelSoLuongBan);
-	    contentPanel.add(chartPanelSoLuongBanCham);
-	    contentPanel.add(chartPanelDoanhThu);
-	    contentPanel.add(chartPanelLoiNhuan);
-	    contentPanel.add(chartPanel);
-	    contentPanel.add(chartPanelLoaiSanPham);
-	    
-	    JScrollPane scrollPane = new JScrollPane(contentPanel);
+		JFreeChart barChartSoLuongBan = createBarChart(datasetSoLuongBan, "Sản phẩm", "Số lượng sản phẩm bán chạy");
+		JFreeChart barChartSoLuongBanCham = createBarChart(datasetSoLuongBanCham, "Sản phẩm",
+				"Số lượng sản phẩm bán chậm");
+		JFreeChart lineChartDoanhThu = createLineChart(datasetDoanhThu, "Sản phẩm", "Doanh thu");
+		JFreeChart barChartLoiNhuan = createBarChart(datasetLoiNhuan, "Sản phẩm", "Lợi nhuận");
+		JFreeChart pieChart = createPieChart(dataset, "Tỉ lệ nhà cung cấp của sản phẩm");
+		JFreeChart pieChartLoaiSanPham = createPieChart(datasetLoaiSanPham, "Tỉ lệ loại sản phẩm của sản phẩm");
 
-	    JDialog dialog = new JDialog();
-	    dialog.setTitle("Thống kê sản phẩm");
-	    dialog.setSize(1300, 800);
-	    dialog.setLocationRelativeTo(null);
+		ChartPanel chartPanelSoLuongBan = new ChartPanel(barChartSoLuongBan);
+		ChartPanel chartPanelSoLuongBanCham = new ChartPanel(barChartSoLuongBanCham);
+		ChartPanel chartPanelDoanhThu = new ChartPanel(lineChartDoanhThu);
+		ChartPanel chartPanelLoiNhuan = new ChartPanel(barChartLoiNhuan);
+		ChartPanel chartPanel = new ChartPanel(pieChart);
+		ChartPanel chartPanelLoaiSanPham = new ChartPanel(pieChartLoaiSanPham);
 
-	    dialog.add(scrollPane);
+		chartPanelSoLuongBan.setPreferredSize(new Dimension(400, 600));
+		chartPanelSoLuongBanCham.setPreferredSize(new Dimension(400, 600));
+		chartPanelDoanhThu.setPreferredSize(new Dimension(400, 300));
+		chartPanelLoiNhuan.setPreferredSize(new Dimension(400, 300));
+		chartPanel.setPreferredSize(new Dimension(400, 300));
+		chartPanelLoaiSanPham.setPreferredSize(new Dimension(400, 300));
 
-	    dialog.setVisible(true);
+		JPanel contentPanel = new JPanel(new GridLayout(3, 2));
+		contentPanel.add(chartPanelSoLuongBan);
+		contentPanel.add(chartPanelSoLuongBanCham);
+		contentPanel.add(chartPanelDoanhThu);
+		contentPanel.add(chartPanelLoiNhuan);
+		contentPanel.add(chartPanel);
+		contentPanel.add(chartPanelLoaiSanPham);
+
+		JScrollPane scrollPane = new JScrollPane(contentPanel);
+
+		JDialog dialog = new JDialog();
+		dialog.setTitle("Thống kê sản phẩm");
+		dialog.setSize(1300, 800);
+		dialog.setLocationRelativeTo(null);
+
+		dialog.add(scrollPane);
+
+		dialog.setVisible(true);
 	}
-
 
 	private DefaultPieDataset createDatasetNhaCungCap(String label, Date ngayHienTai, Date ngayChon) {
-	    DefaultPieDataset dataset = new DefaultPieDataset();
-	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+		DefaultPieDataset dataset = new DefaultPieDataset();
+		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
 
-	    for (SanPhamCon sp : dsSanPham) {
-	        if (sp.getIdNhaCungCap() != null && sp.getIdNhaCungCap().getIdNhaCungCap() != null) {
-	            dataset.setValue(sp.getIdNhaCungCap().getIdNhaCungCap(), sp.getSoLuongBan());
-	        }
-	    }
+		for (SanPhamCon sp : dsSanPham) {
+			if (sp.getIdNhaCungCap() != null && sp.getIdNhaCungCap().getIdNhaCungCap() != null) {
+				dataset.setValue(sp.getIdNhaCungCap().getIdNhaCungCap(), sp.getSoLuongBan());
+			}
+		}
 
-	    return dataset;
+		return dataset;
 	}
+
 	private DefaultPieDataset createDatasetLoaiSanPham(String label, Date ngayHienTai, Date ngayChon) {
-	    DefaultPieDataset dataset = new DefaultPieDataset();
-	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+		DefaultPieDataset dataset = new DefaultPieDataset();
+		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
 
-	    for (SanPhamCon sp : dsSanPham) {
-	        if (sp.getIdLoaiSanPham() != null && sp.getIdLoaiSanPham().getIdLoaiSanPham() != null) {
-	            dataset.setValue(sp.getIdLoaiSanPham().getIdLoaiSanPham(), sp.getSoLuongBan());
-	        }
-	    }
+		for (SanPhamCon sp : dsSanPham) {
+			if (sp.getIdLoaiSanPham() != null && sp.getIdLoaiSanPham().getIdLoaiSanPham() != null) {
+				dataset.setValue(sp.getIdLoaiSanPham().getIdLoaiSanPham(), sp.getSoLuongBan());
+			}
+		}
 
-	    return dataset;
+		return dataset;
 	}
 
 	private JFreeChart createPieChart(DefaultPieDataset dataset, String chartTitle) {
-	    JFreeChart pieChart = ChartFactory.createPieChart(
-	            chartTitle,
-	            dataset,
-	            true, true, false
-	    );
+		JFreeChart pieChart = ChartFactory.createPieChart(chartTitle, dataset, true, true, false);
 
-	    PiePlot plot = (PiePlot) pieChart.getPlot();
-	    plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1}"));
-	    return pieChart;
+		PiePlot plot = (PiePlot) pieChart.getPlot();
+		plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1}"));
+		return pieChart;
 	}
 
 	private DefaultCategoryDataset createDatasetSoLuongBan(String label, Date ngayHienTai, Date ngayChon) {
-	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
 
-	    int count = 0;
-	    for (SanPhamCon sp : dsSanPham) {
-	        if (count < 10) {
-	            dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
-	            count++;
-	        } else {
-	            break;
-	        }
-	    }
+		int count = 0;
+		for (SanPhamCon sp : dsSanPham) {
+			if (count <= 10) {
+				dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
+				count++;
+			} else {
+				break;
+			}
+		}
 
-	    return dataset;
+		return dataset;
 	}
+
+	
 	
 	private DefaultCategoryDataset createDatasetSoLuongBanCham(String label, Date ngayHienTai, Date ngayChon) {
-	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamBanChamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamBanChamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
 
-	    int count = 0;
-	    for (SanPhamCon sp : dsSanPham) {
-	        if (count < 10) {
-	            dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
-	            count++;
-	        } else {
-	            break;
-	        }
-	    }
+		int count = 0;
+		for (SanPhamCon sp : dsSanPham) {
+			if (count <= 10) {
+				dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
+				count++;
+			} else {
+				break;
+			}
+		}
 
-	    return dataset;
+		return dataset;
 	}
-	
 
 	private DefaultCategoryDataset createDatasetDoanhThu(String label, Date ngayHienTai, Date ngayChon) {
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
 
-	    int count = 0;
 	    for (SanPhamCon sp : dsSanPham) {
-	        if (count < 10) {
-	            dataset.addValue(sp.getDoanhThu(), label, sp.getTenSanPham());
-	            count++;
-	        } else {
-	            break;
-	        }
+	        dataset.addValue(sp.getDoanhThu(), label, sp.getTenSanPham());
 	    }
 
 	    return dataset;
@@ -447,59 +443,42 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
 
-	    int count = 0;
 	    for (SanPhamCon sp : dsSanPham) {
-	        if (count < 10) {
-	            dataset.addValue(sp.getLoiNhuan(), label, sp.getTenSanPham());
-	            count++;
-	        } else {
-	            break;
-	        }
+	        dataset.addValue(sp.getLoiNhuan(), label, sp.getTenSanPham());
 	    }
 
 	    return dataset;
 	}
 
 	private JFreeChart createBarChart(DefaultCategoryDataset dataset, String categoryAxisLabel, String valueAxisLabel) {
-	    JFreeChart barChart = ChartFactory.createBarChart(
-	            valueAxisLabel,
-	            categoryAxisLabel,
-	            valueAxisLabel,
-	            dataset,
-	            PlotOrientation.VERTICAL,
-	            true, true, false
-	    );
+		JFreeChart barChart = ChartFactory.createBarChart(valueAxisLabel, categoryAxisLabel, valueAxisLabel, dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 
-	    CategoryPlot plot = barChart.getCategoryPlot();
-	    BarRenderer renderer = (BarRenderer) plot.getRenderer();
-	    renderer.setSeriesPaint(0, Color.blue);
+		CategoryPlot plot = barChart.getCategoryPlot();
+		BarRenderer renderer = (BarRenderer) plot.getRenderer();
+		renderer.setSeriesPaint(0, Color.blue);
 
-	    CategoryAxis xAxis = (CategoryAxis) plot.getDomainAxis();
-	    xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+		CategoryAxis xAxis = (CategoryAxis) plot.getDomainAxis();
+		xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
-	    return barChart;
+		return barChart;
 	}
 
-	private JFreeChart createLineChart(DefaultCategoryDataset dataset, String categoryAxisLabel, String valueAxisLabel) {
-	    JFreeChart lineChart = ChartFactory.createLineChart(
-	            valueAxisLabel,
-	            categoryAxisLabel,
-	            valueAxisLabel,
-	            dataset,
-	            PlotOrientation.VERTICAL,
-	            true, true, false
-	    );
+	private JFreeChart createLineChart(DefaultCategoryDataset dataset, String categoryAxisLabel,
+			String valueAxisLabel) {
+		JFreeChart lineChart = ChartFactory.createLineChart(valueAxisLabel, categoryAxisLabel, valueAxisLabel, dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 
-	    CategoryPlot plot = lineChart.getCategoryPlot();
-	    LineAndShapeRenderer renderer = new LineAndShapeRenderer();
-	    CategoryAxis xAxis = (CategoryAxis) plot.getDomainAxis();
-	    xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-	    plot.setRenderer(renderer);
-	    renderer.setSeriesPaint(0, Color.red);
+		CategoryPlot plot = lineChart.getCategoryPlot();
+		LineAndShapeRenderer renderer = new LineAndShapeRenderer();
+		CategoryAxis xAxis = (CategoryAxis) plot.getDomainAxis();
+		xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+		plot.setRenderer(renderer);
+		renderer.setSeriesPaint(0, Color.red);
 
-	    return lineChart;
+		return lineChart;
 	}
-	
+
 	private void XoaDuLieuTable() {
 		DefaultTableModel dm = (DefaultTableModel) tblHoaDon.getModel();
 		dm.getDataVector().removeAllElements();
@@ -535,20 +514,23 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				double loiNhuan = sp.getLoiNhuan();
 				String trangThai = sp.getTrangThai() + "";
 
-				 modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, loaiSanPham, nhaCungCap,
-		                    String.valueOf(soLuong), String.valueOf(soLuongBan), currencyFormat.format(giaNhap),
-		                    currencyFormat.format(giaBan), currencyFormat.format(doanhThu),
-		                    currencyFormat.format(loiNhuan), trangThai });
+				modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, loaiSanPham, nhaCungCap,
+						String.valueOf(soLuong), String.valueOf(soLuongBan), currencyFormat.format(giaNhap),
+						currencyFormat.format(giaBan), currencyFormat.format(doanhThu), currencyFormat.format(loiNhuan),
+						trangThai });
 			}
 
-			
-			double tongDoanhThu = daoSanPham.getDoanhThuTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
-			double tongLoiNhuan = daoSanPham.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
-			double soLuongDaBan = daoSanPham.getSoLuongDaBanTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
-			double soLuongTon = daoSanPham.getSoLuongTonTheoNgay(dfNgaySQL.format(ngayChon), dfNgaySQL.format(ngayHienTai));
+			double tongDoanhThu = daoSanPham.getDoanhThuTheoNgay(dfNgaySQL.format(ngayChon),
+					dfNgaySQL.format(ngayHienTai));
+			double tongLoiNhuan = daoSanPham.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon),
+					dfNgaySQL.format(ngayHienTai));
+			double soLuongDaBan = daoSanPham.getSoLuongDaBanTheoNgay(dfNgaySQL.format(ngayChon),
+					dfNgaySQL.format(ngayHienTai));
+			double soLuongTon = daoSanPham.getSoLuongTonTheoNgay(dfNgaySQL.format(ngayChon),
+					dfNgaySQL.format(ngayHienTai));
 
-			lblTongHoaDon.setText("TỔNG DOANH THU : " + currencyFormat.format(tongDoanhThu)); 
-			lblTongLN.setText("TỔNG LỢI NHUẬN: " + currencyFormat.format(tongLoiNhuan)); 
+			lblTongHoaDon.setText("TỔNG DOANH THU : " + currencyFormat.format(tongDoanhThu));
+			lblTongLN.setText("TỔNG LỢI NHUẬN: " + currencyFormat.format(tongLoiNhuan));
 			lblTongLoiNhuan.setText("TỔNG SỐ LƯỢNG ĐÃ BÁN : " + Math.round(soLuongDaBan));
 			lblTongDoanhThu.setText("TỔNG SỐ LƯỢNG TỒN : " + Math.round(soLuongTon));
 
@@ -583,7 +565,59 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				calendar.add(Calendar.DAY_OF_MONTH, -7);
 				Date sevenDaysAgo = calendar.getTime();
 				loadDataSanPhamTheoNgay(ngayHienTai, sevenDaysAgo);
+			} else if ("6 tháng gần nhất".equals(selectedOption) || "1 tháng gần nhất".equals(selectedOption)
+					|| "3 tháng gần nhất".equals(selectedOption) || "1 năm gần nhất".equals(selectedOption)) {
+				for (String option : new String[] { "6 tháng gần nhất", "1 tháng gần nhất", "3 tháng gần nhất",
+						"1 năm gần nhất" }) {
+					Date ngayHienTai = new Date();
+					Date ngayChon = tinhNgayChon(option, ngayHienTai);
+
+					if (coDuLieu(ngayHienTai, ngayChon)) {
+						XoaDuLieuTable();
+						chooserDayStart.setEnabled(false);
+						chooserDayEnd.setEnabled(false);
+						loadDataSanPhamTheoNgay(ngayHienTai, ngayChon);
+						cbLoc.setSelectedItem("Hiện tại");
+						JOptionPane.showMessageDialog(this, "Không có dữ liệu", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+				}
 			}
 		}
 	}
+
+	private boolean coDuLieu(Date ngayHienTai, Date ngayChon) {
+		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
+		return !dsSanPham.isEmpty();
+	}
+
+	private Date tinhNgayChon(String option, Date ngayHienTai) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(ngayHienTai);
+
+		switch (option) {
+		 case "7 ngày gần nhất":
+		        calendar.add(Calendar.DAY_OF_MONTH, -7);
+		        break;
+		case "6 tháng gần nhất":
+			calendar.add(Calendar.MONTH, -6);
+			break;
+		case "1 tháng gần nhất":
+			calendar.add(Calendar.MONTH, -1);
+			break;
+		case "3 tháng gần nhất":
+			calendar.add(Calendar.MONTH, -3);
+			break;
+		case "1 năm gần nhất":
+			calendar.add(Calendar.YEAR, -1);
+			break;
+
+		default:
+			break;
+		}
+
+		return calendar.getTime();
+	}
+
 }

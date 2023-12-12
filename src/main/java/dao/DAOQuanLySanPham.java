@@ -79,7 +79,7 @@ public class DAOQuanLySanPham implements Serializable {
 				+ "JOIN LoaiSanPham lsp ON sp.loaiSanPham = lsp.idLoaiSanPham "
 				+ "JOIN NhaCungCap ncc ON sp.nhaCungCap = ncc.idNhaCungCap " + "WHERE hd.ngayLap BETWEEN ? AND ? "
 				+ "GROUP BY sp.idSanPham, sp.tenSanPham, lsp.tenLoaiSanPham, ncc.tenNhaCungCap, sp.soLuong, "
-				+ "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan DESC;";
+				+ "sp.giaNhap, sp.giaBan, sp.trangThai " + "ORDER BY soLuongBan DESC";
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 			preparedStatement.setString(1, dayStart);
