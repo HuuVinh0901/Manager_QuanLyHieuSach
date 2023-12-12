@@ -212,6 +212,14 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new ThongKeSanPhamQuanLyView());
 			}
 		});
+		
+		MenuItem subThongKeSach = new MenuItem(iconSubMenu, "Thống kê sách", new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchToPanel(new ThongKeSachQuanLyView());
+			}
+		});
 		MenuItem subThongKeNhanVien = new MenuItem(iconSubMenu, "Thống kê nhân viên", new ActionListener() {
 
 			@Override
@@ -226,7 +234,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 			}
 		});
-		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,
+		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,subThongKeSach,
 				subThongKeKhachHang, subThongKeNhanVien);
 		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {

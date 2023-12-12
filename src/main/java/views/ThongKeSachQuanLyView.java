@@ -67,16 +67,19 @@ import org.jfree.data.general.DefaultPieDataset;
 import com.toedter.calendar.JDateChooser;
 
 import dao.DAOQuanLySanPham;
+import dao.DAOSach;
 import dao.DAO_QuanLyBanHang;
 import models.ChiTietHoaDon;
 import models.HoaDon;
 import models.LoaiSanPham;
 import models.NhaCungCap;
 import models.NhanVien;
-import models.SanPhamCon;
+import models.SachCon;
+import models.TacGia;
+import models.TheLoai;
 import utils.TrangThaiSPEnum;
 
-public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, ItemListener {
+public class ThongKeSachQuanLyView extends JPanel implements ActionListener, ItemListener {
 	private JDateChooser chooserDayStart;
 	private JDateChooser chooserDayEnd;
 	private JButton btnTimKiem;
@@ -93,15 +96,16 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	private JComboBox<String> cbLoc;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 	private DAO_QuanLyBanHang daoBanHang;
-	private DAOQuanLySanPham daoSanPham;
+//	private DAOQuanLySanPham daoSanPham;
 	private JLabel lblTongLN;
 	private JPanel pnTongLN;
+	private DAOSach daoSach;
 
-	public ThongKeSanPhamQuanLyView() {
+	public ThongKeSachQuanLyView() {
 		setLayout(new BorderLayout());
-		daoSanPham = new DAOQuanLySanPham();
 		currencyFormat.setCurrency(Currency.getInstance("VND"));
 		daoBanHang = new DAO_QuanLyBanHang();
+		daoSach = new DAOSach();
 		dfNgaySQL = new SimpleDateFormat("yyyy-MM-dd");
 		JPanel pn2 = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		JPanel pn1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -115,7 +119,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		JPanel pnTongDoanhThu = new JPanel();
 		JPanel pnTongLoiNhuan = new JPanel();
 		pnTongLN = new JPanel();
-		JLabel lblTitle = new JLabel("THỐNG KÊ SẢN PHẨM");
+		JLabel lblTitle = new JLabel("THỐNG KÊ SÁCH");
 		JLabel lblDayStart = new JLabel("Từ ngày");
 		JLabel lblDayEnd = new JLabel("Đến ngày");
 		lblLoc = new JLabel("Thời gian:");
@@ -190,8 +194,10 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			}
 		};
 
-		modelHoaDon.addColumn("Mã sản phẩm");
-		modelHoaDon.addColumn("Tên sản phẩm");
+		modelHoaDon.addColumn("Mã sách");
+		modelHoaDon.addColumn("Tên sách");
+		modelHoaDon.addColumn("Tác giả");
+		modelHoaDon.addColumn("Thể loại");
 		modelHoaDon.addColumn("Loại sản phẩm");
 		modelHoaDon.addColumn("Nhà cung cấp");
 		modelHoaDon.addColumn("Số lượng tồn");
@@ -203,7 +209,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		modelHoaDon.addColumn("Tình trạng");
 		tblHoaDon.setModel(modelHoaDon);
 		JScrollPane scrollTblHD = new JScrollPane(tblHoaDon);
-		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Thông tin sản phẩm"));
+		scrollTblHD.setBorder(BorderFactory.createTitledBorder("Thông tin sách"));
 		pnDay.setBorder(BorderFactory.createTitledBorder("Chức năng tìm kiếm"));
 		pn1.setBorder(BorderFactory.createTitledBorder("In & Thống kê"));
 
@@ -273,7 +279,6 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					loadDataSanPhamTheoNgay(startDate, endDate);
-					loadSanPhamTheoTuyChinh();
 				}
 			}
 		} else if (o.equals(btnThongKe)) {
@@ -294,7 +299,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			}
 		} else if (o.equals(btnInThongKe)) {
 			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/SanPham/ThongKe/SP_"
+			String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/Sach/ThongKe/S_"
 					+ timeStamp + ".xlsx";
 			ghiFileExcel(filePath);
 		}
@@ -311,26 +316,40 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private void ghiFileExcel(String filePath) {
 		int rowCount = modelHoaDon.getRowCount();
-		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		ArrayList<SachCon> dsSanPham = new ArrayList<SachCon>();
 		for (int i = 0; i < rowCount; i++) {
 			String idSanPham = (String) modelHoaDon.getValueAt(i, 0);
 			String tenSanPham = (String) modelHoaDon.getValueAt(i, 1);
-			String loaiSanPham = (String) modelHoaDon.getValueAt(i, 2);
-			String nhaCungCap = (String) modelHoaDon.getValueAt(i, 3);
-			int soLuong = Integer.parseInt((String) modelHoaDon.getValueAt(i, 4));
-			int soLuongBan = Integer.parseInt((String) modelHoaDon.getValueAt(i, 5));
-			String giaNhapStr = ((String) modelHoaDon.getValueAt(i, 6)).replaceAll("\\D+","");
+			String tacGia =(String) modelHoaDon.getValueAt(i, 2);
+			String theLoai = (String) modelHoaDon.getValueAt(i, 3);
+			String loaiSanPham = (String) modelHoaDon.getValueAt(i, 4);
+			String nhaCungCap = (String) modelHoaDon.getValueAt(i, 5);
+			int soLuong = Integer.parseInt((String) modelHoaDon.getValueAt(i, 6));
+			int soLuongBan = Integer.parseInt((String) modelHoaDon.getValueAt(i, 7));
+			String giaNhapStr = ((String) modelHoaDon.getValueAt(i, 8)).replaceAll("\\D+", "");
 			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
-			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 7)).replaceAll("\\D+","");
+			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 9)).replaceAll("\\D+", "");
 			Double doanhThu = parseDoubleWithMultiplePoints(doanhThuStr);
-			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 8)).replaceAll("\\D+","");
+			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 10)).replaceAll("\\D+", "");
 			Double loiNhuan = parseDoubleWithMultiplePoints(loiNhuanStr);
-			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 9);
+			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 11);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
-			
-			SanPhamCon sp = new SanPhamCon();
+
+			SachCon sp = new SachCon();
 			sp.setIdSanPham(idSanPham);
 			sp.setTenSanPham(tenSanPham);
+			if (tacGia != null) {
+				TacGia tg = new TacGia();
+				tg.setTenTacGia(tacGia);
+				sp.setTacGia(tg);
+			}
+			
+			if (theLoai != null) {
+				TheLoai tl = new TheLoai();
+				tl.setTenTheLoai(theLoai);
+				sp.setTheLoai(tl);
+			}
+			
 			if (loaiSanPham != null) {
 				LoaiSanPham loaiSP = new LoaiSanPham();
 				loaiSP.setTenLoaiSanPham(loaiSanPham);
@@ -342,51 +361,64 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				ncc.setTenNhaCungCap(nhaCungCap);
 				sp.setIdNhaCungCap(ncc);
 			}
+			
+			
 			sp.setSoLuong(soLuong);
 			sp.setSoLuongBan(soLuongBan);
 			sp.setGiaNhap(giaNhap);
-			sp.giaBan();
 			sp.setDoanhThu(doanhThu);
 			sp.setLoiNhuan(loiNhuan);
 			sp.setTrangThai(trangThai);
 			dsSanPham.add(sp);
 		}
 		try (Workbook workbook = new XSSFWorkbook()) {
-			org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Thống kê danh sách sản phẩm");
+			org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Thống kê danh sách sách");
 			Row headerRow = sheet.createRow(0);
-			String[] columnNames = { "ID Sản phẩm", "Tên sản phẩm", "Loại sản phẩm", "Nhà cung cấp", "Số lượng",
+			String[] columnNames = { "ID Sản phẩm", "Tên sản phẩm","Tác giả","Thể loại", "Loại sản phẩm", "Nhà cung cấp", "Số lượng",
 					"Số lượng đã bán", "Giá nhập", "Giá bán", "Doanh thu", "Lợi nhuận", "Trạng thái" };
 			for (int i = 0; i < columnNames.length; i++) {
 				org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
 				cell.setCellValue(columnNames[i]);
 			}
 			int rowNumber = 1;
-			for (SanPhamCon spc : dsSanPham) {
+			for (SachCon spc : dsSanPham) {
 				Row row = sheet.createRow(rowNumber++);
 				org.apache.poi.ss.usermodel.Cell idSanPhamCell = row.createCell(0);
 				idSanPhamCell.setCellValue(spc.getIdSanPham());
+				
 				org.apache.poi.ss.usermodel.Cell tenSanPhamCell = row.createCell(1);
 				tenSanPhamCell.setCellValue(spc.getTenSanPham());
-				org.apache.poi.ss.usermodel.Cell loaiSanPhamCell = row.createCell(2);
+				
+				org.apache.poi.ss.usermodel.Cell tacGiaCell = row.createCell(2);
+				tacGiaCell
+						.setCellValue(spc.getTacGia() != null ? spc.getTacGia().getTenTacGia(): "");
+				
+				org.apache.poi.ss.usermodel.Cell theLoaiCell = row.createCell(3);
+				theLoaiCell
+						.setCellValue(spc.getTheLoai() != null ? spc.getTheLoai().getTenTheLoai(): "");
+				
+				org.apache.poi.ss.usermodel.Cell loaiSanPhamCell = row.createCell(4);
 				loaiSanPhamCell
 						.setCellValue(spc.getIdLoaiSanPham() != null ? spc.getIdLoaiSanPham().getTenLoaiSanPham() : "");
-				org.apache.poi.ss.usermodel.Cell nhaCungCapCell = row.createCell(3);
+				
+				org.apache.poi.ss.usermodel.Cell nhaCungCapCell = row.createCell(5);
 				nhaCungCapCell
 						.setCellValue(spc.getIdNhaCungCap() != null ? spc.getIdNhaCungCap().getTenNhaCungCap() : "");
-				org.apache.poi.ss.usermodel.Cell soLuongCell = row.createCell(4);
+				
+				org.apache.poi.ss.usermodel.Cell soLuongCell = row.createCell(6);
 				soLuongCell.setCellValue(spc.getSoLuong());
-				org.apache.poi.ss.usermodel.Cell soLuongBanCell = row.createCell(5);
+				org.apache.poi.ss.usermodel.Cell soLuongBanCell = row.createCell(7);
 				soLuongBanCell.setCellValue(spc.getSoLuongBan());
-				org.apache.poi.ss.usermodel.Cell giaNhapCell = row.createCell(6);
+				org.apache.poi.ss.usermodel.Cell giaNhapCell = row.createCell(8);
 				giaNhapCell.setCellValue(spc.getGiaNhap());
-				org.apache.poi.ss.usermodel.Cell giaBanCell = row.createCell(7);
+				org.apache.poi.ss.usermodel.Cell giaBanCell = row.createCell(9);
 				giaBanCell.setCellValue(spc.giaBan());
-				org.apache.poi.ss.usermodel.Cell doanhThuCell = row.createCell(8);
+				org.apache.poi.ss.usermodel.Cell doanhThuCell = row.createCell(10);
 				doanhThuCell.setCellValue(spc.getDoanhThu());
-				org.apache.poi.ss.usermodel.Cell loiNhuanCell = row.createCell(9);
+				org.apache.poi.ss.usermodel.Cell loiNhuanCell = row.createCell(11);
 				loiNhuanCell.setCellValue(spc.getLoiNhuan());
-				org.apache.poi.ss.usermodel.Cell trangThaiCell = row.createCell(10);
-				trangThaiCell.setCellValue(spc.getTrangThai().toString());				
+				org.apache.poi.ss.usermodel.Cell trangThaiCell = row.createCell(12);
+				trangThaiCell.setCellValue(spc.getTrangThai().toString());
 			}
 			for (int i = 0; i < columnNames.length; i++) {
 				sheet.autoSizeColumn(i);
@@ -394,7 +426,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
 				workbook.write(outputStream);
 			}
-			System.out.println("Dữ liệu SanPham đã được ghi vào tệp Excel thành công.");
+			System.out.println("Dữ liệu Sách đã được ghi vào tệp Excel thành công.");
 			JOptionPane.showMessageDialog(this, "Xuất thống kê excel thành công");
 			clearData();
 		} catch (IOException e) {
@@ -414,15 +446,17 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải trước ngày kết thúc");
 			chooserDayEnd.requestFocus();
 		} else {
-			ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(
-					dfNgaySQL.format(chooserDayStart.getDate()), dfNgaySQL.format(chooserDayEnd.getDate()));
+			ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
+					dfNgaySQL.format(chooserDayEnd.getDate()));
 			if (dsSanPham.size() == 0) {
 				JOptionPane.showMessageDialog(this, "Khung thời gian này không sản phẩm nào");
 				XoaDuLieuTable();
 			} else {
-				for (SanPhamCon sp : dsSanPham) {
+				for (SachCon sp : dsSanPham) {
 					String idSanPham = sp.getIdSanPham();
 					String tenSanPham = sp.getTenSanPham();
+					String tacGia = sp.getTacGia().getIdTacGia();
+					String theLoai = sp.getTheLoai().getIdTheLoai();
 					String loaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
 					String nhaCungCap = sp.getIdNhaCungCap().getIdNhaCungCap();
 					int soLuong = sp.getSoLuong();
@@ -433,18 +467,18 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 					double loiNhuan = sp.getLoiNhuan();
 					String trangThai = sp.getTrangThai() + "";
 
-					modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, loaiSanPham, nhaCungCap,
+					modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, tacGia, theLoai, loaiSanPham, nhaCungCap,
 							String.valueOf(soLuong), String.valueOf(soLuongBan), currencyFormat.format(giaNhap),
 							currencyFormat.format(giaBan), currencyFormat.format(doanhThu),
 							currencyFormat.format(loiNhuan), trangThai });
 				}
-				double tongDoanhThu = daoSanPham.getDoanhThuTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
+				double tongDoanhThu = daoSach.getDoanhThuTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
 						dfNgaySQL.format(chooserDayEnd.getDate()));
-				double tongLoiNhuan = daoSanPham.getLoiNhuanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
+				double tongLoiNhuan = daoSach.getLoiNhuanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
 						dfNgaySQL.format(chooserDayEnd.getDate()));
-				double soLuongDaBan = daoSanPham.getSoLuongDaBanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
+				double soLuongDaBan = daoSach.getSoLuongDaBanTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
 						dfNgaySQL.format(chooserDayEnd.getDate()));
-				double soLuongTon = daoSanPham.getSoLuongTonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
+				double soLuongTon = daoSach.getSoLuongTonTheoNgay(dfNgaySQL.format(chooserDayStart.getDate()),
 						dfNgaySQL.format(chooserDayEnd.getDate()));
 
 				lblTongHoaDon.setText("TỔNG DOANH THU : " + currencyFormat.format(tongDoanhThu));
@@ -460,14 +494,14 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	}
 
 	private void showBieuDoTheoNgayVaThang(Date ngayHienTai, Date ngayChon) {
-		ArrayList<SanPhamCon> dsSanPham = new ArrayList<SanPhamCon>();
+		ArrayList<SachCon> dsSanPham = new ArrayList<SachCon>();
 		DefaultCategoryDataset datasetSoLuongBan = createDatasetSoLuongBan("Số lượng bán chạy", ngayHienTai, ngayChon);
 		DefaultCategoryDataset datasetSoLuongBanCham = createDatasetSoLuongBanCham("Số lượng bán chậm", ngayHienTai,
 				ngayChon);
 		DefaultCategoryDataset datasetDoanhThu = createDatasetDoanhThu("Doanh thu", ngayHienTai, ngayChon);
 		DefaultCategoryDataset datasetLoiNhuan = createDatasetLoiNhuan("Lợi nhuận", ngayHienTai, ngayChon);
 		DefaultPieDataset dataset = createDatasetNhaCungCap("Tỉ lệ nhà cung cấp", ngayHienTai, ngayChon);
-		DefaultPieDataset datasetLoaiSanPham = createDatasetLoaiSanPham("Tỉ lệ LoaiSanPham", ngayHienTai, ngayChon);
+		DefaultPieDataset datasetLoaiSanPham = createDatasetTheLoai("Tỉ lệ thể loại", ngayHienTai, ngayChon);
 
 		JFreeChart barChartSoLuongBan = createBarChart(datasetSoLuongBan, "Sản phẩm", "Số lượng sản phẩm bán chạy");
 		JFreeChart barChartSoLuongBanCham = createBarChart(datasetSoLuongBanCham, "Sản phẩm",
@@ -475,7 +509,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		JFreeChart lineChartDoanhThu = createLineChart(datasetDoanhThu, "Sản phẩm", "Doanh thu");
 		JFreeChart barChartLoiNhuan = createBarChart(datasetLoiNhuan, "Sản phẩm", "Lợi nhuận");
 		JFreeChart pieChart = createPieChart(dataset, "Tỉ lệ nhà cung cấp của sản phẩm");
-		JFreeChart pieChartLoaiSanPham = createPieChart(datasetLoaiSanPham, "Tỉ lệ loại sản phẩm của sản phẩm");
+		JFreeChart pieChartLoaiSanPham = createPieChart(datasetLoaiSanPham, "Tỉ lệ thể loại của sản phẩm");
 
 		ChartPanel chartPanelSoLuongBan = new ChartPanel(barChartSoLuongBan);
 		ChartPanel chartPanelSoLuongBanCham = new ChartPanel(barChartSoLuongBanCham);
@@ -513,10 +547,10 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private DefaultPieDataset createDatasetNhaCungCap(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultPieDataset dataset = new DefaultPieDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			if (sp.getIdNhaCungCap() != null && sp.getIdNhaCungCap().getIdNhaCungCap() != null) {
 				dataset.setValue(sp.getIdNhaCungCap().getIdNhaCungCap(), sp.getSoLuongBan());
 			}
@@ -527,10 +561,10 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private DefaultPieDataset createDatasetLoaiSanPham(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultPieDataset dataset = new DefaultPieDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			if (sp.getIdLoaiSanPham() != null && sp.getIdLoaiSanPham().getIdLoaiSanPham() != null) {
 				dataset.setValue(sp.getIdLoaiSanPham().getIdLoaiSanPham(), sp.getSoLuongBan());
 			}
@@ -539,23 +573,60 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		return dataset;
 	}
 
-	private JFreeChart createPieChart(DefaultPieDataset dataset, String chartTitle) {
-	    JFreeChart pieChart = ChartFactory.createPieChart(chartTitle, dataset, true, true, false);
+	private DefaultPieDataset createDatasetTheLoai(String label, Date ngayHienTai, Date ngayChon) {
+		DefaultPieDataset dataset = new DefaultPieDataset();
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+				dfNgaySQL.format(ngayHienTai));
 
-	    PiePlot plot = (PiePlot) pieChart.getPlot();
-	    plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
-	    plot.setCircular(false);
-	    return pieChart;
+		for (SachCon sp : dsSanPham) {
+			if (sp.getTheLoai() != null && sp.getTheLoai().getIdTheLoai() != null) {
+				dataset.setValue(sp.getTheLoai().getIdTheLoai(), sp.getSoLuongBan());
+			}
+		}
+
+		return dataset;
 	}
 
+//	private DefaultPieDataset createDatasetISBN(String label, Date ngayHienTai, Date ngayChon) {
+//		DefaultPieDataset dataset = new DefaultPieDataset();
+//		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+//				dfNgaySQL.format(ngayHienTai));
+//
+//		for (SachCon sp : dsSanPham) {
+//			if (sp.getISBN() != null) {
+//				String country = sp.getISBN().substring(0, 3);
+//				switch (country) {
+//				case "978":
+//				case "979":
+//					return "";
+//				case "981":
+//					return "Singapore";
+//				default:
+//					return "";
+//				}
+//				dataset.setValue(sp.getISBN(), sp.getSoLuongBan());
+//			}
+//		}
+//		return dataset;
+//
+//	}
+
+	private JFreeChart createPieChart(DefaultPieDataset dataset, String chartTitle) {
+		JFreeChart pieChart = ChartFactory.createPieChart(chartTitle, dataset, true, true, false);
+
+		PiePlot plot = (PiePlot) pieChart.getPlot();
+		plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0}: {1} ({2})"));
+		plot.setCircular(false);
+		return pieChart;
+	}
 
 	private DefaultCategoryDataset createDatasetSoLuongBan(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
 		int count = 0;
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			if (count <= 10) {
 				dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
 				count++;
@@ -569,11 +640,11 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private DefaultCategoryDataset createDatasetSoLuongBanCham(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamBanChamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamBanChamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
 		int count = 0;
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			if (count <= 10) {
 				dataset.addValue(sp.getSoLuongBan(), label, sp.getTenSanPham());
 				count++;
@@ -587,10 +658,10 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private DefaultCategoryDataset createDatasetDoanhThu(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			dataset.addValue(sp.getDoanhThu(), label, sp.getTenSanPham());
 		}
 
@@ -599,10 +670,10 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	private DefaultCategoryDataset createDatasetLoiNhuan(String label, Date ngayHienTai, Date ngayChon) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 
-		for (SanPhamCon sp : dsSanPham) {
+		for (SachCon sp : dsSanPham) {
 			dataset.addValue(sp.getLoiNhuan(), label, sp.getTenSanPham());
 		}
 
@@ -613,6 +684,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 		CategoryPlot plot = new CategoryPlot(dataset, new CategoryAxis("Sản Phẩm"), new NumberAxis("Số Lượng Bán"),
 				new LineAndShapeRenderer());
 		JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+
 		return chart;
 	}
 
@@ -659,7 +731,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 
 	public void loadDataSanPhamTheoNgay(Date ngayHienTai, Date ngayChon) {
 		modelHoaDon.setRowCount(0);
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 		int tongSoLuongTon = 0;
 		int tongSoLuongDaBan = 0;
@@ -667,9 +739,11 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 //			JOptionPane.showMessageDialog(this, "Khung thời gian này không có sản phẩm nào");
 			XoaDuLieuTable();
 		} else {
-			for (SanPhamCon sp : dsSanPham) {
+			for (SachCon sp : dsSanPham) {
 				String idSanPham = sp.getIdSanPham();
 				String tenSanPham = sp.getTenSanPham();
+				String tacGia = sp.getTacGia().getIdTacGia();
+				String theLoai = sp.getTheLoai().getIdTheLoai();
 				String loaiSanPham = sp.getIdLoaiSanPham().getIdLoaiSanPham();
 				String nhaCungCap = sp.getIdNhaCungCap().getIdNhaCungCap();
 				int soLuong = sp.getSoLuong();
@@ -680,19 +754,19 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				double loiNhuan = sp.getLoiNhuan();
 				String trangThai = sp.getTrangThai() + "";
 
-				modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, loaiSanPham, nhaCungCap,
+				modelHoaDon.addRow(new String[] { idSanPham, tenSanPham, tacGia, theLoai, loaiSanPham, nhaCungCap,
 						String.valueOf(soLuong), String.valueOf(soLuongBan), currencyFormat.format(giaNhap),
 						currencyFormat.format(giaBan), currencyFormat.format(doanhThu), currencyFormat.format(loiNhuan),
 						trangThai });
 			}
 
-			double tongDoanhThu = daoSanPham.getDoanhThuTheoNgay(dfNgaySQL.format(ngayChon),
+			double tongDoanhThu = daoSach.getDoanhThuTheoNgay(dfNgaySQL.format(ngayChon),
 					dfNgaySQL.format(ngayHienTai));
-			double tongLoiNhuan = daoSanPham.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon),
+			double tongLoiNhuan = daoSach.getLoiNhuanTheoNgay(dfNgaySQL.format(ngayChon),
 					dfNgaySQL.format(ngayHienTai));
-			double soLuongDaBan = daoSanPham.getSoLuongDaBanTheoNgay(dfNgaySQL.format(ngayChon),
+			double soLuongDaBan = daoSach.getSoLuongDaBanTheoNgay(dfNgaySQL.format(ngayChon),
 					dfNgaySQL.format(ngayHienTai));
-			double soLuongTon = daoSanPham.getSoLuongTonTheoNgay(dfNgaySQL.format(ngayChon),
+			double soLuongTon = daoSach.getSoLuongTonTheoNgay(dfNgaySQL.format(ngayChon),
 					dfNgaySQL.format(ngayHienTai));
 
 			lblTongHoaDon.setText("TỔNG DOANH THU : " + currencyFormat.format(tongDoanhThu));
@@ -701,10 +775,6 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			lblTongDoanhThu.setText("TỔNG SỐ LƯỢNG TỒN : " + Math.round(soLuongTon));
 
 		}
-	}
-
-	public void loadDataHoaDonTheoTuyChinh() {
-
 	}
 
 	@Override
@@ -720,9 +790,12 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				if (startDate == null || startDate.after(currentDate)) {
 					JOptionPane.showConfirmDialog(this, "Ngày bắt đầu không thể nhỏ hơn ngày hiện tại", "Cảnh báo",
 							JOptionPane.WARNING_MESSAGE);
+					clearData();
+
 				} else if (endDate == null || endDate.after(currentDate)) {
 					JOptionPane.showConfirmDialog(this, "Ngày kết thúc không thể nhỏ hơn ngày hiện tại", "Cảnh báo",
 							JOptionPane.WARNING_MESSAGE);
+					clearData();
 				} else {
 					loadDataSanPhamTheoNgay(startDate, endDate);
 				}
@@ -742,10 +815,11 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 				calendar.add(Calendar.DAY_OF_MONTH, -7);
 				Date sevenDaysAgo = calendar.getTime();
 				loadDataSanPhamTheoNgay(ngayHienTai, sevenDaysAgo);
-			} else if ("6 tháng gần nhất".equals(selectedOption) || "1 tháng gần nhất".equals(selectedOption) || "7 ngày gần nhất".equals(selectedOption)
-					|| "3 tháng gần nhất".equals(selectedOption) || "1 năm gần nhất".equals(selectedOption)) {
-				for (String option : new String[] { "7 ngày gần nhất","6 tháng gần nhất", "1 tháng gần nhất", "3 tháng gần nhất",
-						"1 năm gần nhất" }) {
+			} else if ("6 tháng gần nhất".equals(selectedOption) || "1 tháng gần nhất".equals(selectedOption)
+					|| "7 ngày gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption)
+					|| "1 năm gần nhất".equals(selectedOption)) {
+				for (String option : new String[] { "7 ngày gần nhất", "6 tháng gần nhất", "1 tháng gần nhất",
+						"3 tháng gần nhất", "1 năm gần nhất" }) {
 					Date ngayHienTai = new Date();
 					Date ngayChon = tinhNgayChon(option, ngayHienTai);
 
@@ -765,7 +839,7 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 	}
 
 	private boolean coDuLieu(Date ngayHienTai, Date ngayChon) {
-		ArrayList<SanPhamCon> dsSanPham = daoSanPham.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
+		ArrayList<SachCon> dsSanPham = daoSach.getTopSanPhamTheoNgay(dfNgaySQL.format(ngayChon),
 				dfNgaySQL.format(ngayHienTai));
 		return !dsSanPham.isEmpty();
 	}
