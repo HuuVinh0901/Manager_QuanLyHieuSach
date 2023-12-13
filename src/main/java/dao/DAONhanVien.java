@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import connection.ConnectDB;
-
+import models.KhachHang;
 import models.NhanVien;
 
 public class DAONhanVien {
@@ -153,31 +153,7 @@ public class DAONhanVien {
 		return listNV;
 	}
 
-	public void updateKhachHang(NhanVien nv) {
-		ConnectDB.getinstance();
-		PreparedStatement pst = null;
-		Connection con = ConnectDB.getConnection();
-		String sql = "update NhanVien set tenNhanVien = ?, soDienThoai = ?, diaChi = ?, email = ? ,ngaySinh = ?, gioiTinh = ? ,chucVu=?,trangThai=? where idNhanVien = ?";
-		try {
-			pst = con.prepareStatement(sql);
-			pst.setString(1, nv.getTen());
-			pst.setString(2, nv.getSoDienThoai());
-			pst.setString(3, nv.getDiaChi());
-			pst.setString(4, nv.getEmail());
-			pst.setDate(5, nv.getNgaySinh());
-			pst.setBoolean(6, nv.isGioiTinh());
-			pst.setString(7, nv.getChucVu());
-			pst.setBoolean(6, nv.isTrangThai());
-			pst.setString(7, nv.getId());
-			pst.executeUpdate();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			close(pst);
-		}
-	}
-
+	
 	public void DeleteNV(String maXoa) {
 		ConnectDB.getinstance();
 		PreparedStatement pst = null;
@@ -274,5 +250,37 @@ public class DAONhanVien {
 			e.printStackTrace();
 		}
 		return lstNV;
+	}
+	public ArrayList<NhanVien> getNVTimKiem(String cond) {
+		ArrayList<NhanVien> listNV = new ArrayList<NhanVien>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM NhanVien WHERE soDienThoai LIKE '%" + cond + "%' OR"
+					+ " idNhanVien LIKE '%" + cond + "%' OR" 
+					+ " tenNhanVien LIKE N'%" + cond + "%'" ;
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rsMa = statement.executeQuery();
+			while (rsMa.next()) {
+				NhanVien nv=new NhanVien();
+				nv.setId(rsMa.getString(1));
+				nv.setTen(rsMa.getString(2));
+				nv.setSoDienThoai(rsMa.getString(3));
+				nv.setDiaChi(rsMa.getString(4));
+				nv.setEmail(rsMa.getString(5));
+				nv.setNgaySinh(rsMa.getDate(6));
+				nv.setGioiTinh(rsMa.getBoolean(7));
+				nv.setChucVu(rsMa.getString(8));
+				nv.setTrangThai(rsMa.getBoolean(9));
+				
+				listNV.add(nv);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return listNV;
 	}
 }

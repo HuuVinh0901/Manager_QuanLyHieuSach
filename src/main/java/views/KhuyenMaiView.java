@@ -478,6 +478,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 				        daoKM.ThemSachKM(idSP, idKM, tenSP, giaBan, giaKM);
 				        daoKM.updateGiaKMSach(idSP, giaKM);
 				        modelSKM.addRow(new Object[] {idKM,idSP,tenSP,vietnameseFormat.format(giaBan),"-"+vietnameseFormat.format(giaKM)});
+				        dlogSach.setVisible(false);
 				        JOptionPane.showMessageDialog(this,"Áp dụng khuyến mãi thành công");
 			        }
 			        
@@ -522,6 +523,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 			    	 daoKM.ThemSPKM(idSP, idKM,tenSP,giaBan,giaKM);
 				     daoKM.updateGiaKM(idSP, giaKM);
 				     modelSP.addRow(new Object[] {idKM,idSP,tenSP,vietnameseFormat.format(giaBan),"-"+vietnameseFormat.format(giaKM)});
+				     dlogSP.setVisible(false);
 				     JOptionPane.showMessageDialog(this,"Áp dụng khuyến mãi thành công");
 			    }
 			    
@@ -596,12 +598,17 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		String LoaiDescription=selectedValue.getDescription();
 		
 		
-		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
-		
-		Boolean TrangThaibooleanValue = Boolean.parseBoolean(trangThaiValue);
-		KhuyenMai km=new KhuyenMai(id, tenKM, ngayBD, TrangThaibooleanValue, selectedValue);
+		String trangThaiSelected=cbTrangThai.getSelectedItem().toString();
+		Boolean trangThai=null;
+		if(trangThaiSelected.equals("Đang áp dụng")) {
+			trangThai=true;
+		}
+		if(trangThaiSelected.equals("Dừng áp dụng")) {
+			trangThai=false;
+		}
+		KhuyenMai km=new KhuyenMai(id, tenKM, ngayBD, trangThai, selectedValue);
 		daoKM.ThemKM(km);
-		modelKM.addRow(new Object[] {id,tenKM,dfNgayBD.format(km.getNgayBatDau()),km.getTrangThai()?"Đang áp dụng":"Dừng áp dụng",LoaiDescription});
+		modelKM.addRow(new Object[] {id,tenKM,dfNgayBD.format(km.getNgayBatDau()),trangThaiSelected,LoaiDescription});
 	}
 	public boolean valiDate() {
 		
@@ -782,6 +789,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		if (o.equals(btnThem)) {
 			try {
 				themKM();
+				lamMoi();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -799,7 +807,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		if(o.equals(btnChonSP)) {
 			try {
 				ThemSPKM();
-				dlogSP.dispose();
+				
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -808,7 +816,7 @@ public class KhuyenMaiView extends JPanel implements ActionListener,MouseListene
 		if(o.equals(btnChonSach)) {
 			try {
 				ThemSachKM();
-				dlogSach.dispose();
+				
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
