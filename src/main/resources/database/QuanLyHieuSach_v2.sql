@@ -529,7 +529,8 @@ delete TheLoai
 delete NhaCungCap
 delete LoaiSanPham
 delete Sach
-
+delete ChiTietHoaDonSanPham
+delete ChiTietHoaDonSach
 INSERT INTO sanPham (idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, thue, giaNhap, soLuong, giaBan, giaKhuyenMai)
 SELECT temp.idSanPham, temp.tenSanPham, loaiSanPham.id, nhaCungCap.id, temp.kichThuoc, temp.mauSac, temp.trangThai, temp.thue, temp.giaNhap, temp.soLuong, temp.giaBan, temp.giaKhuyenMai
 FROM temp
