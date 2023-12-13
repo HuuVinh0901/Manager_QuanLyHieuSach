@@ -448,110 +448,6 @@ BEGIN
     FROM INSERTED
 END
 
-INSERT INTO LoaiSanPham VALUES (N'',N'Sách')
-INSERT INTO LoaiSanPham VALUES (N'', N'Trò chơi giáo dục')
-INSERT INTO LoaiSanPham VALUES (N'', N'Sổ tay và sổ ghi chú')
-INSERT INTO LoaiSanPham VALUES (N'', N'Đồ chơi')
-INSERT INTO LoaiSanPham VALUES (N'', N'Phim và album')
-INSERT INTO LoaiSanPham VALUES (N'', N'Bản đồ')
-INSERT INTO LoaiSanPham VALUES (N'', N'Dấu trang')
-INSERT INTO LoaiSanPham VALUES (N'', N'Văn phòng phẩm')
-INSERT INTO LoaiSanPham VALUES (N'', N'Bút mực trang trí')
-INSERT INTO LoaiSanPham VALUES (N'', N'Thiệp chúc mừng và thiệp ghi chú trống')
-INSERT INTO LoaiSanPham VALUES (N'',N'Trò chơi bảng')
-go
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Điện tử Minh Châu', N'123 Đường Nguyễn Văn Linh, Quận 1, TP.Hồ Chí Minh', N'0901234567');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Thời trang Áo Đẹp', N'456 Đường Lê Lai, Quận 3, TP.Hồ Chí Minh', N'0918765432');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ gia dụng Hạnh Phúc', N'789 Đường Lê Thị Riêng, Quận 5, TP.Hồ Chí Minh', N'0987654321');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Mỹ phẩm Tâm Anh', N'234 Đường Bà Triệu, Quận 7, TP.Hồ Chí Minh', N'0954321897');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà lưu niệm Vui Vẻ', N'567 Đường Đống Đa, Quận 10, TP.Hồ Chí Minh', N'0967890123');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Hữu Nghị', N'890 Đường Phan Chu Trinh, Quận Bình Thạnh', N'0923456789');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ chơi Trí Tuệ', N'321 Đường Hoàng Sa, Q. Phú Nhuận, TP.Hồ Chí Minh', N'0945678901');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Nước hoa Thanh Xuân', N'654 Đường Cách Mạng Tháng 8', N'0912345678');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ điện gia dụng Tiến Đạt', N'111 Đường Trần Hưng Đạo', N'0932109876');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Phụ kiện Thời trang Sang Trọng', N'11 Đường Trần Hưng Đạo', N'0978563412');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Văn Học Việt Nam', N'22 Đường Trần Hưng Đạo, Quận 1, TP.Hồ Chí Minh', N'0901234987');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Giáo Khoa Thành Phố', N'12 Đường Nguyễn Thị Minh Khai, Quận 1, TP.Hồ Chí Minh', N'0909123456'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Thái Bình', N'34 Đường Lý Tự Trọng, Quận 3, TP.Hồ Chí Minh', N'0919876543');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Dùng Học Tập Huy Hoàng', N'56 Đường Nguyễn Trãi, Quận 5, TP.Hồ Chí Minh', N'0987765432');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Ngoại Văn Anh Văn', N'78 Đường Nguyễn Đình Chiểu, Quận 7, TP.Hồ Chí Minh', N'0955432189');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Văn Hóa Việt', N'90 Đường Cao Thắng, Quận 10, TP.Hồ Chí Minh', N'0968901234');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Khoa Học Kỹ Thuật', N'11 Đường Trần Quang Khải, Quận Bình Thạnh, TP.Hồ Chí Minh', N'0924567890');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Chơi Giáo Dục Thông Minh', N'33 Đường Phan Đăng Lưu, Quận Phú Nhuận, TP.Hồ Chí Minh', N'0946789012'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Truyện Thiếu Nhi', N'55 Đường Nguyễn Văn Cừ, Quận 11, TP.Hồ Chí Minh', N'0913456789'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Sáng Tạo', N'77 Đường Lê Văn Sỹ, Quận Tân Bình, TP.Hồ Chí Minh', N'0933210987');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Sách Nghệ Thuật', N'99 Đường Nguyễn Thị Thập, Quận 7, TP.Hồ Chí Minh', N'0979654321');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Chất Lượng', N'44 Đường Lê Thánh Tôn, Quận 3, TP.Hồ Chí Minh', N'0918765439');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Dùng Học Tập Tiện Lợi', N'66 Đường Trần Phú, Quận 5, TP.Hồ Chí Minh', N'0987654398');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Ngoại Văn Pháp Văn', N'88 Đường Nguyễn Thái Học, Quận 7, TP.Hồ Chí Minh', N'0954321987');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Văn Hóa Nhật', N'111 Đường Lý Thường Kiệt, Quận 10, TP.Hồ Chí Minh', N'0967890345');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Khoa Học Phổ Thông', N'222 Đường Nguyễn Văn Cừ, Quận Bình Thạnh, TP.Hồ Chí Minh', N'0923456901'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Đồ Chơi Giáo Dục Vui Nhộn', N'333 Đường Nguyễn Kiệm, Quận Phú Nhuận, TP.Hồ Chí Minh', N'0945678034'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Sách Truyện Thiếu Niên', N'444 Đường Lê Đại Hành, Quận 11, TP.Hồ Chí Minh', N'0913456987');
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Văn Phòng Phẩm Đa Dạng', N'555 Đường Bạch Đằng, Quận Tân Bình, TP.Hồ Chí Minh', N'0933210976'); 
-INSERT INTO NhaCungCap VALUES (N'', N'Công ty Quà Tặng Sách Hài Hước', N'666 Đường Nguyễn Hữu Thọ, Quận 7, TP.Hồ Chí Minh', N'0979654310');
-
-
-
-
-go
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Nhật Ánh', '1955-05-07', 6);
-INSERT INTO TacGia VALUES (N'', N'Tô Hoài', '1920-08-04', 6);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Du', '1766-01-05', 6);
-INSERT INTO TacGia VALUES (N'', N'Trí Tuệ', '1980-12-15', 4);
-INSERT INTO TacGia VALUES (N'', N'Tuổi Trẻ', '1988-03-20', 4);
-INSERT INTO TacGia VALUES (N'', N'Kim Dung', '1924-02-07', 4);
-INSERT INTO TacGia VALUES (N'', N'Xuân Diệu', '1916-03-02', 6);
-INSERT INTO TacGia VALUES (N'', N'Hồ Xuân Hương', '1772-02-06', 4);
-INSERT INTO TacGia VALUES (N'', N'Nam Cao', '1915-12-15', 6);
-INSERT INTO TacGia VALUES (N'', N'Lê Lợi', '1385-01-10', 4);
-INSERT INTO TacGia VALUES (N'', N'Lê Thanh An', '2011-01-10', 10);
-INSERT INTO TacGia VALUES (N'', N'Vũ Thảo Ánh', '2000-02-07', 4);
-INSERT INTO TacGia VALUES (N'', N'Bùi Thanh Bình', '1997-02-17', 4);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Thanh Cảnh', '1898-07-10', 6);
-INSERT INTO TacGia VALUES (N'', N'Lê Đôn Chủng', '2002-09-11', 8);
-INSERT INTO TacGia VALUES (N'', N'Vũ Hòa Bình', '1978-09-19', 10);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Duy Cường', '1999-09-25', 10);
-INSERT INTO TacGia VALUES (N'', N'Lê Văn Hoàng', '2003-07-10', 10);
-INSERT INTO TacGia VALUES (N'', N'Trần Gia Huy', '1977-02-19', 6);
-INSERT INTO TacGia VALUES (N'', N'Hồ Nguyễn Đăng Khoa', '1986-01-29', 10);
-INSERT INTO TacGia VALUES (N'', N'Đặng Phạm Thiên Khải', '1980-11-27', 8);
-INSERT INTO TacGia VALUES (N'', N'Lê Hoàng Khang', '1967-09-25', 4);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Xuân Nam', '1909-09-02', 22);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Thị Tuyết Ngân', '2003-12-01', 6);
-INSERT INTO TacGia VALUES (N'', N'Phạm Hoàng Ngọc Quân', '1885-09-03', 6);
-INSERT INTO TacGia VALUES (N'', N'Lê Vũ Hạo', '1866-11-09', 4);
-INSERT INTO TacGia VALUES (N'', N'Nguyễn Thị Hồng Lương', '1978-07-28', 3);
-INSERT INTO TacGia VALUES (N'', N'Phạm Hoàng Ngọc Quân', '2001-09-03', 3);
-INSERT INTO TacGia VALUES (N'', N'Lê Thị Như Ngọc', '2002-05-12', 4);
-
-
-go
-INSERT INTO TheLoai VALUES (N'', N'Tiểu thuyết khoa học viễn tưởng', 2, N'Tiểu thuyết dựa trên những khả năng khoa học và công nghệ trong tương lai hoặc thế giới khác');
-INSERT INTO TheLoai VALUES (N'', N'Tiểu thuyết giả tưởng', 7, N'Tiểu thuyết sử dụng những yếu tố huyền bí, siêu nhiên, thần thoại hoặc không có thật');
-INSERT INTO TheLoai VALUES (N'', N'Truyện ngắn', 6, N'Tác phẩm văn học có độ dài ngắn hơn tiểu thuyết, thường xoay quanh một sự kiện');
-INSERT INTO TheLoai VALUES (N'', N'Cổ tích', 5, N'Truyện kể về những sự kiện kỳ diệu, những nhân vật có phép thuật hoặc những bài học đạo đức');
-INSERT INTO TheLoai VALUES (N'', N'Chính trị', 5, N'Sách nói về những vấn đề, quan điểm, lịch sử hoặc hệ thống chính trị của một quốc gia, vùng lãnh thổ');
-INSERT INTO TheLoai VALUES (N'', N'Giáo dục giới tính', 3, N'Sách cung cấp những kiến thức, kỹ năng, thái độ và giá trị liên quan đến giới tính, sinh lý');
-INSERT INTO TheLoai VALUES (N'', N'Hài hước', 1, N'Sách có mục đích làm cho người đọc cười hoặc giải trí bằng những tình huống, nhân vật, ngôn ngữ');
-INSERT INTO TheLoai VALUES (N'', N'Hình sự', 2, N'Sách xoay quanh những vụ án, tội phạm, điều tra, truy tố hoặc pháp lý');
-INSERT INTO TheLoai VALUES (N'', N'Hồi ký', 2, N'Sách viết về cuộc đời, sự nghiệp, trải nghiệm hoặc suy nghĩ của một người hoặc một nhóm người');
-INSERT INTO TheLoai VALUES (N'', N'Kinh dị', 4, N'Sách tạo ra những cảm xúc sợ hãi, ghê rợn, căng thẳng cho người đọc bằng những yếu tố bạo lực');
-INSERT INTO TheLoai VALUES (N'', N'Kinh doanh', 13, N'Sách cung cấp những kiến thức, kỹ năng, chiến lược, phân tích hoặc kinh nghiệm ');
-INSERT INTO TheLoai VALUES (N'', N'Kỹ năng sống', 4, N'Sách hướng dẫn người đọc cách đối phó, giải quyết hoặc cải thiện những vấn đề');
-INSERT INTO TheLoai VALUES (N'', N'Khoa học viễn tưởng', 9, N'Sách giải thích những hiện tượng, sự kiện, khả năng hoặc thế giới khác');
-INSERT INTO TheLoai VALUES (N'', N'Ngôn tình', 4, N'Tiểu thuyết tập trung vào những mối quan hệ, tình cảm, đời sống hoặc xã hội của những nhân vật nữ');
-INSERT INTO TheLoai VALUES (N'', N'Phát triển bản thân', 19, N'Sách giúp người đọc nhận thức, phát huy hoặc thay đổi những phẩm chất');
-INSERT INTO TheLoai VALUES (N'', N'Phiêu lưu', 4, N'Sách kể về những chuyến đi, cuộc hành trình, khám phá hoặc thử thách');
-INSERT INTO TheLoai VALUES (N'', N'Thiếu nhi', 1, N'Sách dành cho độc giả nhỏ tuổi, thường có nội dung giáo dục, giải trí');
-INSERT INTO TheLoai VALUES (N'', N'Truyện tranh', 8, N'Tác phẩm văn học kết hợp giữa hình ảnh và chữ viết để kể một câu chuyện');
-INSERT INTO TheLoai VALUES (N'', N'Tâm lý học', 7, N'Sách nghiên cứu, phân tích hoặc ứng dụng những kiến thức, nguyên lý, phương pháp');
-INSERT INTO TheLoai VALUES (N'', N'TIểu thuyết', 20, N'Tác phẩm văn học dài, kể về một hoặc nhiều câu chuyện, nhân vật, tình tiết hoặc đề tài');
-INSERT INTO TheLoai VALUES (N'', N'Trinh thám', 5, N'Sách kể về quá trình tìm kiếm, phát hiện, giải mã hoặc làm sáng tỏ những bí ẩn');
-INSERT INTO TheLoai VALUES (N'', N'Văn học', 13, N'Sách thuộc về lĩnh vực nghệ thuật sử dụng ngôn ngữ để thể hiện những ý nghĩa, cảm xúc, suy nghĩ');
-INSERT INTO TheLoai VALUES (N'', N'Thơ', 3, N'Tác phẩm văn học sử dụng những từ ngữ, âm điệu, nhịp điệu, hình ảnh hoặc biểu tượng');
-INSERT INTO TheLoai VALUES (N'', N'Thần thoại', 1, N'Sách kể về những truyền thuyết, thần thoại, thần tiên, thần linh hoặc những sự kiện siêu nhiên');
-
 go
 insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Hữu Vinh',N'0918255167',N'vinhpham123@gmail.com',N'320D phường 7, TP.Bến Tre','2003-01-09',1)
 insert KhachHang (tenKhachHang,soDienThoai,email,diaChi,ngaySinh,gioiTinh) values (N'Vũ Duy','0918288167','duy123@gmail.com','Phan Rang','2003-06-27',1)
@@ -622,5 +518,14 @@ select *from HoaDon
 select *from SanPham
 select *from ChiTietHoaDonSanPham
 
+use master
+drop database QLHieuSach
 
-
+delete SanPham
+delete NhaCungCap
+delete LoaiSanPham
+INSERT INTO sanPham (idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, thue, giaNhap, soLuong, giaBan, giaKhuyenMai)
+SELECT temp.idSanPham, temp.tenSanPham, loaiSanPham.id, nhaCungCap.id, temp.kichThuoc, temp.mauSac, temp.trangThai, temp.thue, temp.giaNhap, temp.soLuong, temp.giaBan, temp.giaKhuyenMai
+FROM temp
+LEFT JOIN loaiSanPham ON loaiSanPham.tenLoaiSanPham = temp.loaiSanPham
+LEFT JOIN nhaCungCap ON nhaCungCap.tenNhaCungCap = temp.nhaCungCap;

@@ -99,7 +99,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private QuanLySachView sachPanel;
 	private JButton btnXuatExCel;
 	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
@@ -362,72 +361,191 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 					+ ".xlsx";
 			ghiFileExcel(filePath);
 		} else if (o.equals(btnNhapNhieuSanPham)) {
-//			System.out.println("Nhap nhieu san pham thanh cong");
 			try {
 				themNhieuSanPham();
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
+
 				e1.printStackTrace();
 			}
 		}
 	}
-
 	public void themNhieuSanPham() throws SQLException {
-		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
-		JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
-		excelFileChooser.setDialogTitle("Select Excel File");
-		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
-		excelFileChooser.setFileFilter(fnef);
-		int excelChooser = excelFileChooser.showOpenDialog(null);
-		if (excelChooser == JFileChooser.APPROVE_OPTION) {
-			File excelFile = excelFileChooser.getSelectedFile();
-			try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
-				Sheet sheet = workbook.getSheetAt(0);
-				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-					Row row = sheet.getRow(rowIndex);
-					if (row != null) {
-						SanPhamCon sp = new SanPhamCon();
-						sp.setIdSanPham(row.getCell(0).getStringCellValue());
-						sp.setTenSanPham(row.getCell(1).getStringCellValue());
-						sp.setIdLoaiSanPham(new LoaiSanPham(row.getCell(2).getStringCellValue()));
-						sp.setIdNhaCungCap(new NhaCungCap(row.getCell(3).getStringCellValue()));
-						sp.setKichThuoc(row.getCell(4).getNumericCellValue());
-						sp.setMauSac(row.getCell(5).getStringCellValue());
-						int trangThaiValue = (int) row.getCell(6).getNumericCellValue();
-						TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
-						sp.setTrangThai(trangThaiEnum);
-						sp.thue();
-						sp.setGiaNhap(row.getCell(8).getNumericCellValue());
-						int soLuong = (int) row.getCell(9).getNumericCellValue();
-						sp.setSoLuong(soLuong);
-						sp.giaBan();
-						sp.setGiaKM(row.getCell(11).getNumericCellValue());
-						boolean checkIDLoaiSanPham = daoLoaiSanPham
-								.checkIdLoaiSanPham(sp.getIdLoaiSanPham().getIdLoaiSanPham());
-						boolean checkIDNhaCungCap = daoNhaCungCap
-								.checkIdNhaCungCap(sp.getIdNhaCungCap().getIdNhaCungCap());
-						if (!checkIDLoaiSanPham || !checkIDNhaCungCap) {
-							JOptionPane.showMessageDialog(this,
-									"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
-							continue;
-						}
-						if (daoSanPham.checkIdSanPham(sp.getIdSanPham())) {
-							daoSanPham.capNhatSanPham(sp);
-						} else {
-							boolean result = daoSanPham.themSanPham(sp);
-							loadDataIntoTable();
-							if (!result) {
-								System.out.println("Không thể thêm sản phẩm: " + sp.getIdSanPham());
-							}
-						}
-					}
-				}
-				JOptionPane.showMessageDialog(null, "Thêm thành công");
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage());
-			}
-		}
+	    String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
+	    JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+	    excelFileChooser.setDialogTitle("Chọn File Excel");
+	    FileNameExtensionFilter fnef = new FileNameExtensionFilter("TẤT CẢ CÁC FILE EXCEL", "xls", "xlsx", "xlsm");
+	    excelFileChooser.setFileFilter(fnef);
+	    int excelChooser = excelFileChooser.showOpenDialog(null);
+
+	    if (excelChooser == JFileChooser.APPROVE_OPTION) {
+	        File excelFile = excelFileChooser.getSelectedFile();
+
+	        try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
+	            xulyTrangNhaCungCap(workbook.getSheetAt(0));
+	            xulyTrangLoaiSanPham(workbook.getSheetAt(1));
+	            xulyTrangSanPhamCon(workbook.getSheetAt(2));
+	            loadComboxBoxLoaiSanPham();
+	            loadComboxBoxNhaCungCap();
+	            JOptionPane.showMessageDialog(null, "Thêm thành công");
+	        } catch (IOException e) {
+	            JOptionPane.showMessageDialog(null, e.getMessage());
+	        }
+	    }
 	}
+
+	private void xulyTrangSanPhamCon(Sheet sheet) {
+	    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+	        Row row = sheet.getRow(rowIndex);
+	        if (row != null) {
+	            SanPhamCon sp = new SanPhamCon();
+	            sp.setIdSanPham(row.getCell(0).getStringCellValue());
+	            sp.setTenSanPham(row.getCell(1).getStringCellValue());
+	            sp.setIdLoaiSanPham(new LoaiSanPham(row.getCell(2).getStringCellValue()));
+	            sp.setIdNhaCungCap(new NhaCungCap(row.getCell(3).getStringCellValue()));
+	            sp.setKichThuoc(row.getCell(4).getNumericCellValue());
+	            sp.setMauSac(row.getCell(5).getStringCellValue());
+	            int trangThaiValue = (int) row.getCell(6).getNumericCellValue();
+	            TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
+	            sp.setTrangThai(trangThaiEnum);
+	            sp.thue();
+	            sp.setGiaNhap(row.getCell(8).getNumericCellValue());
+	            int soLuong = (int) row.getCell(9).getNumericCellValue();
+	            sp.setSoLuong(soLuong);
+	            sp.giaBan();
+	            sp.setGiaKM(row.getCell(11).getNumericCellValue());
+
+	            boolean checkIDLoaiSanPham = daoLoaiSanPham.checkIdLoaiSanPham(sp.getIdLoaiSanPham().getIdLoaiSanPham());
+	            boolean checkIDNhaCungCap = daoNhaCungCap.checkIdNhaCungCap(sp.getIdNhaCungCap().getIdNhaCungCap());
+
+	            if (!checkIDLoaiSanPham || !checkIDNhaCungCap) {
+//	                JOptionPane.showMessageDialog(this, "Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
+	                continue;
+	            }
+
+	            try {
+					if (daoSanPham.checkIdSanPham(sp.getIdSanPham())) {
+					    daoSanPham.capNhatSanPham(sp);
+					} else {
+					    boolean result = daoSanPham.themSanPham(sp);
+					    loadDataIntoTable();
+					    if (!result) {
+					        System.out.println("Không thể thêm sản phẩm: " + sp.getIdSanPham());
+					    }
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+	        }
+	    }
+	}
+
+	private void xulyTrangLoaiSanPham(Sheet sheet) {
+	    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+	        Row row = sheet.getRow(rowIndex);
+	        if (row != null) {
+	            LoaiSanPham lsp = new LoaiSanPham();
+	            lsp.setIdLoaiSanPham(row.getCell(0).getStringCellValue());
+	            lsp.setTenLoaiSanPham(row.getCell(1).getStringCellValue());
+
+	            try {
+	                if (!daoLoaiSanPham.checkIdLoaiSanPham(lsp.getIdLoaiSanPham())) {
+	                    boolean result = daoLoaiSanPham.themLoaiSanPham(lsp);
+	                    if (!result) {
+	                        System.out.println("Không thể thêm loại sản phẩm: " + lsp.getIdLoaiSanPham());
+	                    }
+	                }
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
+	private void xulyTrangNhaCungCap(Sheet sheet) {
+	    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+	        Row row = sheet.getRow(rowIndex);
+	        if (row != null) {
+	            NhaCungCap ncc = new NhaCungCap();
+	            ncc.setIdNhaCungCap(row.getCell(0).getStringCellValue());
+	            ncc.setTenNhaCungCap(row.getCell(1).getStringCellValue());
+	            ncc.setDiaChi(row.getCell(2).getStringCellValue());
+	            ncc.setSoDienThoai(row.getCell(3).getStringCellValue());
+
+	            try {
+	                if (!daoNhaCungCap.checkIdNhaCungCap(ncc.getIdNhaCungCap())) {
+	                    boolean result = daoNhaCungCap.themNhaCungCap(ncc);
+	                    if (!result) {
+	                        System.out.println("Không thể thêm nhà cung cấp: " + ncc.getIdNhaCungCap());
+	                    }
+	                }
+	            } catch (SQLException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
+	}
+
+
+	
+//	public void themNhieuSanPham() throws SQLException {
+//		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
+//		JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+//		excelFileChooser.setDialogTitle("Select Excel File");
+//		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
+//		excelFileChooser.setFileFilter(fnef);
+//		int excelChooser = excelFileChooser.showOpenDialog(null);
+//		if (excelChooser == JFileChooser.APPROVE_OPTION) {
+//			File excelFile = excelFileChooser.getSelectedFile();
+//			try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
+//				Sheet sheet = workbook.getSheetAt(0);
+//				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+//					Row row = sheet.getRow(rowIndex);
+//					if (row != null) {
+//						SanPhamCon sp = new SanPhamCon();
+//						sp.setIdSanPham(row.getCell(0).getStringCellValue());
+//						sp.setTenSanPham(row.getCell(1).getStringCellValue());
+//						sp.setIdLoaiSanPham(new LoaiSanPham(row.getCell(2).getStringCellValue()));
+//						sp.setIdNhaCungCap(new NhaCungCap(row.getCell(3).getStringCellValue()));
+//						sp.setKichThuoc(row.getCell(4).getNumericCellValue());
+//						sp.setMauSac(row.getCell(5).getStringCellValue());
+//						int trangThaiValue = (int) row.getCell(6).getNumericCellValue();
+//						TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
+//						sp.setTrangThai(trangThaiEnum);
+//						sp.thue();
+//						sp.setGiaNhap(row.getCell(8).getNumericCellValue());
+//						int soLuong = (int) row.getCell(9).getNumericCellValue();
+//						sp.setSoLuong(soLuong);
+//						sp.giaBan();
+//						sp.setGiaKM(row.getCell(11).getNumericCellValue());
+//						boolean checkIDLoaiSanPham = daoLoaiSanPham
+//								.checkIdLoaiSanPham(sp.getIdLoaiSanPham().getIdLoaiSanPham());
+//						boolean checkIDNhaCungCap = daoNhaCungCap
+//								.checkIdNhaCungCap(sp.getIdNhaCungCap().getIdNhaCungCap());
+//						if (!checkIDLoaiSanPham || !checkIDNhaCungCap) {
+//							JOptionPane.showMessageDialog(this,
+//									"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
+//							continue;
+//						}
+//						if (daoSanPham.checkIdSanPham(sp.getIdSanPham())) {
+//							daoSanPham.capNhatSanPham(sp);
+//						} else {
+//							boolean result = daoSanPham.themSanPham(sp);
+//							loadDataIntoTable();
+//							if (!result) {
+//								System.out.println("Không thể thêm sản phẩm: " + sp.getIdSanPham());
+//							}
+//						}
+//					}
+//				}
+//				JOptionPane.showMessageDialog(null, "Thêm thành công");
+//			} catch (IOException e) {
+//				JOptionPane.showMessageDialog(null, e.getMessage());
+//			}
+//		}
+//	}
+	
+	
+	
 
 	private void showSuccessMessage(String message) {
 		JOptionPane.showMessageDialog(this, message);

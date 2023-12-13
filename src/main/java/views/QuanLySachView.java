@@ -264,8 +264,10 @@ public class QuanLySachView extends JPanel
 //					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
 //					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "",
 //					s.getGiaNhap() + "", s.giaBan() + "" };
-			model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, dfNgaySinh.format(s.getNamXuatBan()), isbn, soTrang, loaiSanPham,
-					nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
+			model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai,
+					dfNgaySinh.format(s.getNamXuatBan()), isbn, soTrang, loaiSanPham, nhaCungCap, kichThuoc, mauSac,
+					trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap),
+					currencyFormat.format(giaBan) });
 		}
 
 	}
@@ -607,74 +609,255 @@ public class QuanLySachView extends JPanel
 		}
 	}
 
-	private void themNhieuSach() throws SQLException {
+	public void themNhieuSach() throws SQLException {
 		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
-		JFileChooser exelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
-		exelFileChooser.setDialogTitle("Select Excel file:");
-		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
-		exelFileChooser.setFileFilter(fnef);
-		int excelChooser = exelFileChooser.showOpenDialog(null);
+		JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+		excelFileChooser.setDialogTitle("Chọn File Excel");
+		FileNameExtensionFilter fnef = new FileNameExtensionFilter("TẤT CẢ CÁC FILE EXCEL", "xls", "xlsx", "xlsm");
+		excelFileChooser.setFileFilter(fnef);
+		int excelChooser = excelFileChooser.showOpenDialog(null);
+
 		if (excelChooser == JFileChooser.APPROVE_OPTION) {
-			File excelFile = exelFileChooser.getSelectedFile();
+			File excelFile = excelFileChooser.getSelectedFile();
+
 			try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
-				Sheet sheet = workbook.getSheetAt(0);
-				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-					Row row = sheet.getRow(rowIndex);
-					if (row != null) {
-						SachCon s = new SachCon();
-						s.setIdSanPham(row.getCell(0).getStringCellValue());
-						s.setTenSanPham(row.getCell(1).getStringCellValue());
-						s.setTacGia(new TacGia(row.getCell(2).getStringCellValue()));
-						s.setTheLoai(new TheLoai(row.getCell(3).getStringCellValue()));
-						java.util.Date namXuatBanUtil = row.getCell(4).getDateCellValue();
-						java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
-						s.setNamXuatBan(namXuatBanSql);
-						s.setISBN(row.getCell(5).getStringCellValue());
-						int soTrang = (int) row.getCell(6).getNumericCellValue();
-						s.setSoTrang(soTrang);
-						s.setIdLoaiSanPham(new LoaiSanPham(row.getCell(7).getStringCellValue()));
-						s.setIdNhaCungCap(new NhaCungCap(row.getCell(8).getStringCellValue()));
-						s.setKichThuoc(row.getCell(9).getNumericCellValue());
-						s.setMauSac(row.getCell(10).getStringCellValue());
-						int trangThaiValue = (int) row.getCell(11).getNumericCellValue();
-						TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
-						s.setTrangThai(trangThaiEnum);
-						s.thue();
-						int soLuong = (int) row.getCell(13).getNumericCellValue();
-						s.setSoLuong(soLuong);
-						s.setGiaNhap(row.getCell(14).getNumericCellValue());
-						s.giaBan();
-						s.setGiaKM(row.getCell(16).getNumericCellValue());
-						boolean checkIDLoaiSanPham = daoLoaiSanPham
-								.checkIdLoaiSanPham(s.getIdLoaiSanPham().getIdLoaiSanPham());
-						boolean checkIDNhaCungCap = daoNhaCungCap
-								.checkIdNhaCungCap(s.getIdNhaCungCap().getIdNhaCungCap());
-						boolean checkIDTacGia = daoTacGia.checkIdTacGia(s.getTacGia().getIdTacGia());
-						boolean checkIDTheLoai = daoTheLoai.checkIdTheLoai(s.getTheLoai().getIdTheLoai());
-						if (!checkIDLoaiSanPham || !checkIDNhaCungCap || !checkIDTacGia || !checkIDTheLoai) {
-							JOptionPane.showMessageDialog(this,
-									"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
-							continue;
-						}
-						if (daoSach.checkIdSach(s.getIdSanPham())) {
-							daoSach.capNhatSach(s);
-							lamMoi();
-						} else {
-							boolean result = daoSach.themSach(s);
-							loadData();
-							lamMoi();
-							if (!result) {
-								System.out.println("Không thể thêm sản phẩm: " + s.getIdSanPham());
-							}
-						}
-					}
-				}
+				xulyTrangTacGia(workbook.getSheetAt(0));
+				xulyTrangTheLoai(workbook.getSheetAt(1));
+				xulyTrangNhaCungCap(workbook.getSheetAt(2));
+				xulyTrangLoaiSanPham(workbook.getSheetAt(3));
+				xulyTrangSanPhamCon(workbook.getSheetAt(4));
+				loadComboBoxByLoaiSanPham();
+				loadComBoBoxByTacGia();
+				loadComboBoxByTheLoai();
+				loadComboxBoxByNhaCungCap();
 				JOptionPane.showMessageDialog(null, "Thêm thành công");
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
 			}
 		}
 	}
+
+	private void xulyTrangSanPhamCon(Sheet sheet) throws SQLException {
+		for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+			Row row = sheet.getRow(rowIndex);
+			if (row != null) {
+				SachCon s = new SachCon();
+				s.setIdSanPham(row.getCell(0).getStringCellValue());
+				s.setTenSanPham(row.getCell(1).getStringCellValue());
+				s.setTacGia(new TacGia(row.getCell(2).getStringCellValue()));
+				s.setTheLoai(new TheLoai(row.getCell(3).getStringCellValue()));
+				java.util.Date namXuatBanUtil = row.getCell(4).getDateCellValue();
+				java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
+				s.setNamXuatBan(namXuatBanSql);
+				s.setISBN(row.getCell(5).getStringCellValue());
+				int soTrang = (int) row.getCell(6).getNumericCellValue();
+				s.setSoTrang(soTrang);
+				s.setIdLoaiSanPham(new LoaiSanPham(row.getCell(7).getStringCellValue()));
+				s.setIdNhaCungCap(new NhaCungCap(row.getCell(8).getStringCellValue()));
+				s.setKichThuoc(row.getCell(9).getNumericCellValue());
+				s.setMauSac(row.getCell(10).getStringCellValue());
+				int trangThaiValue = (int) row.getCell(11).getNumericCellValue();
+				TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
+				s.setTrangThai(trangThaiEnum);
+				s.thue();
+				int soLuong = (int) row.getCell(13).getNumericCellValue();
+				s.setSoLuong(soLuong);
+				s.setGiaNhap(row.getCell(14).getNumericCellValue());
+				s.giaBan();
+				s.setGiaKM(row.getCell(16).getNumericCellValue());
+				boolean checkIDLoaiSanPham = daoLoaiSanPham.checkIdLoaiSanPham(s.getIdLoaiSanPham().getIdLoaiSanPham());
+				boolean checkIDNhaCungCap = daoNhaCungCap.checkIdNhaCungCap(s.getIdNhaCungCap().getIdNhaCungCap());
+
+				boolean checkIDTacGia = daoTacGia.checkIdTacGia(s.getTacGia().getIdTacGia());
+
+				boolean checkIDTheLoai = daoTheLoai.checkIdTheLoai(s.getTheLoai().getIdTheLoai());
+
+				if (!checkIDLoaiSanPham || !checkIDNhaCungCap || !checkIDTacGia || !checkIDTheLoai) {
+					JOptionPane.showMessageDialog(this,
+							"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
+					continue;
+				}if (daoSach.checkIdSach(s.getIdSanPham())) {
+					daoSach.capNhatSach(s);
+					lamMoi();
+				} else {
+					boolean result = daoSach.themSach(s);
+					loadData();
+					lamMoi();
+					if (!result) {
+						System.out.println("Không thể thêm sản phẩm: " + s.getIdSanPham());
+					}
+				}
+			}
+		}
+	}
+
+	private void xulyTrangTheLoai(Sheet sheet) {
+		for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+			Row row = sheet.getRow(rowIndex);
+			if (row != null) {
+				TheLoai tl = new TheLoai();
+				tl.setIdTheLoai(row.getCell(0).getStringCellValue());
+				tl.setTenTheLoai(row.getCell(1).getStringCellValue());
+				int soLuong = (int) row.getCell(2).getNumericCellValue();
+				tl.setSoLuongSach(soLuong);
+				tl.setMoTa(row.getCell(3).getStringCellValue());
+				try {
+					if (!daoTheLoai.checkIdTheLoai(tl.getIdTheLoai())) {
+						boolean result = daoTheLoai.themTheLoai(tl);
+						if (!result) {
+							System.out.println("Không thể thêm thể loại: " + tl.getIdTheLoai());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void xulyTrangTacGia(Sheet sheet) {
+		for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+			Row row = sheet.getRow(rowIndex);
+			if (row != null) {
+				TacGia tg = new TacGia();
+				tg.setIdTacGia(row.getCell(0).getStringCellValue());
+				tg.setTenTacGia(row.getCell(1).getStringCellValue());
+				java.util.Date namXuatBanUtil = row.getCell(3).getDateCellValue();
+				java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
+				tg.setNgaySinh(namXuatBanSql);
+				
+				
+//				tg.setNgaySinh(new java.sql.Date(row.getCell(2).getDateCellValue().getTime()));
+				int soLuong = (int) row.getCell(3).getNumericCellValue();
+				tg.setSoLuongTacPham(soLuong);
+				try {
+					if (!daoTacGia.checkIdTacGia(tg.getIdTacGia())) {
+						boolean result = daoTacGia.themTacGia(tg);
+						if (!result) {
+							System.out.println("Không thể thêm tác giả: " + tg.getIdTacGia());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void xulyTrangLoaiSanPham(Sheet sheet) {
+		for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+			Row row = sheet.getRow(rowIndex);
+			if (row != null) {
+				LoaiSanPham lsp = new LoaiSanPham();
+				lsp.setIdLoaiSanPham(row.getCell(0).getStringCellValue());
+				lsp.setTenLoaiSanPham(row.getCell(1).getStringCellValue());
+
+				try {
+					if (!daoLoaiSanPham.checkIdLoaiSanPham(lsp.getIdLoaiSanPham())) {
+						boolean result = daoLoaiSanPham.themLoaiSanPham(lsp);
+						if (!result) {
+							System.out.println("Không thể thêm loại sản phẩm: " + lsp.getIdLoaiSanPham());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private void xulyTrangNhaCungCap(Sheet sheet) {
+		for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+			Row row = sheet.getRow(rowIndex);
+			if (row != null) {
+				NhaCungCap ncc = new NhaCungCap();
+				ncc.setIdNhaCungCap(row.getCell(0).getStringCellValue());
+				ncc.setTenNhaCungCap(row.getCell(1).getStringCellValue());
+				ncc.setDiaChi(row.getCell(2).getStringCellValue());
+				ncc.setSoDienThoai(row.getCell(3).getStringCellValue());
+
+				try {
+					if (!daoNhaCungCap.checkIdNhaCungCap(ncc.getIdNhaCungCap())) {
+						boolean result = daoNhaCungCap.themNhaCungCap(ncc);
+						if (!result) {
+							System.out.println("Không thể thêm nhà cung cấp: " + ncc.getIdNhaCungCap());
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+//	private void themNhieuSach() throws SQLException {
+//		String defaultCurrentDirectoryPath = System.getProperty("user.dir") + "/src/main/resources/DataImports";
+//		JFileChooser exelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+//		exelFileChooser.setDialogTitle("Select Excel file:");
+//		FileNameExtensionFilter fnef = new FileNameExtensionFilter("EXCEL FILES", "xls", "xlsx", "xlsm");
+//		exelFileChooser.setFileFilter(fnef);
+//		int excelChooser = exelFileChooser.showOpenDialog(null);
+//		if (excelChooser == JFileChooser.APPROVE_OPTION) {
+//			File excelFile = exelFileChooser.getSelectedFile();
+//			try (FileInputStream fis = new FileInputStream(excelFile); Workbook workbook = new XSSFWorkbook(fis)) {
+//				Sheet sheet = workbook.getSheetAt(0);
+//				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+//					Row row = sheet.getRow(rowIndex);
+//					if (row != null) {
+//						SachCon s = new SachCon();
+//						s.setIdSanPham(row.getCell(0).getStringCellValue());
+//						s.setTenSanPham(row.getCell(1).getStringCellValue());
+//						s.setTacGia(new TacGia(row.getCell(2).getStringCellValue()));
+//						s.setTheLoai(new TheLoai(row.getCell(3).getStringCellValue()));
+//						java.util.Date namXuatBanUtil = row.getCell(4).getDateCellValue();
+//						java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
+//						s.setNamXuatBan(namXuatBanSql);
+//						s.setISBN(row.getCell(5).getStringCellValue());
+//						int soTrang = (int) row.getCell(6).getNumericCellValue();
+//						s.setSoTrang(soTrang);
+//						s.setIdLoaiSanPham(new LoaiSanPham(row.getCell(7).getStringCellValue()));
+//						s.setIdNhaCungCap(new NhaCungCap(row.getCell(8).getStringCellValue()));
+//						s.setKichThuoc(row.getCell(9).getNumericCellValue());
+//						s.setMauSac(row.getCell(10).getStringCellValue());
+//						int trangThaiValue = (int) row.getCell(11).getNumericCellValue();
+//						TrangThaiSPEnum trangThaiEnum = TrangThaiSPEnum.getById(trangThaiValue);
+//						s.setTrangThai(trangThaiEnum);
+//						s.thue();
+//						int soLuong = (int) row.getCell(13).getNumericCellValue();
+//						s.setSoLuong(soLuong);
+//						s.setGiaNhap(row.getCell(14).getNumericCellValue());
+//						s.giaBan();
+//						s.setGiaKM(row.getCell(16).getNumericCellValue());
+//						boolean checkIDLoaiSanPham = daoLoaiSanPham
+//								.checkIdLoaiSanPham(s.getIdLoaiSanPham().getIdLoaiSanPham());
+//						boolean checkIDNhaCungCap = daoNhaCungCap
+//								.checkIdNhaCungCap(s.getIdNhaCungCap().getIdNhaCungCap());
+//						boolean checkIDTacGia = daoTacGia.checkIdTacGia(s.getTacGia().getIdTacGia());
+//						boolean checkIDTheLoai = daoTheLoai.checkIdTheLoai(s.getTheLoai().getIdTheLoai());
+//						if (!checkIDLoaiSanPham || !checkIDNhaCungCap || !checkIDTacGia || !checkIDTheLoai) {
+//							JOptionPane.showMessageDialog(this,
+//									"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
+//							continue;
+//						}
+//						if (daoSach.checkIdSach(s.getIdSanPham())) {
+//							daoSach.capNhatSach(s);
+//							lamMoi();
+//						} else {
+//							boolean result = daoSach.themSach(s);
+//							loadData();
+//							lamMoi();
+//							if (!result) {
+//								System.out.println("Không thể thêm sản phẩm: " + s.getIdSanPham());
+//							}
+//						}
+//					}
+//				}
+//				JOptionPane.showMessageDialog(null, "Thêm thành công");
+//			} catch (IOException e) {
+//				JOptionPane.showMessageDialog(null, e.getMessage());
+//			}
+//		}
+//	}
 
 	private Double parseDoubleWithMultiplePoints(String input) {
 		String cleanedInput = input.replaceAll("[^\\d.]", "");
@@ -710,10 +893,10 @@ public class QuanLySachView extends JPanel
 			String mauSac = (String) model.getValueAt(i, 10);
 			String trangThaiStr = (String) model.getValueAt(i, 11);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
-			String thueStr = ((String) model.getValueAt(i, 12)).replaceAll("\\D+","");
+			String thueStr = ((String) model.getValueAt(i, 12)).replaceAll("\\D+", "");
 			Double thue = parseDoubleWithMultiplePoints(thueStr);
 			int soLuong = (int) model.getValueAt(i, 13);
-			String giaNhapStr = ((String) model.getValueAt(i, 14)).replaceAll("\\D+","");
+			String giaNhapStr = ((String) model.getValueAt(i, 14)).replaceAll("\\D+", "");
 			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
 			SachCon s = new SachCon();
 			s.setIdSanPham(idSanPham);
@@ -1273,12 +1456,12 @@ public class QuanLySachView extends JPanel
 
 			chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
 
-	        String giaNhapStr = model.getValueAt(row, 14).toString().replaceAll("\\D+","");
-	        String giaBanStr = model.getValueAt(row, 15).toString().replaceAll("\\D+","");
+			String giaNhapStr = model.getValueAt(row, 14).toString().replaceAll("\\D+", "");
+			String giaBanStr = model.getValueAt(row, 15).toString().replaceAll("\\D+", "");
 
-	        txtGiaNhap.setText(giaNhapStr);
-	        txtGiaBan.setText(giaBanStr);
-			
+			txtGiaNhap.setText(giaNhapStr);
+			txtGiaBan.setText(giaBanStr);
+
 			txtSoLuong.setText(model.getValueAt(row, 13).toString());
 		}
 
@@ -1439,7 +1622,8 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan)});
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong,
+							currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
@@ -1475,7 +1659,8 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong,
+							currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
@@ -1511,7 +1696,8 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong,
+							currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
@@ -1547,7 +1733,8 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong,
+							currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
