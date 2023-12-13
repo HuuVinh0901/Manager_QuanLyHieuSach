@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Currency;
 
@@ -676,7 +677,8 @@ public class QuanLySachView extends JPanel
 					JOptionPane.showMessageDialog(this,
 							"Không thể thêm sản phẩm: Một hoặc nhiều khóa phụ không tồn tại hoặc không hợp lệ.");
 					continue;
-				}if (daoSach.checkIdSach(s.getIdSanPham())) {
+				}
+				if (daoSach.checkIdSach(s.getIdSanPham())) {
 					daoSach.capNhatSach(s);
 					lamMoi();
 				} else {
@@ -725,8 +727,7 @@ public class QuanLySachView extends JPanel
 				java.util.Date namXuatBanUtil = row.getCell(3).getDateCellValue();
 				java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
 				tg.setNgaySinh(namXuatBanSql);
-				
-				
+
 //				tg.setNgaySinh(new java.sql.Date(row.getCell(2).getDateCellValue().getTime()));
 				int soLuong = (int) row.getCell(3).getNumericCellValue();
 				tg.setSoLuongTacPham(soLuong);
@@ -882,7 +883,12 @@ public class QuanLySachView extends JPanel
 			String tacGia = (String) model.getValueAt(i, 2);
 			String theLoai = (String) model.getValueAt(i, 3);
 
-			java.sql.Date date = (java.sql.Date) model.getValueAt(i, 4);
+//			java.util.Date namXuatBanUtil = model.getValueAt(i, 4);
+//			java.sql.Date namXuatBanSql = new java.sql.Date(namXuatBanUtil.getTime());
+//			java.sql.Date date = (java.sql.Date) model.getValueAt(i, 4);
+
+			String dateString = (String) model.getValueAt(i, 4);
+			java.sql.Date date = convertStringToSqlDate(dateString);
 
 			String isbn = (String) model.getValueAt(i, 5);
 			int soTrang = (int) model.getValueAt(i, 6);
@@ -913,6 +919,7 @@ public class QuanLySachView extends JPanel
 			}
 
 			s.setNamXuatBan(date);
+
 			s.setISBN(isbn);
 
 			s.setSoTrang(soTrang);
@@ -1012,14 +1019,21 @@ public class QuanLySachView extends JPanel
 
 	}
 
-	private Date convertStringToDate(String dateString) {
-		try {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			return dateFormat.parse(dateString);
-		} catch (ParseException e) {
-			e.printStackTrace(); // Handle the exception appropriately
-			return null;
-		}
+	private java.sql.Date convertStringToSqlDate(String dateString) {
+	    try {
+	        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+	        java.util.Date utilDate = format.parse(dateString);
+	        return new java.sql.Date(utilDate.getTime());
+	    } catch (ParseException e) {
+	        try {
+	            int excelDateValue = Integer.parseInt(dateString);
+	            LocalDate date = LocalDate.of(1900, 1, 1).plusDays(excelDateValue - 2);
+	            return java.sql.Date.valueOf(date);
+	        } catch (NumberFormatException nfe) {
+	            nfe.printStackTrace();
+	            return null;
+	        }
+	    }
 	}
 
 	private void xoaSP() {

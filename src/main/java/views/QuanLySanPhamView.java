@@ -595,7 +595,6 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
 
 		for (int i = 0; i < rowCount; i++) {
-
 			String idSanPham = (String) modelSP.getValueAt(i, 0);
 			String tenSanPham = (String) modelSP.getValueAt(i, 1);
 			String loaiSanPham = (String) modelSP.getValueAt(i, 2);
