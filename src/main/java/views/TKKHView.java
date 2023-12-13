@@ -165,7 +165,8 @@ public class TKKHView extends JPanel implements ActionListener, ItemListener {
 		// nút khách hàng thân thiết
 		btnKHThanThiet = new JButton("Khách hàng Thân thiết");
 		pnDayRight.add(btnKHThanThiet);
-		
+		JLabel lbThongBao=new JLabel("(*) Có từ 3 lần mua trở lên");
+		pnDayRight.add(lbThongBao);
 		pnDay.add(pnDayLeft);
 		pnDay.add(pnDayRight);
 		

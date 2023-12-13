@@ -78,7 +78,6 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 	private JLabel lbNgaySinh;
 	private JLabel lbGioiTinh;
 	private JLabel lbID;
-
 	private JLabel lbTimKiem;
 	private JRadioButton rbNam;
 	private JRadioButton rbNu;
@@ -255,30 +254,32 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 		return sb.toString();
 	}
 
-	public void ThemNV() throws SQLException {
+private void ThemNV() throws SQLException {
+		
 		String id = autoID();
 		String ten = txtTenNV.getText();
-		String email = txtEmail.getText();
-		String sdt = txtsdt.getText();
-		String diaChi = txtDiaChi.getText();
+		String email= txtEmail.getText();
+		String sdt=txtsdt.getText();
+		String diaChi=txtDiaChi.getText();
 		java.util.Date date = chooserNgaySinh.getDate();
 		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
-		Boolean GioiTinh = rbNam.isSelected();
-		String TrangThai = (String) cbTrangThai.getSelectedItem().toString();
-		Boolean TrangThaibooleanValue = Boolean.parseBoolean(TrangThai);
-		String chucVu = cbChucVu.getSelectedItem().toString();
+		Boolean GioiTinh=rbNam.isSelected();
+		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
+		Boolean trangThai=null;
+		if(trangThaiValue.equals("Đang làm việc")) {
+			trangThai=true;
+		}
+		if(trangThaiValue.equals("Đã nghỉ việc")) {
+			trangThai=false;
+		}
+		String chucVu=cbChucVu.getSelectedItem().toString();
 		Date ngayLap = new Date(System.currentTimeMillis());
-		String matkhau = "1111";
-
-		// String hashedPasswordSHA3_256 = hashWithSHA3_256(matkhau);
-		//
-		// BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
-		// String hashedPasswordBCrypt = passwordEncoder.encode(hashedPasswordSHA3_256);
+		String matkhau="1111";
+		QuanLy nv = new QuanLy();
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 		String hasdPassword = passwordEncoder.encode(matkhau);
-		TaiKhoan tk = new TaiKhoan(id, hasdPassword, ngayLap);
+		TaiKhoan tk=new TaiKhoan(id,hasdPassword,ngayLap);
 		System.out.println(hasdPassword);
-		QuanLy nv = new QuanLy();
 		nv.setId(id);
 		nv.setTen(ten);
 		nv.setChucVu(chucVu);
@@ -286,15 +287,14 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 		nv.setNgaySinh(ngaySinh);
 		nv.setDiaChi(diaChi);
 		nv.setEmail(email);
-		nv.setTrangThai(TrangThaibooleanValue);
+		nv.setTrangThai(trangThai);
 		nv.setSoDienThoai(sdt);
-
-		daoTaiKhoan.createTK(tk);
-		daoQuanLy.themQuanLy(nv);
-		modelNhanVien.addRow(new Object[] { id, ten, sdt, diaChi, email, dfNgaySinh.format(nv.getNgaySinh()),
-				nv.isGioiTinh() ? "Nam" : "Nữ", chucVu, TrangThai });
+		if(valiDate()) {
+			daoTaiKhoan.createTK(tk);
+			daoQuanLy.themQuanLy(nv);
+			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,trangThaiValue });
+		}
 	}
-
 	private void loadData() {
 		modelNhanVien.setRowCount(0);
 		for (QuanLy nv : daoQuanLy.getAllDanhSachNV()) {
@@ -523,7 +523,7 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 			xoaNV();
 		}
 		if (o.equals(btnCapNhatNV)) {
-//			 CapNhatNV();
+			 CapNhatNV();
 		}
 
 	}
@@ -602,7 +602,6 @@ public class QuanLyView extends JPanel implements KeyListener, MouseListener, Ac
 				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
 			} else if (e.getKeyCode() == KeyEvent.VK_F5) {
 				lamMoi();
-//				loadData();
 			}
 		});
 	}

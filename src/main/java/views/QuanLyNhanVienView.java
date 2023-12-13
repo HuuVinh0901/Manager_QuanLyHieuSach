@@ -301,7 +301,6 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 	private void handleTimKiemNV(String cond) {
 		if (!cond.equals("")) {
 			for (NhanVien nv : daoNhanVien.getNVTimKiem(cond)) {
-				String ngaySinh = new SimpleDateFormat("dd/MM/yyyy").format(nv.getNgaySinh());
 				modelNhanVien.addRow(new Object[] { nv.getId(), nv.getTen(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
 				});
 			}

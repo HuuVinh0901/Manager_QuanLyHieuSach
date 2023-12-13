@@ -229,7 +229,7 @@ public class TrangChuQuanTriView extends JFrame {
 
 		
 
-		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,subThongKeSach,
+		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê", null, subThongKeDoanhThu, subThongKeSanPham,subThongKeSach,
 				subThongKeKhachHang);
 		
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
