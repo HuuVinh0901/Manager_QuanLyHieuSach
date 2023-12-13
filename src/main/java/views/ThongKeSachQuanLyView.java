@@ -279,6 +279,7 @@ public class ThongKeSachQuanLyView extends JPanel implements ActionListener, Ite
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					loadDataSanPhamTheoNgay(startDate, endDate);
+					loadSanPhamTheoTuyChinh();
 				}
 			}
 		} else if (o.equals(btnThongKe)) {
@@ -491,6 +492,7 @@ public class ThongKeSachQuanLyView extends JPanel implements ActionListener, Ite
 				lblTongLN.setText("TỔNG LỢI NHUẬN: " + currencyFormat.format(tongLoiNhuan));
 				lblTongLoiNhuan.setText("TỔNG SỐ LƯỢNG ĐÃ BÁN : " + Math.round(soLuongDaBan));
 				lblTongDoanhThu.setText("TỔNG SỐ LƯỢNG TỒN : " + Math.round(soLuongTon));
+				System.out.println("tuy chinh thanh cong");
 			}
 		}
 	}
