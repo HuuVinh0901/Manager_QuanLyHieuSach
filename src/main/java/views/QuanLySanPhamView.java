@@ -385,7 +385,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	            xulyTrangNhaCungCap(workbook.getSheetAt(0));
 	            xulyTrangLoaiSanPham(workbook.getSheetAt(1));
 	            xulyTrangSanPhamCon(workbook.getSheetAt(2));
-
+	            loadComboxBoxLoaiSanPham();
+	            loadComboxBoxNhaCungCap();
 	            JOptionPane.showMessageDialog(null, "Thêm thành công");
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(null, e.getMessage());
