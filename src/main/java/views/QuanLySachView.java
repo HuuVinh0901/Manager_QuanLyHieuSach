@@ -626,6 +626,10 @@ public class QuanLySachView extends JPanel
 				xulyTrangNhaCungCap(workbook.getSheetAt(2));
 				xulyTrangLoaiSanPham(workbook.getSheetAt(3));
 				xulyTrangSanPhamCon(workbook.getSheetAt(4));
+				loadComboBoxByLoaiSanPham();
+				loadComBoBoxByTacGia();
+				loadComboBoxByTheLoai();
+				loadComboxBoxByNhaCungCap();
 				JOptionPane.showMessageDialog(null, "Thêm thành công");
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
