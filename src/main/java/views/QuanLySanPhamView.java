@@ -107,8 +107,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		setLayout(new BorderLayout(8, 6));
 		tabbedPane = new JTabbedPane();
 		// tab sách
-		sachPanel = new QuanLySachView();
-//		JPanel sachPanel = new JPanel();
+		sachPanel = new QuanLySachView();;
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
 		sanPhamPanel.setLayout(new BorderLayout());

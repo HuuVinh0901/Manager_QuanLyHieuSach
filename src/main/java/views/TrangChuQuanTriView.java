@@ -81,12 +81,10 @@ public class TrangChuQuanTriView extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				int result = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn đóng cửa sổ?",
+				int result = JOptionPane.showConfirmDialog(TrangChuQuanTriView.this, "Bạn có chắc chắn muốn đóng cửa sổ?",
 						"Xác nhận đóng cửa sổ", JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
-					e.getWindow().dispose();
-				} else if (result == JOptionPane.NO_OPTION) {
-
+					dispose();
 				}
 			}
 		});
@@ -220,23 +218,20 @@ public class TrangChuQuanTriView extends JFrame {
 				switchToPanel(new ThongKeSachQuanLyView());
 			}
 		});
-		MenuItem subThongKeNhanVien = new MenuItem(iconSubMenu, "Thống kê nhân viên", new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-			}
-		});
+		
 		MenuItem subThongKeKhachHang = new MenuItem(iconSubMenu, "Thống kê khách hàng", new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				switchToPanel(new TKKHView());
 			}
 		});
+
+		
+
 		MenuItem ThongKe = new MenuItem(iconTK, "Thống kê doanh thu", null, subThongKeDoanhThu, subThongKeSanPham,subThongKeSach,
-				subThongKeKhachHang, subThongKeNhanVien);
-		MenuItem subCaiDatTT = new MenuItem(iconSubMenu, "Thông tin", null);
+				subThongKeKhachHang);
+		
 		MenuItem subGiaoDien = new MenuItem(iconSubMenu, "Giao diện", new ActionListener() {
 
 			@Override

@@ -49,6 +49,8 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -270,7 +272,24 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		txtDiaChi.addKeyListener(this);
 		txtEmail.addKeyListener(this);
 		txtsdt.addKeyListener(this);
-		
+		txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            	modelNhanVien.setRowCount(0);
+            	handleTimKiemNV(txtTimKiem.getText().trim());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	modelNhanVien.setRowCount(0);
+            	handleTimKiemNV(txtTimKiem.getText().trim());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	
+            }
+        });
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -278,6 +297,17 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			e.printStackTrace();
 		}
 		loadData();
+	}
+	private void handleTimKiemNV(String cond) {
+		if (!cond.equals("")) {
+			for (NhanVien nv : daoNhanVien.getNVTimKiem(cond)) {
+				String ngaySinh = new SimpleDateFormat("dd/MM/yyyy").format(nv.getNgaySinh());
+				modelNhanVien.addRow(new Object[] { nv.getId(), nv.getTen(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
+				});
+			}
+		} else {
+			loadData();
+		}
 	}
 	private void ThemNV() throws SQLException {
 		
@@ -289,8 +319,14 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		java.util.Date date = chooserNgaySinh.getDate();
 		Date ngaySinh = new Date(date.getYear(), date.getMonth(), date.getDate());
 		Boolean GioiTinh=rbNam.isSelected();
-		String TrangThai=(String)cbTrangThai.getSelectedItem().toString();
-		Boolean TrangThaibooleanValue = Boolean.parseBoolean(TrangThai);
+		String trangThaiValue=cbTrangThai.getSelectedItem().toString();
+		Boolean trangThai=null;
+		if(trangThaiValue.equals("Đang làm việc")) {
+			trangThai=true;
+		}
+		if(trangThaiValue.equals("Đã nghỉ việc")) {
+			trangThai=false;
+		}
 		String chucVu=cbChucVu.getSelectedItem().toString();
 		Date ngayLap = new Date(System.currentTimeMillis());
 		String matkhau="1111";
@@ -306,12 +342,12 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		nv.setNgaySinh(ngaySinh);
 		nv.setDiaChi(diaChi);
 		nv.setEmail(email);
-		nv.setTrangThai(TrangThaibooleanValue);
+		nv.setTrangThai(trangThai);
 		nv.setSoDienThoai(sdt);
 		if(valiDate()) {
 			daoTK.createTK(tk);
 			daoNhanVien.themNhanVien(nv);
-			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,TrangThai });
+			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,trangThaiValue });
 		}
 	}
 	private void loadData() {
@@ -584,7 +620,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			 CapNhatNV();
 		 }
 		 if(o.equals(btnXemTatCa)) {
-			 loadData();
+			 txtTimKiem.setText("");
 		 }
 		 if(o.equals(btnXuatExecl)) {
 			 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
@@ -677,13 +713,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(() -> {
 			Object o = e.getSource();
-			if (o.equals(txtTimKiem)) {
-				DefaultTableModel model = (DefaultTableModel) tableNhanVien.getModel();
-				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
-				tableNhanVien.setRowSorter(tr);
-				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1));
-			} 
-			else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) {
 				lamMoi();
 				loadData();
 			}

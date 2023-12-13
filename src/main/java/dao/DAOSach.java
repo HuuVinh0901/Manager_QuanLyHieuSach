@@ -30,7 +30,6 @@ public class DAOSach implements Serializable {
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {
 			pst.setInt(1, sl);
 			pst.setString(2, idSP);
-			System.out.println(sql);
 			int n = pst.executeUpdate();
 			return n > 0;
 		} catch (SQLException e) {
@@ -640,9 +639,6 @@ public class DAOSach implements Serializable {
 			int n = pst.executeUpdate();
 			return n > 0;
 		} catch (SQLException e) {
-			System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
-			System.out.println("Error Code                       : " + e.getErrorCode());
-			System.out.println("Error Message                    : " + e.getMessage());
 			return false;
 		}
 	}
@@ -653,9 +649,7 @@ public class DAOSach implements Serializable {
 			pst.setString(1, idSach);
 			pst.executeUpdate();
 		} catch (SQLException e) {
-			System.out.println("SQL Exception catched, SQL State : " + e.getSQLState());
-			System.out.println("Error Code                       : " + e.getErrorCode());
-			System.out.println("Error Message                    : " + e.getMessage());
+			
 		}
 	}
 

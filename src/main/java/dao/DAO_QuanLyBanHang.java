@@ -227,7 +227,6 @@ public class DAO_QuanLyBanHang {
 			return false;
 		}
 	}
-
 	public ArrayList<HoaDon> getHoaDonTheoNgay(String dayStart, String dayEnd) {
 		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
 		ConnectDB.getinstance();
@@ -257,6 +256,7 @@ public class DAO_QuanLyBanHang {
 
 		return dsHoaDon;
 	}
+
 
 	public ArrayList<ChiTietHoaDon> getChiTietHoaDonSachTheoId(String idHoaDon) {
 		ArrayList<ChiTietHoaDon> dsCTHDSach = new ArrayList<ChiTietHoaDon>();
@@ -390,7 +390,33 @@ public class DAO_QuanLyBanHang {
 
 		return hd;
 	}
+	public ArrayList<HoaDon> getHoaDonTheoNV(String idNV) {
+		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT * FROM HoaDon WHERE nhanVien = ?";
+			statement = con.prepareStatement(sql);
+			statement.setString(1, idNV);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				HoaDon hd=new HoaDon();
+				hd.setIdDonHang(rs.getString(1));
+				hd.setNgayLap(rs.getDate(2));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
+				hd.setTienKhachDua(rs.getDouble(5));
+				hd.setTongTien(rs.getDouble(6));
+				hd.setTongLoiNhuan(rs.getDouble(7));
+				dsHoaDon.add(hd);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		return dsHoaDon;
+	}
 	public ArrayList<HoaDon> getHoaDonTimKiem(String cond) {
 		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
 		ConnectDB.getinstance();
@@ -651,5 +677,6 @@ public class DAO_QuanLyBanHang {
 		}
 		return soLuong;
 	}
+
 
 }

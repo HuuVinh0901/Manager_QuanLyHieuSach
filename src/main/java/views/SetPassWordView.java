@@ -102,7 +102,8 @@ public class SetPassWordView extends Dialog implements ActionListener, MouseList
 
 		txtTenDangNhap.setText(nv.getId());
 		txtTenNhanVien.setText(nv.getTen());
-//		txtMaXacNhan.setText(nv.getSoDienThoai());
+		txtTenDangNhap.setEditable(false);
+		txtTenNhanVien.setEditable(false);
 
 		btnGuiLaiMa = new JButton("Hủy bỏ");
 		btnXacNhan = new JButton("Xác nhận");

@@ -237,4 +237,116 @@ public class DAOKhachHang {
 		}
 		return lstNV;
 	}
+	public ArrayList<KhachHang> getKhachHangThanThiet(int soLuongHoaDonToiThieu) {
+        ArrayList<KhachHang> dsKhachHang = new ArrayList<>();
+
+        try {
+            String query = "SELECT * FROM KhachHang WHERE idKhachHang IN " +
+                           "(SELECT khachHang FROM HoaDon GROUP BY khachHang HAVING COUNT(*) >= ?)";
+            
+            Connection conn = ConnectDB.getConnection();
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, soLuongHoaDonToiThieu);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                KhachHang khachHang = new KhachHang();
+                khachHang.setIdKhachHang(resultSet.getString("idKhachHang"));
+                khachHang.setTenKhachHang(resultSet.getString("tenKhachHang"));
+                khachHang.setSdt(resultSet.getString("soDienThoai"));
+                khachHang.setEmail(resultSet.getString("email"));
+                khachHang.setDiaChi(resultSet.getString("diaChi"));
+                khachHang.setNgaySinh(resultSet.getDate("ngaySinh"));
+                khachHang.setGioiTinh(resultSet.getBoolean("gioiTinh"));
+                dsKhachHang.add(khachHang);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return dsKhachHang;
+    }
+	
+	public int getSoLuongHoaDon(String maKH) {
+        int soLuongHoaDon = 0;
+
+        try {
+            String query = "SELECT COUNT(*) FROM HoaDon WHERE khachHang = ?";
+            Connection conn = ConnectDB.getConnection();
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, maKH);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                soLuongHoaDon = resultSet.getInt(1);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return soLuongHoaDon;
+    }
+	
+	public int getSoLuongKhachHangTheoThangNam(String thang, String nam) {
+        int soLuongKhachHang = 0;
+
+        try {
+            String query = "SELECT COUNT(DISTINCT khachHang) " +
+                           "FROM HoaDon " +
+                           "WHERE MONTH(ngayLap) = ? AND YEAR(ngayLap) = ?";
+            Connection conn = ConnectDB.getConnection();
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, thang);
+            statement.setString(2, nam);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                soLuongKhachHang = resultSet.getInt(1);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return soLuongKhachHang;
+    }
+	
+	public int getSoLuongKhachHangTheoNgayThangNam(String ngay, String thang, String nam) {
+	    int soLuongKhachHang = 0;
+	    ConnectDB.getinstance();
+	    Connection con = ConnectDB.getConnection();
+	    PreparedStatement statement = null;
+
+	    try {
+	        String sql = "SELECT COUNT(DISTINCT khachHang) AS total " +
+	                     "FROM HoaDon " +
+	                     "WHERE DAY(ngayLap) = ? AND MONTH(ngayLap) = ? AND YEAR(ngayLap) = ? " +
+	                     "GROUP BY DAY(ngayLap), MONTH(ngayLap), YEAR(ngayLap)";
+
+	        statement = con.prepareStatement(sql);
+	        statement.setString(1, ngay);
+	        statement.setString(2, thang);
+	        statement.setString(3, nam);
+
+	        ResultSet rs = statement.executeQuery();
+	        while (rs.next()) {
+	            soLuongKhachHang = rs.getInt("total");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return soLuongKhachHang;
+	}
 }

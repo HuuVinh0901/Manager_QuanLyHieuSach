@@ -2,6 +2,7 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -17,9 +18,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
@@ -30,6 +38,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -51,6 +60,18 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+ 
 import connection.ConnectDB;
 import dao.DAOKhachHang;
 import dao.DAOQuanLySanPham;
@@ -118,6 +139,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	private DefaultTableModel modelGioHang;
 	private DefaultTableModel modelHangCho;
 	private DAOKhachHang daoKhachHang;
+	private DAO_QuanLyBanHang daoBanHang;
 	private DAOQuanLySanPham daoQLSP;
 	private DAOSach daoSach;
 	private DAO_QuanLyBanHang daoQLBH;
@@ -133,10 +155,10 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
     private JTable tblMaSp;
     private DefaultTableModel modelMaSP;
     private JFrame frameThongBao;
-    private NhanLuc nvLogIn;
+    private NhanVien nvLogIn;
 
 	
-	public QuanLyBanHangView(NhanLuc nv) {
+	public QuanLyBanHangView(NhanVien nv) {
 		nvLogIn = nv;
 		// Xóa logo Eclipse ở phía trên hộp thoại
         UIManager.put("OptionPane.windowIcons", new ImageIcon[0]);
@@ -181,6 +203,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		JPanel pnLamThanhToan = new JPanel();
 		JPanel pnTimKiemKH = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		daoKhachHang = new DAOKhachHang();
+		daoBanHang=new DAO_QuanLyBanHang();
 		daoQLSP = new DAOQuanLySanPham();
 		daoSach = new DAOSach();
 		daoQLBH = new DAO_QuanLyBanHang();
@@ -862,7 +885,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	
 	
 	
-	private void handLeThanhToan() {
+	private void handLeThanhToan() throws DocumentException {
 		if (!txtMaKH.getText().equals("")) {
 			if (modelGioHang.getRowCount() >= 0) {
 				
@@ -894,6 +917,9 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
              	    return;
             	} 
 				luuHoaDonVaCTHD();
+				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	            String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/HoaDonPDF/HD_"+timeStamp+".pdf" ;
+				exportToPdf(filePath);
 				lamMoiGioHang();
 				handleLamMoiHoaDon();
 				txtTienKhachDua.setText("");
@@ -904,6 +930,7 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 			JOptionPane.showMessageDialog(this, "Chưa thể thanh toán được vì chưa chọn khách hàng");
 			showDialogKhachHang();
 		}
+		
 	}
 	
 	private void luuHoaDonVaCTHD() {
@@ -1806,12 +1833,135 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		dialogSanPham.setVisible(true);
 	}
 	
-	
+	private void exportToPdf(String filePath) throws DocumentException {
+		OutputStream file = null;
+        try {
+            file = new FileOutputStream(filePath);
+            // Create a new Document object
+            Document document = new Document();
+ 
+            // You need PdfWriter to generate PDF document
+            PdfWriter.getInstance(document, file);
+ 
+            // Opening document for writing PDF
+            document.open();
+            String idKH= txtMaKH.getText();
+            KhachHang kh=daoKhachHang.getKhachHang(idKH);
+            String idHD=txtMaHD.getText();
+            HoaDon hd = daoBanHang.getHoaDonTheoID(idHD);
+            LocalDateTime now = LocalDateTime.now();
+    		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    		String dateTimeString = now.format(formatter);
+            // Writing content
+            String filePath2 = System.getProperty("user.dir") + "/src/main/resources/database/vuArial.ttf";
+            BaseFont bf = BaseFont.createFont(filePath2, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Paragraph tieuDe=new Paragraph("HÓA ĐƠN",new com.itextpdf.text.Font(bf,30,1,BaseColor.BLUE));
+            Paragraph tenKH=new Paragraph("Tên khách hàng : "+kh.getTenKhachHang().toString(),new com.itextpdf.text.Font(bf,15));
+            Paragraph idKH2=new Paragraph("ID khách hàng   : "+kh.getIdKhachHang().toString(),new com.itextpdf.text.Font(bf,15));
+            Paragraph idHD2=new Paragraph("ID hóa đơn      : "+txtMaHD.getText().toString(),new com.itextpdf.text.Font(bf,15,Font.BOLD));
+            String ngay = new SimpleDateFormat("dd").format(new Date());
+            String thang = new SimpleDateFormat("MM").format(new Date());
+            String nam = new SimpleDateFormat("yyyy").format(new Date());
+            Paragraph DateTime=new Paragraph("Ngày "+ngay+" tháng "+thang+" năm "+nam,new com.itextpdf.text.Font(bf,15,Font.ITALIC));
+            tieuDe.setAlignment(Element.ALIGN_CENTER);
+            DateTime.setAlignment(Element.ALIGN_RIGHT);
+            document.add(tieuDe);
+            document.add(DateTime);
+            document.add(idHD2);
+            document.add(tenKH);
+            document.add(idKH2);
+            document.add(new Paragraph("SDT khách hàng: "+kh.getSdt(),new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("Tên nhân viên    : "+nvLogIn.getTen().toString(),new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("ID nhân viên      : "+nvLogIn.getId(),new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("Ngày lập            : "+dateTimeString,new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph(" "));
+                   // Add meta data information to PDF file
+           
+            PdfPTable table = new PdfPTable(6);
+        	//Khởi tạo ô header
+            PdfPCell header1 = new PdfPCell(new Paragraph("ID sản phẩm",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header2 = new PdfPCell(new Paragraph("Tên sản phẩm",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header3 = new PdfPCell(new Paragraph("Số lượng",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header4 = new PdfPCell(new Paragraph("Thành tiền",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header5 = new PdfPCell(new Paragraph("Giá bán",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header6 = new PdfPCell(new Paragraph("Khuyến mãi",new com.itextpdf.text.Font(bf,12)));
+        	//Thêm 4 ô header vào table
+            table.addCell(header1);
+            table.addCell(header2);
+            table.addCell(header5);
+            table.addCell(header6);
+            table.addCell(header3);
+            table.addCell(header4);
+            
+
+        	for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSachTheoId(idHD)) {
+    			String idSP = cthd.getSanPham().getIdSanPham();
+    			SachCon s = daoSach.getSach(idSP);
+    			String tenSP = s.getTenSanPham();
+    			String soLuong = String.valueOf(cthd.getSoLuong());
+    			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			String giaBan = currencyFormat.format(s.giaBan());
+    			String giaKM = currencyFormat.format(s.getGiaKM());
+    			 table.addCell(new PdfPCell(new Paragraph(idSP)));
+    			 table.addCell(new PdfPCell(new Paragraph(tenSP,new com.itextpdf.text.Font(bf,12))));
+    			 table.addCell(new PdfPCell(new Paragraph(giaBan)));
+ 	   			 table.addCell(new PdfPCell(new Paragraph("- "+giaKM)));
+    			 table.addCell(new PdfPCell(new Paragraph(soLuong)));
+    			 table.addCell(new PdfPCell(new Paragraph(thanhTien)));
+    		}
+    		for (ChiTietHoaDon cthd : daoBanHang.getChiTietHoaDonSanPhamTheoId(idHD)) {
+    			String idSP = cthd.getSanPham().getIdSanPham();
+    			SanPhamCha sp = daoQLSP.getSanPham(idSP);
+    			String tenSP = sp.getTenSanPham();
+    			String soLuong = String.valueOf(cthd.getSoLuong());
+    			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			String giaBan = currencyFormat.format(sp.giaBan());
+    			String giaKM = currencyFormat.format(sp.getGiaKM());
+    			table.addCell(new PdfPCell(new Paragraph(idSP)));
+	   			table.addCell(new PdfPCell(new Paragraph(tenSP,new com.itextpdf.text.Font(bf,12))));
+	   			table.addCell(new PdfPCell(new Paragraph(giaBan)));
+	   			table.addCell(new PdfPCell(new Paragraph("- "+giaKM)));
+	   			table.addCell(new PdfPCell(new Paragraph(soLuong)));
+	   			table.addCell(new PdfPCell(new Paragraph(thanhTien)));
+    		}
+            document.add(table);
+            String StrtienKhachDua=currencyFormat.format(hd.getTienKhachDua());
+           
+            Paragraph tongTien=new Paragraph("TỔNG TIỀN : "+txtTongTienHoaDon.getText().toString(),new com.itextpdf.text.Font(bf, 25, 1, BaseColor.RED));
+            Paragraph tienKhachDua=new Paragraph("Tiền khách đưa  : "+StrtienKhachDua,new com.itextpdf.text.Font(bf, 20));
+            Paragraph tienTraKhach=new Paragraph("Tiền trả khách    : "+txtTienTraKhach.getText().toString(),new com.itextpdf.text.Font(bf, 20));
+            Paragraph tienGioHang=new Paragraph("Tổng thành tiền  : "+txtTongTienGioHang.getText().toString(),new com.itextpdf.text.Font(bf, 20,Font.BOLD));
+            Paragraph thue=new Paragraph("Thuế VAT (10%): "+txtThue.getText().toString(),new com.itextpdf.text.Font(bf, 20));
+            document.add(tienGioHang);
+            document.add(thue);
+            document.add(tongTien);
+            document.add(tienKhachDua);
+            document.add(tienTraKhach);
+            // close the document
+            document.close();
+            Desktop.getDesktop().open(new java.io.File(filePath));
+ 
+        } catch (Exception e) {
+            e.printStackTrace();
+ 
+        } finally {
+ 
+            // closing FileOutputStream
+            try {
+                if (file != null) {
+                    file.close();
+                }
+            } catch (IOException io) {/*Failed to close*/
+ 
+            }
+ 
+        }
+    }
 	private void phatSinhMaHD() {
 		String currentDate = new SimpleDateFormat("yyMMddHHmmss").format(new java.util.Date());
 		txtMaHD.setText("HD" + currentDate);
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int rowSP = tblSanPham.getSelectedRow();
@@ -1890,7 +2040,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		} else if (o.equals(btnXemTatCaKhachHang)) {
 			lamMoiKhachHang();
 		} else if (o.equals(btnThanhToan)) {
-			handLeThanhToan();
+			try {
+				handLeThanhToan();
+			} catch (DocumentException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
   		} else if (o.equals(btnLuuHoaDon)) {
   			handleLuuHoaDonChoVaCTHDC();
 		} else if (o.equals(btnXoaHangCho)) {
