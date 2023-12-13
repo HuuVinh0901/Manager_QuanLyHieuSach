@@ -106,7 +106,9 @@ public class DangNhapView extends JFrame implements ActionListener, MouseListene
 		b2.add(txtTaiKhoan = new JTextField());
 		txtTaiKhoan.setPreferredSize(new Dimension(0, 30));
 		txtTaiKhoan.setToolTipText("Nhập tài khoản");
+
 		txtTaiKhoan.setText("QL202312030001");
+
 		b2.add(Box.createRigidArea(new Dimension(40, 0)));
 		b.add(Box.createVerticalStrut(10));
 

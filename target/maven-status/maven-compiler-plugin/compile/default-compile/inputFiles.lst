@@ -7,6 +7,7 @@ D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAONhanVien.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\DangNhapView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\connection\ConnectDB.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\TaiKhoan.java
+D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAONhanLuc.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\HoaDon.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAO_QuanLyBanHang.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\KhuyenMai.java
@@ -24,7 +25,9 @@ D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\QuanLy.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOQuanLy.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\DanhSachGioHang.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOSach.java
+D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\ChiTietHoaDonCho.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\SanPhamKhuyenMai.java
+D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\ForgotPassWordView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\LoaiSanPhamView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\SachKhuyenMai.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\SanPhamCha.java
@@ -39,6 +42,7 @@ D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOSetPassWord.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\LoaiSanPham.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\utils\hi.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\HomeView.java
+D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\SetPassWordQuanLyView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOKhuyenMai.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOTaiKhoan.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\NhanLuc.java
@@ -46,6 +50,7 @@ D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\utils\LoaiKMEnum.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\ThongKeDoanhThuView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\QuanLyNhanVienView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\controllers\MenuItem.java
+D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\models\HoaDonCho.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\dao\DAOQuanLySanPham.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\QuanLySanPhamView.java
 D:\PTUD_APP\Manager_QuanLyHieuSach\src\main\java\views\ThongKeDoanhThuNhanVienView.java

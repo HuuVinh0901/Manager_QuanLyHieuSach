@@ -10,16 +10,45 @@ public class SachCon extends SanPhamCha {
 	private Date namXuatBan;
 	private String ISBN;
 	private int soTrang;
+
+	private int soLuongBan;
+	private double doanhThu;
+	private double loiNhuan;
+
+	public int getSoLuongBan() {
+		return soLuongBan;
+	}
+
+	public void setSoLuongBan(int soLuongBan) {
+		this.soLuongBan = soLuongBan;
+	}
+
+	public double getDoanhThu() {
+		return doanhThu;
+	}
+
+	public void setDoanhThu(double doanhThu) {
+		this.doanhThu = doanhThu;
+	}
+
+	public double getLoiNhuan() {
+		return loiNhuan;
+	}
+
+	public void setLoiNhuan(double loiNhuan) {
+		this.loiNhuan = loiNhuan;
+	}
+
 	public SachCon() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	
 	public SachCon(String idSanPham, String tenSanPham, TacGia tacGia, TheLoai theLoai, Date namXuatBan, String iSBN,
 			int soTrang, LoaiSanPham idLoaiSanPham, NhaCungCap idNhaCungCap, double kichThuoc, String mauSac,
-			TrangThaiSPEnum trangThai, int soLuong, double giaNhap,double giaKM) {
-		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap,giaKM);
+			TrangThaiSPEnum trangThai, int soLuong, double giaNhap, double giaKM) {
+		super(idSanPham, tenSanPham, idLoaiSanPham, idNhaCungCap, kichThuoc, mauSac, trangThai, soLuong, giaNhap,
+				giaKM);
 		this.tacGia = tacGia;
 		this.theLoai = theLoai;
 		this.namXuatBan = namXuatBan;
@@ -32,7 +61,6 @@ public class SachCon extends SanPhamCha {
 		// TODO Auto-generated constructor stub
 	}
 
-	
 	public TacGia getTacGia() {
 		return tacGia;
 	}
@@ -92,5 +120,4 @@ public class SachCon extends SanPhamCha {
 		return super.giaNhap + (super.giaNhap * 0.55) + thue();
 	}
 
-	
 }

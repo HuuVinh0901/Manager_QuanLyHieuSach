@@ -29,6 +29,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -84,7 +85,7 @@ import utils.TrangThaiSPEnum;
 public class QuanLySachView extends JPanel
 		implements ActionListener, MouseListener, KeyListener, ItemListener, DocumentListener, ListSelectionListener {
 	private JTabbedPane tabbedPane;
-
+	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 	private JLabel lblTieuDe, lblIDSanPham, lblTinhTrangKinhDoanh;
 	private JTable sanPhamTable;
 	private JPanel pnCenter, pnChucNang, pnDanhMuc, pnMain;
@@ -263,8 +264,8 @@ public class QuanLySachView extends JPanel
 //					dfNgaySinh.format(s.getNamXuatBan()), s.getISBN(), s.getSoTrang() + "", loaiSanPham, nhaCungCap,
 //					s.getKichThuoc() + "", s.getMauSac(), s.getTrangThai() + "", s.thue() + "", s.getSoLuong() + "",
 //					s.getGiaNhap() + "", s.giaBan() + "" };
-			model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, Date, isbn, soTrang, loaiSanPham,
-					nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaNhap, giaBan });
+			model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, dfNgaySinh.format(s.getNamXuatBan()), isbn, soTrang, loaiSanPham,
+					nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 		}
 
 	}
@@ -279,7 +280,7 @@ public class QuanLySachView extends JPanel
 		daoNhaCungCap = new DAONhaCungCap();
 		daoTheLoai = new DAOTheLoai();
 		daoTacGia = new DAOTacGia();
-
+		currencyFormat.setCurrency(Currency.getInstance("VND"));
 		table = new JTable();
 		model = new DefaultTableModel();
 
@@ -657,9 +658,11 @@ public class QuanLySachView extends JPanel
 						}
 						if (daoSach.checkIdSach(s.getIdSanPham())) {
 							daoSach.capNhatSach(s);
+							lamMoi();
 						} else {
 							boolean result = daoSach.themSach(s);
 							loadData();
+							lamMoi();
 							if (!result) {
 								System.out.println("Không thể thêm sản phẩm: " + s.getIdSanPham());
 							}
@@ -673,6 +676,15 @@ public class QuanLySachView extends JPanel
 		}
 	}
 
+	private Double parseDoubleWithMultiplePoints(String input) {
+		String cleanedInput = input.replaceAll("[^\\d.]", "");
+		cleanedInput = cleanedInput.contains(".")
+				? cleanedInput.substring(0, cleanedInput.indexOf(".") + 1)
+						+ cleanedInput.substring(cleanedInput.indexOf(".") + 1).replace(".", "")
+				: cleanedInput;
+		return cleanedInput.isEmpty() ? 0.0 : Double.parseDouble(cleanedInput);
+	}
+
 	private void ghiFileExcel(String filePath) {
 		double tongGiaNhap = 0;
 		int tongSoLuong = 0;
@@ -680,6 +692,8 @@ public class QuanLySachView extends JPanel
 		int rowCount = model.getRowCount();
 		ArrayList<SachCon> dsSach = new ArrayList<>();
 		for (int i = 0; i < rowCount; i++) {
+//			String thueStr = ((String) modelSP.getValueAt(i, 7)).replaceAll("\\D+","");
+//			Double thue = parseDoubleWithMultiplePoints(thueStr);
 			String idSanPham = (String) model.getValueAt(i, 0);
 			String tenSanPham = (String) model.getValueAt(i, 1);
 			String tacGia = (String) model.getValueAt(i, 2);
@@ -696,9 +710,11 @@ public class QuanLySachView extends JPanel
 			String mauSac = (String) model.getValueAt(i, 10);
 			String trangThaiStr = (String) model.getValueAt(i, 11);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
-			Double thue = (Double) model.getValueAt(i, 12);
+			String thueStr = ((String) model.getValueAt(i, 12)).replaceAll("\\D+","");
+			Double thue = parseDoubleWithMultiplePoints(thueStr);
 			int soLuong = (int) model.getValueAt(i, 13);
-			Double giaNhap = (Double) model.getValueAt(i, 14);
+			String giaNhapStr = ((String) model.getValueAt(i, 14)).replaceAll("\\D+","");
+			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
 			SachCon s = new SachCon();
 			s.setIdSanPham(idSanPham);
 			s.setTenSanPham(tenSanPham);
@@ -1257,9 +1273,13 @@ public class QuanLySachView extends JPanel
 
 			chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
 
+	        String giaNhapStr = model.getValueAt(row, 14).toString().replaceAll("\\D+","");
+	        String giaBanStr = model.getValueAt(row, 15).toString().replaceAll("\\D+","");
+
+	        txtGiaNhap.setText(giaNhapStr);
+	        txtGiaBan.setText(giaBanStr);
+			
 			txtSoLuong.setText(model.getValueAt(row, 13).toString());
-			txtGiaNhap.setText(model.getValueAt(row, 14).toString());
-			txtGiaBan.setText(model.getValueAt(row, 15).toString());
 		}
 
 	}
@@ -1419,7 +1439,7 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan)});
 				}
 			}
 		} catch (SQLException e) {
@@ -1455,7 +1475,7 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
@@ -1491,7 +1511,7 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {
@@ -1527,7 +1547,7 @@ public class QuanLySachView extends JPanel
 					double giaNhap = s.getGiaNhap();
 					double giaBan = s.giaBan();
 					model.addRow(new Object[] { idSanPham, tenSanPham, tenTacGia, tenTheLoai, namXuatBan, ISBN, soTrang,
-							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, thue, soLuong, giaBan, giaBan });
+							loaiSanPham, nhaCungCap, kichThuoc, mauSac, trangThai, currencyFormat.format(thue), soLuong, currencyFormat.format(giaNhap), currencyFormat.format(giaBan) });
 				}
 			}
 		} catch (SQLException e) {

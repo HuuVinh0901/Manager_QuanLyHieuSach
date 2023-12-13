@@ -47,6 +47,8 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicSplitPaneUI.KeyboardHomeHandler;
 import javax.swing.table.DefaultTableModel;
@@ -257,6 +259,24 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		txtsdt.addKeyListener(this);
 		txtEmail.addKeyListener(this);
 		tableKH.addKeyListener(this);
+		txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+	            @Override
+	            public void insertUpdate(DocumentEvent e) {
+	            	modelKhachHang.setRowCount(0);
+	            	handleTimKiemKH(txtTimKiem.getText().trim());
+	            }
+
+	            @Override
+	            public void removeUpdate(DocumentEvent e) {
+	            	modelKhachHang.setRowCount(0);
+	            	handleTimKiemKH(txtTimKiem.getText().trim());
+	            }
+
+	            @Override
+	            public void changedUpdate(DocumentEvent e) {
+	            	
+	            }
+	        });
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -265,6 +285,17 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		}
 		loadData();
         
+	}
+	private void handleTimKiemKH(String cond) {
+		if (!cond.equals("")) {
+			for (KhachHang kh : daoKhachHang.getKhachHangTimKiem(cond)) {
+				String ngaySinh = new SimpleDateFormat("dd/MM/yyyy").format(kh.getNgaySinh());
+				modelKhachHang.addRow(new String[] { kh.getIdKhachHang(), kh.getTenKhachHang(),kh.getSdt(), kh.getEmail(),kh.getDiaChi(),ngaySinh,kh.isGioiTinh()?"Nam":"Nữ"
+						});	
+			}
+		} else {
+			loadData();
+		}
 	}
 	private void ThemKH() throws SQLException {
 		String idKhachHang = autoID();
@@ -529,7 +560,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			CapNhatKH();
 		}
 		if(o.equals(btnXemTatCa)) {
-			 loadData();
+			 txtTimKiem.setText("");
 		 }
 		if(o.equals(btnXuatExcel)) {
 			String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
@@ -605,7 +636,6 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			if (e.getKeyCode() == KeyEvent.VK_F5) 
 			{
 				lamMoi();
-				loadData();
 			}
 
 		} 
@@ -618,21 +648,13 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(() -> {
 			Object o = e.getSource();
-		if (o.equals(txtTimKiem)) {
-			DefaultTableModel model = (DefaultTableModel) tableKH.getModel();
-			TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
-			tableKH.setRowSorter(tr);
-			tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1,2));
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_F5) 
+		if (e.getKeyCode() == KeyEvent.VK_F5) 
 		{
 			lamMoi();
-			loadData();
 		} 
 		else if (e.getKeyCode() == KeyEvent.VK_F10) 
 		{
 			lamMoi();
-			loadData();
 		}
 		});
 		

@@ -29,11 +29,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -95,17 +98,17 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 	private JLabel lblNhaCungCapSearch;
 	private QuanLySachView sachPanel;
 	private JButton btnXuatExCel;
+	private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
 	public QuanLySanPhamView() {
 		daoLoaiSanPham = new DAOLoaiSanPham();
 		daoNhaCungCap = new DAONhaCungCap();
 		daoSanPham = new DAOQuanLySanPham();
-
+		currencyFormat.setCurrency(Currency.getInstance("VND"));
 		setLayout(new BorderLayout(8, 6));
 		tabbedPane = new JTabbedPane();
 		// tab sách
-		sachPanel = new QuanLySachView();
-//		JPanel sachPanel = new JPanel();
+		sachPanel = new QuanLySachView();;
 		// Tab Sản phẩm
 		JPanel sanPhamPanel = new JPanel();
 		sanPhamPanel.setLayout(new BorderLayout());
@@ -450,9 +453,19 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			int soLuong = sanPham.getSoLuong();
 			double giaBan = sanPham.giaBan();
 			modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
-					trangThai, thue, giaNhap, soLuong, giaBan });
+					trangThai, currencyFormat.format(thue), currencyFormat.format(giaNhap), soLuong,
+					currencyFormat.format(giaBan) });
 
 		}
+	}
+
+	private Double parseDoubleWithMultiplePoints(String input) {
+		String cleanedInput = input.replaceAll("[^\\d.]", "");
+		cleanedInput = cleanedInput.contains(".")
+				? cleanedInput.substring(0, cleanedInput.indexOf(".") + 1)
+						+ cleanedInput.substring(cleanedInput.indexOf(".") + 1).replace(".", "")
+				: cleanedInput;
+		return cleanedInput.isEmpty() ? 0.0 : Double.parseDouble(cleanedInput);
 	}
 
 	public void ghiFileExcel(String filePath) {
@@ -464,6 +477,7 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 		ArrayList<SanPhamCon> dsSanPham = new ArrayList<>();
 
 		for (int i = 0; i < rowCount; i++) {
+
 			String idSanPham = (String) modelSP.getValueAt(i, 0);
 			String tenSanPham = (String) modelSP.getValueAt(i, 1);
 			String loaiSanPham = (String) modelSP.getValueAt(i, 2);
@@ -472,8 +486,11 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 			String mauSac = (String) modelSP.getValueAt(i, 5);
 			String trangThaiStr = (String) modelSP.getValueAt(i, 6);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
-			Double thue = (Double) modelSP.getValueAt(i, 7);
-			Double giaNhap = (Double) modelSP.getValueAt(i, 8);
+			String thueStr = ((String) modelSP.getValueAt(i, 7)).replaceAll("\\D+", "");
+			Double thue = parseDoubleWithMultiplePoints(thueStr);
+			String giaNhapStr = ((String) modelSP.getValueAt(i, 8)).replaceAll("\\D+", "");
+			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
+
 			int soLuong = (int) modelSP.getValueAt(i, 9);
 			SanPhamCon sp = new SanPhamCon();
 			sp.setIdSanPham(idSanPham);
@@ -537,25 +554,10 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				soLuongCell.setCellValue(spc.getSoLuong());
 				org.apache.poi.ss.usermodel.Cell giaBanCell = row.createCell(10);
 				giaBanCell.setCellValue(spc.giaBan());
-				tongGiaNhap += spc.getGiaNhap();
-				tongSoLuong += spc.getSoLuong();
-				tongGiaBan += spc.giaBan();
 			}
 			for (int i = 0; i < columnNames.length; i++) {
 				sheet.autoSizeColumn(i);
 			}
-			sheet.createRow(rowNumber);
-			org.apache.poi.ss.usermodel.Cell summaryCell = sheet.getRow(rowNumber).createCell(0);
-			summaryCell.setCellValue("Tổng cộng");
-
-			org.apache.poi.ss.usermodel.Cell tongGiaNhapCell = sheet.getRow(rowNumber).createCell(8);
-			tongGiaNhapCell.setCellValue(tongGiaNhap);
-
-			org.apache.poi.ss.usermodel.Cell tongSoLuongCell = sheet.getRow(rowNumber).createCell(9);
-			tongSoLuongCell.setCellValue(tongSoLuong);
-
-			org.apache.poi.ss.usermodel.Cell tongGiaBanCell = sheet.getRow(rowNumber).createCell(10);
-			tongGiaBanCell.setCellValue(tongGiaBan);
 			try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
 				workbook.write(outputStream);
 			}
@@ -859,7 +861,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				int soLuong = sanPham.getSoLuong();
 				double giaBan = sanPham.giaBan();
 				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
-						trangThai, thue, giaNhap, soLuong, giaBan });
+						trangThai, currencyFormat.format(thue), currencyFormat.format(giaNhap), soLuong,
+						currencyFormat.format(giaBan) });
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -884,7 +887,8 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 				int soLuong = sanPham.getSoLuong();
 				double giaBan = sanPham.giaBan();
 				modelSP.addRow(new Object[] { idSanPham, tenSanPham, tenLoaiSanPham, tenNhaCungCap, kichThuoc, mauSac,
-						trangThai, thue, giaNhap, soLuong, giaBan });
+						trangThai, currencyFormat.format(thue), currencyFormat.format(giaNhap), soLuong,
+						currencyFormat.format(giaBan) });
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -966,9 +970,14 @@ public class QuanLySanPhamView extends JPanel implements ActionListener, ItemLis
 
 			chkTinhTrangKinhDoanh.setSelected(trangThai == TrangThaiSPEnum.DANG_KINH_DOANH);
 
-			txtGiaNhap.setText(modelSP.getValueAt(row, 8).toString());
+			String giaNhapStr = modelSP.getValueAt(row, 8).toString().replaceAll("\\D+", "");
+			String giaBanStr = modelSP.getValueAt(row, 10).toString().replaceAll("\\D+", "");
+
+			txtGiaNhap.setText(giaNhapStr);
+			txtGiaBan.setText(giaBanStr);
+//			txtGiaNhap.setText(modelSP.getValueAt(row, 8).toString());
 			txtSoLuong.setText(modelSP.getValueAt(row, 9).toString());
-			txtGiaBan.setText(modelSP.getValueAt(row, 10).toString());
+//			txtGiaBan.setText(modelSP.getValueAt(row, 10).toString());
 		}
 	}
 

@@ -106,8 +106,9 @@ public class SetPassWordQuanLyView extends Dialog implements ActionListener, Mou
 
 		txtTenDangNhap.setText(ql.getId());
 		txtTenNhanVien.setText(ql.getTen());
-//		txtMaXacNhan.setText(nv.getSoDienThoai());
-
+		txtTenDangNhap.setEditable(false);
+		txtTenNhanVien.setEditable(false);
+		
 		btnGuiLaiMa = new JButton("Hủy bỏ");
 		btnXacNhan = new JButton("Xác nhận");
 

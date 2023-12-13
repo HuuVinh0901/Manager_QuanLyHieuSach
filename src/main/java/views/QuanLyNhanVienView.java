@@ -49,6 +49,8 @@ import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -270,7 +272,24 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		txtDiaChi.addKeyListener(this);
 		txtEmail.addKeyListener(this);
 		txtsdt.addKeyListener(this);
-		
+		txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+            	modelNhanVien.setRowCount(0);
+            	handleTimKiemNV(txtTimKiem.getText().trim());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            	modelNhanVien.setRowCount(0);
+            	handleTimKiemNV(txtTimKiem.getText().trim());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            	
+            }
+        });
 		try {
 			ConnectDB.getinstance().connect();
 		} catch (Exception e) {
@@ -278,6 +297,17 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			e.printStackTrace();
 		}
 		loadData();
+	}
+	private void handleTimKiemNV(String cond) {
+		if (!cond.equals("")) {
+			for (NhanVien nv : daoNhanVien.getNVTimKiem(cond)) {
+				String ngaySinh = new SimpleDateFormat("dd/MM/yyyy").format(nv.getNgaySinh());
+				modelNhanVien.addRow(new Object[] { nv.getId(), nv.getTen(),nv.getSoDienThoai(), nv.getEmail(),nv.getDiaChi(),dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",nv.getChucVu(),nv.isTrangThai()?"Đang làm việc":"Đã nghỉ việc"
+				});
+			}
+		} else {
+			loadData();
+		}
 	}
 	private void ThemNV() throws SQLException {
 		
@@ -591,8 +621,6 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		 }
 		 if(o.equals(btnXemTatCa)) {
 			 txtTimKiem.setText("");
-			 loadData();
-			 lamMoi();
 		 }
 		 if(o.equals(btnXuatExecl)) {
 			 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new java.util.Date());
@@ -685,20 +713,13 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(() -> {
 			Object o = e.getSource();
-			if (o.equals(txtTimKiem)) {
-				DefaultTableModel model = (DefaultTableModel) tableNhanVien.getModel();
-				TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
-				tableNhanVien.setRowSorter(tr);
-				tr.setRowFilter(RowFilter.regexFilter("(?i)" + txtTimKiem.getText().trim(), 1,2));
-			} 
-			else if (e.getKeyCode() == KeyEvent.VK_F5) {
+			if (e.getKeyCode() == KeyEvent.VK_F5) {
 				lamMoi();
 				loadData();
 			}
 		});
 	}
 }
-
 
 
 

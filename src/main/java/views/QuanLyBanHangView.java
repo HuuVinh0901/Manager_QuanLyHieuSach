@@ -64,6 +64,7 @@ import javax.swing.table.DefaultTableModel;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.BaseFont;
@@ -885,50 +886,50 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 	
 	
 	private void handLeThanhToan() throws DocumentException {
-//		if (!txtMaKH.getText().equals("")) {
-//			if (modelGioHang.getRowCount() >= 0) {
-//				
-//				if (txtTienKhachDua.getText().equals("")) {
-//            	    JOptionPane.showMessageDialog(this, "Chưa nhập tiền khách đưa");
-//            	    txtTienKhachDua.requestFocus(); 
-//            	    txtTienKhachDua.setSelectionStart(0); 
-//            	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
-//            	    return;
-//            	} 
-//				
-//				if (!txtTienKhachDua.getText().matches("\\d+")) {
-//					JOptionPane.showMessageDialog(this, "Tiền khách đưa nhập sai định dạng");
-//            	    txtTienKhachDua.requestFocus(); 
-//            	    txtTienKhachDua.setSelectionStart(0); 
-//            	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
-//            	    return;
-//            	} 
-//				
-//				String tongTienHoaDon = txtTongTienHoaDon.getText();
-//				double tongTienHoaDonDouble = Double.parseDouble(tongTienHoaDon.trim().replace("\u00A0", "").replaceAll("[.,₫]", ""));
-//				double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText());
-//				
-//				if (tienKhachDua < tongTienHoaDonDouble){
-//            		JOptionPane.showMessageDialog(this, "Tiền khách đưa bé hơn tổng tiền hoá đơn");
-//            		txtTienKhachDua.requestFocus(); 
-//             	    txtTienKhachDua.setSelectionStart(0); 
-//             	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
-//             	    return;
-//            	} 
-//				luuHoaDonVaCTHD();
+		if (!txtMaKH.getText().equals("")) {
+			if (modelGioHang.getRowCount() >= 0) {
+				
+				if (txtTienKhachDua.getText().equals("")) {
+            	    JOptionPane.showMessageDialog(this, "Chưa nhập tiền khách đưa");
+            	    txtTienKhachDua.requestFocus(); 
+            	    txtTienKhachDua.setSelectionStart(0); 
+            	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
+            	    return;
+            	} 
+				
+				if (!txtTienKhachDua.getText().matches("\\d+")) {
+					JOptionPane.showMessageDialog(this, "Tiền khách đưa nhập sai định dạng");
+            	    txtTienKhachDua.requestFocus(); 
+            	    txtTienKhachDua.setSelectionStart(0); 
+            	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
+            	    return;
+            	} 
+				
+				String tongTienHoaDon = txtTongTienHoaDon.getText();
+				double tongTienHoaDonDouble = Double.parseDouble(tongTienHoaDon.trim().replace("\u00A0", "").replaceAll("[.,₫]", ""));
+				double tienKhachDua = Double.parseDouble(txtTienKhachDua.getText());
+				
+				if (tienKhachDua < tongTienHoaDonDouble){
+            		JOptionPane.showMessageDialog(this, "Tiền khách đưa bé hơn tổng tiền hoá đơn");
+            		txtTienKhachDua.requestFocus(); 
+             	    txtTienKhachDua.setSelectionStart(0); 
+             	    txtTienKhachDua.setSelectionEnd(txtTienKhachDua.getText().length());
+             	    return;
+            	} 
+				luuHoaDonVaCTHD();
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 	            String filePath = System.getProperty("user.dir") + "/src/main/resources/DataExports/HoaDonPDF/HD_"+timeStamp+".pdf" ;
 				exportToPdf(filePath);
-//				lamMoiGioHang();
-//				handleLamMoiHoaDon();
-//				txtTienKhachDua.setText("");
-//			} else {
-//				JOptionPane.showMessageDialog(this, "Giỏ hàng rỗng");
-//			}
-//		} else {
-//			JOptionPane.showMessageDialog(this, "Chưa thể thanh toán được vì chưa chọn khách hàng");
-//			showDialogKhachHang();
-//		}
+				lamMoiGioHang();
+				handleLamMoiHoaDon();
+				txtTienKhachDua.setText("");
+			} else {
+				JOptionPane.showMessageDialog(this, "Giỏ hàng rỗng");
+			}
+		} else {
+			JOptionPane.showMessageDialog(this, "Chưa thể thanh toán được vì chưa chọn khách hàng");
+			showDialogKhachHang();
+		}
 		
 	}
 	
@@ -1854,29 +1855,41 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
             // Writing content
             String filePath2 = System.getProperty("user.dir") + "/src/main/resources/database/vuArial.ttf";
             BaseFont bf = BaseFont.createFont(filePath2, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            Paragraph tieuDe=new Paragraph("HÓA ĐƠN",new com.itextpdf.text.Font(bf,30,1,BaseColor.BLUE));
             Paragraph tenKH=new Paragraph("Tên khách hàng : "+kh.getTenKhachHang().toString(),new com.itextpdf.text.Font(bf,15));
             Paragraph idKH2=new Paragraph("ID khách hàng   : "+kh.getIdKhachHang().toString(),new com.itextpdf.text.Font(bf,15));
-            Paragraph idHD2=new Paragraph("ID hóa đơn  :"+txtMaHD.getText().toString(),new com.itextpdf.text.Font(bf, 20, 1, BaseColor.BLUE));
-            document.add(new Paragraph("					HÓA ĐƠN",new com.itextpdf.text.Font(bf,30,1,BaseColor.BLUE)));
+            Paragraph idHD2=new Paragraph("ID hóa đơn      : "+txtMaHD.getText().toString(),new com.itextpdf.text.Font(bf,15,Font.BOLD));
+            String ngay = new SimpleDateFormat("dd").format(new Date());
+            String thang = new SimpleDateFormat("MM").format(new Date());
+            String nam = new SimpleDateFormat("yyyy").format(new Date());
+            Paragraph DateTime=new Paragraph("Ngày "+ngay+" tháng "+thang+" năm "+nam,new com.itextpdf.text.Font(bf,15,Font.ITALIC));
+            tieuDe.setAlignment(Element.ALIGN_CENTER);
+            DateTime.setAlignment(Element.ALIGN_RIGHT);
+            document.add(tieuDe);
+            document.add(DateTime);
             document.add(idHD2);
             document.add(tenKH);
             document.add(idKH2);
             document.add(new Paragraph("SDT khách hàng: "+kh.getSdt(),new com.itextpdf.text.Font(bf,15)));
-            document.add(new Paragraph("Tên nhân viên   : "+nvLogIn.getTen().toString(),new com.itextpdf.text.Font(bf,15)));
-            document.add(new Paragraph("ID nhân viên     : "+nvLogIn.getId(),new com.itextpdf.text.Font(bf,15)));
-            document.add(new Paragraph("Ngày lập         : "+dateTimeString,new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("Tên nhân viên    : "+nvLogIn.getTen().toString(),new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("ID nhân viên      : "+nvLogIn.getId(),new com.itextpdf.text.Font(bf,15)));
+            document.add(new Paragraph("Ngày lập            : "+dateTimeString,new com.itextpdf.text.Font(bf,15)));
             document.add(new Paragraph(" "));
                    // Add meta data information to PDF file
            
-            PdfPTable table = new PdfPTable(4);
-        	//Khởi tạo 4 ô header
+            PdfPTable table = new PdfPTable(6);
+        	//Khởi tạo ô header
             PdfPCell header1 = new PdfPCell(new Paragraph("ID sản phẩm",new com.itextpdf.text.Font(bf,12)));
             PdfPCell header2 = new PdfPCell(new Paragraph("Tên sản phẩm",new com.itextpdf.text.Font(bf,12)));
             PdfPCell header3 = new PdfPCell(new Paragraph("Số lượng",new com.itextpdf.text.Font(bf,12)));
             PdfPCell header4 = new PdfPCell(new Paragraph("Thành tiền",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header5 = new PdfPCell(new Paragraph("Giá bán",new com.itextpdf.text.Font(bf,12)));
+            PdfPCell header6 = new PdfPCell(new Paragraph("Khuyến mãi",new com.itextpdf.text.Font(bf,12)));
         	//Thêm 4 ô header vào table
             table.addCell(header1);
             table.addCell(header2);
+            table.addCell(header5);
+            table.addCell(header6);
             table.addCell(header3);
             table.addCell(header4);
             
@@ -1887,8 +1900,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
     			String tenSP = s.getTenSanPham();
     			String soLuong = String.valueOf(cthd.getSoLuong());
     			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			String giaBan = currencyFormat.format(s.giaBan());
+    			String giaKM = currencyFormat.format(s.getGiaKM());
     			 table.addCell(new PdfPCell(new Paragraph(idSP)));
     			 table.addCell(new PdfPCell(new Paragraph(tenSP,new com.itextpdf.text.Font(bf,12))));
+    			 table.addCell(new PdfPCell(new Paragraph(giaBan)));
+ 	   			 table.addCell(new PdfPCell(new Paragraph("- "+giaKM)));
     			 table.addCell(new PdfPCell(new Paragraph(soLuong)));
     			 table.addCell(new PdfPCell(new Paragraph(thanhTien)));
     		}
@@ -1898,19 +1915,28 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
     			String tenSP = sp.getTenSanPham();
     			String soLuong = String.valueOf(cthd.getSoLuong());
     			String thanhTien = currencyFormat.format(cthd.getThanhTien());
+    			String giaBan = currencyFormat.format(sp.giaBan());
+    			String giaKM = currencyFormat.format(sp.getGiaKM());
     			table.addCell(new PdfPCell(new Paragraph(idSP)));
 	   			table.addCell(new PdfPCell(new Paragraph(tenSP,new com.itextpdf.text.Font(bf,12))));
+	   			table.addCell(new PdfPCell(new Paragraph(giaBan)));
+	   			table.addCell(new PdfPCell(new Paragraph("- "+giaKM)));
 	   			table.addCell(new PdfPCell(new Paragraph(soLuong)));
 	   			table.addCell(new PdfPCell(new Paragraph(thanhTien)));
     		}
             document.add(table);
             String StrtienKhachDua=currencyFormat.format(hd.getTienKhachDua());
-            Paragraph tienKhachDua=new Paragraph("Tiền khách đưa: "+StrtienKhachDua,new com.itextpdf.text.Font(bf, 20));
-            Paragraph tienTraKhach=new Paragraph("Tiền trả khách: "+txtTienTraKhach.getText().toString(),new com.itextpdf.text.Font(bf, 20));
-            Paragraph tongTien=new Paragraph("TỔNG TIỀN: "+txtTongTienHoaDon.getText().toString(),new com.itextpdf.text.Font(bf, 25, 1, BaseColor.RED));
+           
+            Paragraph tongTien=new Paragraph("TỔNG TIỀN : "+txtTongTienHoaDon.getText().toString(),new com.itextpdf.text.Font(bf, 25, 1, BaseColor.RED));
+            Paragraph tienKhachDua=new Paragraph("Tiền khách đưa  : "+StrtienKhachDua,new com.itextpdf.text.Font(bf, 20));
+            Paragraph tienTraKhach=new Paragraph("Tiền trả khách    : "+txtTienTraKhach.getText().toString(),new com.itextpdf.text.Font(bf, 20));
+            Paragraph tienGioHang=new Paragraph("Tổng thành tiền  : "+txtTongTienGioHang.getText().toString(),new com.itextpdf.text.Font(bf, 20,Font.BOLD));
+            Paragraph thue=new Paragraph("Thuế VAT (10%): "+txtThue.getText().toString(),new com.itextpdf.text.Font(bf, 20));
+            document.add(tienGioHang);
+            document.add(thue);
+            document.add(tongTien);
             document.add(tienKhachDua);
             document.add(tienTraKhach);
-            document.add(tongTien);
             // close the document
             document.close();
             Desktop.getDesktop().open(new java.io.File(filePath));
