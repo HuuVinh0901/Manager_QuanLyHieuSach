@@ -635,7 +635,7 @@ public class DAOSach implements Serializable {
 			pst.setInt(13, s.getSoLuong());
 			pst.setDouble(14, s.getGiaNhap());
 			pst.setDouble(15, s.giaBan());
-			pst.setDouble(16, s.giaBan());
+			pst.setDouble(16, s.getGiaKM());
 			pst.setString(17, s.getIdSanPham());
 			int n = pst.executeUpdate();
 			return n > 0;
