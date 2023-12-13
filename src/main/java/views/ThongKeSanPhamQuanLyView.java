@@ -321,11 +321,12 @@ public class ThongKeSanPhamQuanLyView extends JPanel implements ActionListener, 
 			int soLuongBan = Integer.parseInt((String) modelHoaDon.getValueAt(i, 5));
 			String giaNhapStr = ((String) modelHoaDon.getValueAt(i, 6)).replaceAll("\\D+","");
 			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
-			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 7)).replaceAll("\\D+","");
+			
+			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 8)).replaceAll("\\D+","");
 			Double doanhThu = parseDoubleWithMultiplePoints(doanhThuStr);
-			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 8)).replaceAll("\\D+","");
+			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 9)).replaceAll("\\D+","");
 			Double loiNhuan = parseDoubleWithMultiplePoints(loiNhuanStr);
-			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 9);
+			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 10);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
 			
 			SanPhamCon sp = new SanPhamCon();

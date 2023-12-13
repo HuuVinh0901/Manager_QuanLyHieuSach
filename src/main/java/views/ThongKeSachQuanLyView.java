@@ -279,6 +279,7 @@ public class ThongKeSachQuanLyView extends JPanel implements ActionListener, Ite
 							JOptionPane.WARNING_MESSAGE);
 				} else {
 					loadDataSanPhamTheoNgay(startDate, endDate);
+					loadSanPhamTheoTuyChinh();
 				}
 			}
 		} else if (o.equals(btnThongKe)) {
@@ -326,13 +327,19 @@ public class ThongKeSachQuanLyView extends JPanel implements ActionListener, Ite
 			String nhaCungCap = (String) modelHoaDon.getValueAt(i, 5);
 			int soLuong = Integer.parseInt((String) modelHoaDon.getValueAt(i, 6));
 			int soLuongBan = Integer.parseInt((String) modelHoaDon.getValueAt(i, 7));
+			
 			String giaNhapStr = ((String) modelHoaDon.getValueAt(i, 8)).replaceAll("\\D+", "");
 			Double giaNhap = parseDoubleWithMultiplePoints(giaNhapStr);
-			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 9)).replaceAll("\\D+", "");
+			
+			
+			
+			String doanhThuStr = ((String) modelHoaDon.getValueAt(i, 10)).replaceAll("\\D+", "");
 			Double doanhThu = parseDoubleWithMultiplePoints(doanhThuStr);
-			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 10)).replaceAll("\\D+", "");
+			
+			String loiNhuanStr = ((String) modelHoaDon.getValueAt(i, 11)).replaceAll("\\D+", "");
 			Double loiNhuan = parseDoubleWithMultiplePoints(loiNhuanStr);
-			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 11);
+			
+			String trangThaiStr = (String) modelHoaDon.getValueAt(i, 12);
 			TrangThaiSPEnum trangThai = TrangThaiSPEnum.getByName(trangThaiStr);
 
 			SachCon sp = new SachCon();
@@ -485,6 +492,7 @@ public class ThongKeSachQuanLyView extends JPanel implements ActionListener, Ite
 				lblTongLN.setText("TỔNG LỢI NHUẬN: " + currencyFormat.format(tongLoiNhuan));
 				lblTongLoiNhuan.setText("TỔNG SỐ LƯỢNG ĐÃ BÁN : " + Math.round(soLuongDaBan));
 				lblTongDoanhThu.setText("TỔNG SỐ LƯỢNG TỒN : " + Math.round(soLuongTon));
+				System.out.println("tuy chinh thanh cong");
 			}
 		}
 	}
