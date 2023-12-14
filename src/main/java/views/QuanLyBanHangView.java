@@ -429,16 +429,17 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		txtNgayLap.setText(currentDate);
 		pnTinhTien.add(lblNgayLap);
 		pnTinhTien.add(txtNgayLap); 
-		pnTinhTien.add(lblThue); 
-		pnTinhTien.add(txtThue); 
 		pnTinhTien.add(lblTongTien);
 		pnTinhTien.add(txtTongTienGioHang);
+		pnTinhTien.add(lblThue); 
+		pnTinhTien.add(txtThue); 
+		pnTinhTien.add(lblTongTienHoaDon);
+		pnTinhTien.add(txtTongTienHoaDon);
 		pnTinhTien.add(lblTienKhachDua);
 		pnTinhTien.add(txtTienKhachDua);
 		pnTinhTien.add(lblTienTraKhach);
 		pnTinhTien.add(txtTienTraKhach);
-		pnTinhTien.add(lblTongTienHoaDon);
-		pnTinhTien.add(txtTongTienHoaDon);
+		
 		pn3.add(pnTinhTien);
 		pnFooterRight.add(pn3, BorderLayout.NORTH);
 		pnFooterRight.add(pnLamMoiHD, BorderLayout.CENTER);
@@ -1780,7 +1781,12 @@ public class QuanLyBanHangView extends JPanel implements ActionListener, MouseLi
 		pnThemLamMoi.setBorder(BorderFactory.createTitledBorder(""));
 		pnDong.setBorder(BorderFactory.createTitledBorder(""));
 		pnMain.add(pnBot, BorderLayout.SOUTH);
-		
+		modelSP.setRowCount(0);
+		if (cbLocSanPham.getSelectedIndex() == 0) {
+			loadSanPham();
+		} else {
+			loadSach();
+		}
 		txtTimKiemSP.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {

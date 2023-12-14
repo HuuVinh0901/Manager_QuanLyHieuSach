@@ -107,12 +107,12 @@ public class QuanLyHoaDonNhanVienView extends JPanel{
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-            	handleTimKiemHoaDon(txtTimKiem.getText().trim());
+            	handleTimKiemHoaDon(txtTimKiem.getText().trim(),nvLogIn.getId());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-            	handleTimKiemHoaDon(txtTimKiem.getText().trim());
+            	handleTimKiemHoaDon(txtTimKiem.getText().trim(),nvLogIn.getId());
             }
 
             @Override
@@ -314,10 +314,10 @@ public class QuanLyHoaDonNhanVienView extends JPanel{
 		}
    }
    
-   private void handleTimKiemHoaDon(String cond) {
+   private void handleTimKiemHoaDon(String cond,String idNV) {
 		if (!cond.equals("")) {
 			modelHoaDon.setRowCount(0);
-			for (HoaDon hd : daoBanHang.getHoaDonTimKiem(cond)) {
+			for (HoaDon hd : daoBanHang.getHoaDonTimKiemNV(cond,idNV)) {
 				String maHD = hd.getIdDonHang();
 				String ngayLap = new SimpleDateFormat("dd/MM/yyyy").format(hd.getNgayLap());
 				String maKH = hd.getKhachHang().getIdKhachHang();

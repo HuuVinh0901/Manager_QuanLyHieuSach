@@ -246,11 +246,9 @@ public class TKKHView extends JPanel implements ActionListener, ItemListener {
 		} else if (o.equals(btnThongKe)) {
 			String selectedOption = (String) cbLoc.getSelectedItem();
 			if("6 tháng gần nhất".equals(selectedOption) || "3 tháng gần nhất".equals(selectedOption)|| "1 năm gần nhất".equals(selectedOption) ){
-//				showBieuDoHoaDonTheoThangTrongNam();
 				showBieuDoKhachHangTheoThangTrongNam();
 			}
 			else {
-//				showBieuDoHoaDonTheoNgayTrongThang();
 				showBieuDoKhachHangTheoNgayTrongThang();
 			}
 		} else if (o.equals(btnInThongKe)) {
@@ -499,7 +497,10 @@ public class TKKHView extends JPanel implements ActionListener, ItemListener {
 		chooserDayStart.setDate(new Date());
 		chooserDayEnd.setDate(new Date());
 		cbLoc.setSelectedItem("Hiện tại");
-
+		Date ngayHienTai = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(ngayHienTai);
+		loadKhachHangTheoNgay(ngayHienTai, ngayHienTai);
 	}
 	
 	public void loadKhachHangTheoNgay(Date ngayHienTai, Date ngayChon) {

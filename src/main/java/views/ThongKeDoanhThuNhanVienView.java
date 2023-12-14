@@ -177,10 +177,10 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			}
 		};
 
-		modelHoaDon.addColumn("Mã hoá đơn");
+		modelHoaDon.addColumn("ID hoá đơn");
 		modelHoaDon.addColumn("Ngày lập");
-		modelHoaDon.addColumn("Mã khách hàng");
-		modelHoaDon.addColumn("Mã nhân viên");
+		modelHoaDon.addColumn("Tên khách hàng");
+		modelHoaDon.addColumn("Tên nhân viên");
 		modelHoaDon.addColumn("Tiền khách đưa");
 		modelHoaDon.addColumn("Tổng tiền");
 		modelHoaDon.addColumn("Lợi nhuận");
@@ -267,8 +267,8 @@ public class ThongKeDoanhThuNhanVienView extends JPanel implements ActionListene
 			Row header = sheet.createRow(0);
 			header.createCell(0).setCellValue("Mã Hóa Đơn");
 			header.createCell(1).setCellValue("Ngày");
-			header.createCell(2).setCellValue("Mã Khách Hàng");
-			header.createCell(3).setCellValue("Mã Nhân Viên");
+			header.createCell(2).setCellValue("Tên Khách Hàng");
+			header.createCell(3).setCellValue("Tên Nhân Viên");
 			header.createCell(4).setCellValue("Tổng Tiền");
 			header.createCell(5).setCellValue("Lợi nhuận");
 

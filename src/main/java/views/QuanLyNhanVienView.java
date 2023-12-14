@@ -347,6 +347,7 @@ public class QuanLyNhanVienView extends JPanel implements KeyListener,MouseListe
 			daoTK.createTK(tk);
 			daoNhanVien.themNhanVien(nv);
 			modelNhanVien.addRow(new Object[] {id, ten, sdt,email, diaChi,dfNgaySinh.format(nv.getNgaySinh()),nv.isGioiTinh()?"Nam":"Nữ",chucVu,trangThaiValue });
+			JOptionPane.showMessageDialog(this, "Thêm thành công");
 		}
 	}
 	private void loadData() {

@@ -449,7 +449,39 @@ public class DAO_QuanLyBanHang {
 
 		return dsHoaDon;
 	}
+	public ArrayList<HoaDon> getHoaDonTimKiemNV(String cond,String idNV) {
+		ArrayList<HoaDon> dsHoaDon = new ArrayList<HoaDon>();
+		ConnectDB.getinstance();
+		Connection con = ConnectDB.getConnection();
+		PreparedStatement statement = null;
+		try {
+			String sql = "SELECT idDonHang, ngayLap, nhanVien, khachHang, tienKhachDua, tongTien, tongLoiNhuan"
+					+ " FROM HoaDon hd" + " JOIN KhachHang kh ON hd.khachHang = kh.idKhachHang"
+					+ " JOIN NhanVien nv ON hd.nhanVien = nv.idNhanVien"
+					+ " WHERE idDonHang LIKE '%" + cond + "%' OR" 
+					+ " kh.soDienThoai LIKE '%" + cond + "%' OR" + " kh.tenKhachHang LIKE N'%" + cond + "%'"
+					+ " AND nv.idNhanVien LIKE N'%"  +idNV+"%'" ;
+					
+			
+			statement = con.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				HoaDon hd = new HoaDon();
+				hd.setIdDonHang(rs.getString(1));
+				hd.setNgayLap(rs.getDate(2));
+				hd.setKhachHang(new KhachHang(rs.getString(4)));
+				hd.setNhanVien(new NhanVien(rs.getString(3)));
+				hd.setTienKhachDua(rs.getDouble(5));
+				hd.setTongTien(rs.getDouble(6));
+				hd.setTongLoiNhuan(rs.getDouble(7));
+				dsHoaDon.add(hd);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+		return dsHoaDon;
+	}
 	public boolean themHoaDon(HoaDon hd) throws SQLException {
 		String sql = "INSERT INTO HoaDon VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement pst = connection.prepareStatement(sql)) {

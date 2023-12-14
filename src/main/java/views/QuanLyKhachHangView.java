@@ -310,6 +310,7 @@ public class QuanLyKhachHangView extends JPanel implements MouseListener, KeyLis
 			KhachHang kh=new KhachHang(idKhachHang, tenKhachHang, sdt, email, diaChi,ngaySinh,GioiTinh);
 			daoKhachHang.themKhachHang(kh);
 			modelKhachHang.addRow(new Object[] {idKhachHang, tenKhachHang, sdt, email, diaChi,dfNgaySinh.format(kh.getNgaySinh()),kh.isGioiTinh()?"Nam":"Nữ" });
+			JOptionPane.showMessageDialog(this, "Thêm thành công");
 		}
 		
 
